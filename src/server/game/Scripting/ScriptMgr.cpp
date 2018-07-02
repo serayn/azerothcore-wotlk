@@ -1984,6 +1984,20 @@ void ScriptMgr::OnBattlegroundAddPlayer(Battleground* bg, Player* player)
     FOREACH_SCRIPT(BGScript)->OnBattlegroundAddPlayer(bg, player);
 }
 
+void ScriptMgr::OnApplyingNonSSDItemStatsBonus(bool &ScriptUsed, Player* player, ItemTemplate const* proto, uint8 slot, uint8 i, uint32 statType, int32 &value, uint32 &statsCount)
+{
+    FOREACH_SCRIPT(PlayerScript)->OnApplyingNonSSDItemStatsBonus(ScriptUsed, player , proto, slot ,i, statType, value, statsCount);
+}
+
+void ScriptMgr::OnApplyingItemBeforeArmorAndResistance(bool &ScriptUsed, Player* player, ItemTemplate const* proto,uint8 slot, uint32 &armor,int32 &holy_res, int32 &fire_res, int32 &nature_res, int32 &frost_res, int32 &shadow_res, int32 &arcane_res)
+{
+    FOREACH_SCRIPT(PlayerScript)->OnApplyingItemBeforeArmorAndResistance(ScriptUsed, player, proto, slot, armor, holy_res, fire_res, nature_res, frost_res, shadow_res, arcane_res);
+}
+
+void ScriptMgr::OnBeforeApplyingWeaponDamage(bool &ScriptUsed, Player* player, ItemTemplate const* proto, uint8 slot, float &damage)
+{
+    FOREACH_SCRIPT(PlayerScript)->OnBeforeApplyingWeaponDamage(ScriptUsed, player, proto, slot, damage);
+}
 AllMapScript::AllMapScript(const char* name)
     : ScriptObject(name)
 {

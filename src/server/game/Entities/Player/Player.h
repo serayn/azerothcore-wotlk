@@ -2595,7 +2595,9 @@ class Player : public Unit, public GridObject<Player>
         const PlayerTalentMap& GetTalentMap() const { return m_talents; }
         uint32 GetNextSave() const { return m_nextSave; }
         SpellModList const& GetSpellModList(uint32 type) const { return m_spellMods[type]; }
-
+        uint32 GetXP() const { return GetUInt32Value(PLAYER_XP); }
+        bool ModifyXP(int32 amount, bool sendError = true);
+        void SetXP(uint32 value);
     protected:
         // Gamemaster whisper whitelist
         WhisperListContainer WhisperList;
@@ -3012,5 +3014,7 @@ template <class T> T Player::ApplySpellMod(uint32 spellId, SpellModOp op, T &bas
         diff = (float)basevalue * (totalmul - 1.0f) + (float)totalflat;
     basevalue = T((float)basevalue + diff);
     return T(diff);
+
+
 }
 #endif

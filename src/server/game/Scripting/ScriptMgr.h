@@ -939,6 +939,39 @@ class PlayerScript : public ScriptObject
         virtual void OnBeforeInitTalentForLevel(Player* /*player*/, uint8& /*level*/, uint32& /*talentPointsForLevel*/) { }
 
         virtual void OnFirstLogin(Player* /*player*/) { }
+
+        //  Called on _ApplyItemBonuses of class player, ScriptUsed is a way to optimize the efficiency.
+        virtual void OnApplyingNonSSDItemStatsBonus(bool& ScriptUsed, Player* /*player*/, ItemTemplate const* /*proto*/, uint8 /*slot*/, uint8 /*i*/, uint32 /*statType*/, int32& /*value*/, uint32& /*statsCount*/)
+        {
+            if (!ScriptUsed)
+            {
+
+            }
+            else
+                sLog->outError("Module error: There is one script has been skipped cause of dupicated script of special type.");
+        }
+
+        //  Called on _ApplyItemBonuses of class player, ScriptUsed is a way to optimize the efficiency.
+        virtual void OnApplyingItemBeforeArmorAndResistance(bool &ScriptUsed, Player* /*player*/, ItemTemplate const* /*proto*/, uint8 /*slot*/, uint32& /*armor*/, int32& /*holy_res*/, int32& /*fire_res*/, int32& /*nature_res*/ , int32& /*frost_res*/ , int32& /*shadow_res*/ , int32& /*arcane_res*/)
+        {
+            if (!ScriptUsed)
+            {
+
+            }
+            else
+                sLog->outError("Module error: There is one script has been skipped cause of dupicated script of special type.");
+        }
+
+        //  Called on _ApplyItemBonuses of class player, ScriptUsed is a way to optimize the efficiency.
+        virtual void OnBeforeApplyingWeaponDamage(bool &ScriptUsed, Player* /*player*/, ItemTemplate const* /*proto*/, uint8 /*slot*/, float &/*damage*/)
+        {
+            if (!ScriptUsed)
+            {
+
+            }
+            else
+                sLog->outError("Module error: There is one script has been skipped cause of dupicated script of special type.");
+        }
 };
 
 class GuildScript : public ScriptObject
@@ -1309,6 +1342,9 @@ class ScriptMgr
         void OnAfterUpdateAttackPowerAndDamage(Player* player, float& level, float& base_attPower, float& attPowerMod, float& attPowerMultiplier, bool ranged);
         void OnBeforeInitTalentForLevel(Player* player, uint8& level, uint32& talentPointsForLevel);
         void OnFirstLogin(Player* player);
+        void OnApplyingNonSSDItemStatsBonus(bool &ScriptUsed, Player* player, ItemTemplate const* proto, uint8 slot, uint8 i, uint32 statType, int32 & value, uint32 & statsCount);
+        void OnApplyingItemBeforeArmorAndResistance(bool &ScriptUsed, Player* player, ItemTemplate const* proto, uint8 slot, uint32 &armor, int32 &holy_res, int32 &fire_res, int32 &nature_res, int32 &frost_res, int32 &shadow_res, int32 &arcane_res);
+        void OnBeforeApplyingWeaponDamage(bool &ScriptUsed, Player* player, ItemTemplate const* proto, uint8 slot, float &damage);
 
     public: /* GuildScript */
 
@@ -1385,8 +1421,7 @@ class ScriptMgr
         void OnBattlegroundStart(Battleground* bg);
         void OnBattlegroundEndReward(Battleground* bg, Player* player, TeamId winnerTeamId);
         void OnBattlegroundUpdate(Battleground* bg, uint32 diff);
-        void OnBattlegroundAddPlayer(Battleground* bg, Player* player);
-
+        void OnBattlegroundAddPlayer(Battleground* bg, Player* player);                
     private:
 
         uint32 _scriptCount;

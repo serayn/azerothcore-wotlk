@@ -19449,3 +19449,34 @@ void Unit::setRace(uint8 race)
     if (GetTypeId() == TYPEID_PLAYER)
         m_race = race;
 }
+
+
+
+void Unit::Whisper(std::string const& text, Language language, Player* target, bool isBossWhisper /*= false*/)
+{
+    if (!target)
+        return;
+
+    LocaleConstant locale = target->GetSession()->GetSessionDbLocaleIndex();
+    WorldPacket data;
+    ChatHandler::BuildChatPacket(data, isBossWhisper ? CHAT_MSG_RAID_BOSS_WHISPER : CHAT_MSG_MONSTER_WHISPER, language, this, target, text, 0, "", locale);
+    target->SendDirectMessage(&data);
+}
+
+void Unit::Whisper(uint32 textId, Player* target, bool isBossWhisper /*= false*/)
+{
+    if (!target)
+        return;
+
+    BroadcastText const* bct = sObjectMgr->GetBroadcastText(textId);
+    if (!bct)
+    {
+        sLog->outString("entities.unit", "WorldObject::MonsterWhisper: `broadcast_text` was not %u found", textId);
+        return;
+    }
+
+    LocaleConstant locale = target->GetSession()->GetSessionDbLocaleIndex();
+    WorldPacket data;
+    ChatHandler::BuildChatPacket(data, isBossWhisper ? CHAT_MSG_RAID_BOSS_WHISPER : CHAT_MSG_MONSTER_WHISPER, LANG_UNIVERSAL, this, target, bct->GetText(locale, getGender()), 0, "", locale);
+    target->SendDirectMessage(&data);
+}

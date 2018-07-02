@@ -7969,10 +7969,15 @@ void Player::_ApplyItemBonuses(ItemTemplate const* proto, uint8 slot, bool apply
         }
         else
         {
-            if (i >= proto->StatsCount)
-                continue;
-            statType = proto->ItemStat[i].ItemStatType;
-            val = proto->ItemStat[i].ItemStatValue;
+            uint32 statsCount = proto->StatsCount;
+            if (i < statsCount)
+            {
+                statType = proto->ItemStat[i].ItemStatType;
+                val = proto->ItemStat[i].ItemStatValue;
+            }
+            bool ScriptUsed = false;
+            sScriptMgr->OnApplyingNonSSDItemStatsBonus(ScriptUsed, this , proto, slot, i, statType, val, statType);
+            if (i >= statsCount) continue;
         }
 
         if (val == 0)
@@ -8138,6 +8143,15 @@ void Player::_ApplyItemBonuses(ItemTemplate const* proto, uint8 slot, bool apply
 
     // If set ScalingStatValue armor get it or use item armor
     uint32 armor = proto->Armor;
+	int32 holy_res = proto->HolyRes;
+	int32 fire_res = proto->FireRes;
+	int32 nature_res = proto->NatureRes;
+	int32 frost_res = proto->FrostRes;
+	int32 shadow_res = proto->ShadowRes;
+	int32 arcane_res = proto->ArcaneRes;
+    bool ScriptUsed = false;
+    sScriptMgr->OnApplyingItemBeforeArmorAndResistance(ScriptUsed, this, proto, slot, armor, holy_res, fire_res, nature_res, frost_res, shadow_res, arcane_res);
+
     if (ssv)
     {
         if (uint32 ssvarmor = ssv->getArmorMod(proto->ScalingStatValue))
@@ -8173,22 +8187,22 @@ void Player::_ApplyItemBonuses(ItemTemplate const* proto, uint8 slot, bool apply
         HandleBaseModValue(SHIELD_BLOCK_VALUE, FLAT_MOD, float(proto->Block), apply);
 
     if (proto->HolyRes)
-        HandleStatModifier(UNIT_MOD_RESISTANCE_HOLY, BASE_VALUE, float(proto->HolyRes), apply);
+        HandleStatModifier(UNIT_MOD_RESISTANCE_HOLY, BASE_VALUE, float(holy_res), apply);
 
     if (proto->FireRes)
-        HandleStatModifier(UNIT_MOD_RESISTANCE_FIRE, BASE_VALUE, float(proto->FireRes), apply);
+        HandleStatModifier(UNIT_MOD_RESISTANCE_FIRE, BASE_VALUE, float(fire_res), apply);
 
     if (proto->NatureRes)
-        HandleStatModifier(UNIT_MOD_RESISTANCE_NATURE, BASE_VALUE, float(proto->NatureRes), apply);
+        HandleStatModifier(UNIT_MOD_RESISTANCE_NATURE, BASE_VALUE, float(nature_res), apply);
 
     if (proto->FrostRes)
-        HandleStatModifier(UNIT_MOD_RESISTANCE_FROST, BASE_VALUE, float(proto->FrostRes), apply);
+        HandleStatModifier(UNIT_MOD_RESISTANCE_FROST, BASE_VALUE, float(frost_res), apply);
 
     if (proto->ShadowRes)
-        HandleStatModifier(UNIT_MOD_RESISTANCE_SHADOW, BASE_VALUE, float(proto->ShadowRes), apply);
+        HandleStatModifier(UNIT_MOD_RESISTANCE_SHADOW, BASE_VALUE, float(shadow_res), apply);
 
     if (proto->ArcaneRes)
-        HandleStatModifier(UNIT_MOD_RESISTANCE_ARCANE, BASE_VALUE, float(proto->ArcaneRes), apply);
+        HandleStatModifier(UNIT_MOD_RESISTANCE_ARCANE, BASE_VALUE, float(arcane_res), apply);
 
     WeaponAttackType attType = BASE_ATTACK;
 
@@ -8225,7 +8239,11 @@ void Player::_ApplyItemBonuses(ItemTemplate const* proto, uint8 slot, bool apply
 }
 
 void Player::_ApplyWeaponDamage(uint8 slot, ItemTemplate const* proto, ScalingStatValuesEntry const* ssv, bool apply)
-{ 
+{
+    bool ScriptUsed = false;
+    float dmg = 0;
+    sScriptMgr->OnBeforeApplyingWeaponDamage(ScriptUsed, this, proto, slot, dmg);
+    dmg = dmg * proto->Delay / 1000;
     WeaponAttackType attType = BASE_ATTACK;
     float damage = 0.0f;
 
@@ -8257,13 +8275,13 @@ void Player::_ApplyWeaponDamage(uint8 slot, ItemTemplate const* proto, ScalingSt
 
     if (minDamage > 0)
     {
-        damage = apply ? minDamage : BASE_MINDAMAGE;
+        damage = apply ? minDamage : BASE_MINDAMAGE; damage += dmg;
         SetBaseWeaponDamage(attType, MINDAMAGE, damage);
     }
 
     if (maxDamage  > 0)
     {
-        damage = apply ? maxDamage : BASE_MAXDAMAGE;
+        damage = apply ? maxDamage : BASE_MAXDAMAGE; damage += dmg;
         SetBaseWeaponDamage(attType, MAXDAMAGE, damage);
     }
 
@@ -27448,4 +27466,22 @@ void Player::SummonPet(uint32 entry, float x, float y, float z, float ang, PetTy
 
     AsynchPetSummon* asynchPetInfo = new AsynchPetSummon(entry, pos, petType, duration, createdBySpell, casterGUID);
     Pet::LoadPetFromDB(this, asynchLoadType, entry, 0, false, asynchPetInfo);
+}
+bool Player::ModifyXP(int32 amount, bool sendError /*= true*/)
+{
+    if (!amount)
+        return true;
+
+    if (amount < 0)
+        SetXP(GetXP() > uint32(-amount) ? GetXP() + amount : 0);
+    else
+    {
+        GiveXP(amount, nullptr);
+    }
+
+    return true;
+}
+void Player::SetXP(uint32 value)
+{
+    SetUInt32Value(PLAYER_XP, value);
 }
