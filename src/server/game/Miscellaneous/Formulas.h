@@ -20,7 +20,7 @@ namespace Trinity
         inline float hk_honor_at_level_f(uint8 level, float multiplier = 1.0f)
         {
             float honor = multiplier * level * 1.55f;
-            //sScriptMgr->OnHonorCalculation(honor, level, multiplier); // pussywizard: optimization
+            sScriptMgr->OnHonorCalculation(honor, level, multiplier); // pussywizard: optimization
             return honor;
         }
 
@@ -44,7 +44,7 @@ namespace Trinity
             else
                 level = pl_level - 9;
 
-            //sScriptMgr->OnGrayLevelCalculation(level, pl_level); // pussywizard: optimization
+            sScriptMgr->OnGrayLevelCalculation(level, pl_level); // pussywizard: optimization
             return level;
         }
 
@@ -63,7 +63,7 @@ namespace Trinity
             else
                 color = XP_GRAY;
 
-            //sScriptMgr->OnColorCodeCalculation(color, pl_level, mob_level); // pussywizard: optimization
+            sScriptMgr->OnColorCodeCalculation(color, pl_level, mob_level); // pussywizard: optimization
             return color;
         }
 
@@ -96,7 +96,7 @@ namespace Trinity
             else
                 diff = 17;
 
-            //sScriptMgr->OnZeroDifferenceCalculation(diff, pl_level); // pussywizard: optimization
+            sScriptMgr->OnZeroDifferenceCalculation(diff, pl_level); // pussywizard: optimization
             return diff;
         }
 
@@ -142,7 +142,7 @@ namespace Trinity
                     baseGain = 0;
             }
 
-            //sScriptMgr->OnBaseGainCalculation(baseGain, pl_level, mob_level, content); // pussywizard: optimization
+            sScriptMgr->OnBaseGainCalculation(baseGain, pl_level, mob_level, content); // pussywizard: optimization
             return baseGain;
         }
 
@@ -177,7 +177,7 @@ namespace Trinity
                 gain = uint32(gain * xpMod);
             }
 
-            //sScriptMgr->OnGainCalculation(gain, player, u); // pussywizard: optimization
+            sScriptMgr->OnGainCalculation(gain, player, u); // pussywizard: optimization
             return gain;
         }
 
@@ -211,7 +211,7 @@ namespace Trinity
                 }
             }
 
-            //sScriptMgr->OnGroupRateCalculation(rate, count, isRaid); // pussywizard: optimization
+            sScriptMgr->OnGroupRateCalculation(rate, count, isRaid); // pussywizard: optimization
             return rate;
         }
     }
