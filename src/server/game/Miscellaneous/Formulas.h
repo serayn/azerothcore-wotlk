@@ -19,8 +19,9 @@ namespace Trinity
     {
         inline float hk_honor_at_level_f(uint8 level, float multiplier = 1.0f)
         {
-            float honor = multiplier * level * 1.55f;
-            sScriptMgr->OnHonorCalculation(honor, level, multiplier); // pussywizard: optimization
+            bool ScriptUsed = false; float honor = 0.0f;
+            sScriptMgr->OnHonorCalculation(ScriptUsed, honor, level, multiplier);
+            if(!ScriptUsed)  honor = multiplier * level * 1.55f;
             return honor;
         }
 
@@ -34,7 +35,9 @@ namespace Trinity
         inline uint8 GetGrayLevel(uint8 pl_level)
         {
             uint8 level;
-
+            bool ScriptUsed = false;
+            sScriptMgr->OnGrayLevelCalculation(ScriptUsed,level, pl_level);
+            if(!ScriptUsed){
             if (pl_level <= 5)
                 level = 0;
             else if (pl_level <= 39)
@@ -43,60 +46,63 @@ namespace Trinity
                 level = pl_level - 1 - pl_level / 5;
             else
                 level = pl_level - 9;
-
-            sScriptMgr->OnGrayLevelCalculation(level, pl_level); // pussywizard: optimization
+            }
+            
             return level;
         }
 
         inline XPColorChar GetColorCode(uint8 pl_level, uint8 mob_level)
         {
-            XPColorChar color;
+            XPColorChar color; bool ScriptUsed = false;
+            sScriptMgr->OnColorCodeCalculation(ScriptUsed, color, pl_level, mob_level); 
+            if (!ScriptUsed) {
+                if (mob_level >= pl_level + 5)
+                    color = XP_RED;
+                else if (mob_level >= pl_level + 3)
+                    color = XP_ORANGE;
+                else if (mob_level >= pl_level - 2)
+                    color = XP_YELLOW;
+                else if (mob_level > GetGrayLevel(pl_level))
+                    color = XP_GREEN;
+                else
+                    color = XP_GRAY;
 
-            if (mob_level >= pl_level + 5)
-                color = XP_RED;
-            else if (mob_level >= pl_level + 3)
-                color = XP_ORANGE;
-            else if (mob_level >= pl_level - 2)
-                color = XP_YELLOW;
-            else if (mob_level > GetGrayLevel(pl_level))
-                color = XP_GREEN;
-            else
-                color = XP_GRAY;
-
-            sScriptMgr->OnColorCodeCalculation(color, pl_level, mob_level); // pussywizard: optimization
+            }
             return color;
         }
 
         inline uint8 GetZeroDifference(uint8 pl_level)
         {
             uint8 diff;
+            bool ScriptUsed = false;
+            sScriptMgr->OnZeroDifferenceCalculation(ScriptUsed, diff, pl_level); // pussywizard: optimization
+            if (!ScriptUsed) {
+                if (pl_level < 8)
+                    diff = 5;
+                else if (pl_level < 10)
+                    diff = 6;
+                else if (pl_level < 12)
+                    diff = 7;
+                else if (pl_level < 16)
+                    diff = 8;
+                else if (pl_level < 20)
+                    diff = 9;
+                else if (pl_level < 30)
+                    diff = 11;
+                else if (pl_level < 40)
+                    diff = 12;
+                else if (pl_level < 45)
+                    diff = 13;
+                else if (pl_level < 50)
+                    diff = 14;
+                else if (pl_level < 55)
+                    diff = 15;
+                else if (pl_level < 60)
+                    diff = 16;
+                else
+                    diff = 17;
 
-            if (pl_level < 8)
-                diff = 5;
-            else if (pl_level < 10)
-                diff = 6;
-            else if (pl_level < 12)
-                diff = 7;
-            else if (pl_level < 16)
-                diff = 8;
-            else if (pl_level < 20)
-                diff = 9;
-            else if (pl_level < 30)
-                diff = 11;
-            else if (pl_level < 40)
-                diff = 12;
-            else if (pl_level < 45)
-                diff = 13;
-            else if (pl_level < 50)
-                diff = 14;
-            else if (pl_level < 55)
-                diff = 15;
-            else if (pl_level < 60)
-                diff = 16;
-            else
-                diff = 17;
-
-            sScriptMgr->OnZeroDifferenceCalculation(diff, pl_level); // pussywizard: optimization
+            }
             return diff;
         }
 
@@ -104,9 +110,11 @@ namespace Trinity
         {
             uint32 baseGain;
             uint32 nBaseExp;
-
-            switch (content)
-            {
+            bool ScriptUsed = false;
+            sScriptMgr->OnBaseGainCalculation(ScriptUsed, baseGain, pl_level, mob_level, content); // pussywizard: optimization
+            if (!ScriptUsed) {
+                switch (content)
+                {
                 case CONTENT_1_60:
                     nBaseExp = 45;
                     break;
@@ -120,29 +128,29 @@ namespace Trinity
                     sLog->outError("BaseGain: Unsupported content level %u", content);
                     nBaseExp = 45;
                     break;
-            }
+                }
 
-            if (mob_level >= pl_level)
-            {
-                uint8 nLevelDiff = mob_level - pl_level;
-                if (nLevelDiff > 4)
-                    nLevelDiff = 4;
-
-                baseGain = ((pl_level * 5 + nBaseExp) * (20 + nLevelDiff) / 10 + 1) / 2;
-            }
-            else
-            {
-                uint8 gray_level = GetGrayLevel(pl_level);
-                if (mob_level > gray_level)
+                if (mob_level >= pl_level)
                 {
-                    uint8 ZD = GetZeroDifference(pl_level);
-                    baseGain = (pl_level * 5 + nBaseExp) * (ZD + mob_level - pl_level) / ZD;
+                    uint8 nLevelDiff = mob_level - pl_level;
+                    if (nLevelDiff > 4)
+                        nLevelDiff = 4;
+
+                    baseGain = ((pl_level * 5 + nBaseExp) * (20 + nLevelDiff) / 10 + 1) / 2;
                 }
                 else
-                    baseGain = 0;
-            }
+                {
+                    uint8 gray_level = GetGrayLevel(pl_level);
+                    if (mob_level > gray_level)
+                    {
+                        uint8 ZD = GetZeroDifference(pl_level);
+                        baseGain = (pl_level * 5 + nBaseExp) * (ZD + mob_level - pl_level) / ZD;
+                    }
+                    else
+                        baseGain = 0;
+                }
 
-            sScriptMgr->OnBaseGainCalculation(baseGain, pl_level, mob_level, content); // pussywizard: optimization
+            }
             return baseGain;
         }
 
@@ -150,50 +158,55 @@ namespace Trinity
         {
             Creature* creature = u->ToCreature();
             uint32 gain = 0;
-
-            if (!creature || (!creature->IsTotem() && !creature->IsPet() && !creature->IsCritter() &&
-                !(creature->GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_NO_XP_AT_KILL)))
+            bool ScriptUsed = false;
+            sScriptMgr->OnGainCalculation(ScriptUsed, gain, player, u);
+            if (!ScriptUsed)
             {
-                float xpMod = 1.0f;
-
-                gain = BaseGain(player->getLevel(), u->getLevel(), GetContentLevelsForMapAndZone(u->GetMapId(), u->GetZoneId()));
-
-                if (gain && creature)
+                if (!creature || (!creature->IsTotem() && !creature->IsPet() && !creature->IsCritter() &&
+                    !(creature->GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_NO_XP_AT_KILL)))
                 {
-                    if (creature->isElite())
+                    float xpMod = 1.0f;
+
+                    gain = BaseGain(player->getLevel(), u->getLevel(), GetContentLevelsForMapAndZone(u->GetMapId(), u->GetZoneId()));
+
+                    if (gain && creature)
                     {
-                        // Elites in instances have a 2.75x XP bonus instead of the regular 2x world bonus.
-                        if (u->GetMap() && u->GetMap()->IsDungeon())
-                            xpMod *= 2.75f;
-                        else
-                            xpMod *= 2.0f;
+                        if (creature->isElite())
+                        {
+                            // Elites in instances have a 2.75x XP bonus instead of the regular 2x world bonus.
+                            if (u->GetMap() && u->GetMap()->IsDungeon())
+                                xpMod *= 2.75f;
+                            else
+                                xpMod *= 2.0f;
+                        }
+
+                        // This requires TrinityCore creature_template.ExperienceModifier feature
+                        // xpMod *= creature->GetCreatureTemplate()->ModExperience;
                     }
 
-                    // This requires TrinityCore creature_template.ExperienceModifier feature
-                    // xpMod *= creature->GetCreatureTemplate()->ModExperience;
+                    xpMod *= isBattleGround ? sWorld->getRate(RATE_XP_BG_KILL) : sWorld->getRate(RATE_XP_KILL);
+                    gain = uint32(gain * xpMod);
                 }
-
-                xpMod *= isBattleGround ? sWorld->getRate(RATE_XP_BG_KILL) : sWorld->getRate(RATE_XP_KILL);
-                gain = uint32(gain * xpMod);
             }
 
-            sScriptMgr->OnGainCalculation(gain, player, u); // pussywizard: optimization
             return gain;
         }
 
         inline float xp_in_group_rate(uint32 count, bool isRaid)
         {
             float rate;
-
-            if (isRaid)
-            {
-                // FIXME: Must apply decrease modifiers depending on raid size.
-                rate = 1.0f;
-            }
-            else
-            {
-                switch (count)
+            bool ScriptUsed = false;
+            sScriptMgr->OnGroupRateCalculation(ScriptUsed, rate, count, isRaid); // pussywizard: optimization
+            if (!ScriptUsed) {
+                if (isRaid)
                 {
+                    // FIXME: Must apply decrease modifiers depending on raid size.
+                    rate = 1.0f;
+                }
+                else
+                {
+                    switch (count)
+                    {
                     case 0:
                     case 1:
                     case 2:
@@ -208,10 +221,10 @@ namespace Trinity
                     case 5:
                     default:
                         rate = 1.4f;
+                    }
                 }
-            }
 
-            sScriptMgr->OnGroupRateCalculation(rate, count, isRaid); // pussywizard: optimization
+            }
             return rate;
         }
     }
