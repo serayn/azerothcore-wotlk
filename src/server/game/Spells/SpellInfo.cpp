@@ -14,6 +14,7 @@
 #include "Player.h"
 #include "Battleground.h"
 #include "Chat.h"
+#include "ScriptMgr.h"
 
 uint32 GetTargetFlagMask(SpellTargetObjectTypes objType)
 {
@@ -2481,7 +2482,10 @@ SpellInfo const* SpellInfo::GetAuraRankForLevel(uint8 level) const
     for (SpellInfo const* nextSpellInfo = this; nextSpellInfo != NULL; nextSpellInfo = nextSpellInfo->GetPrevRankSpell())
     {
         // if found appropriate level
-        if (uint32(level + 10) >= nextSpellInfo->SpellLevel)
+        uint32 appropriateLevel = 0; bool ScriptUsed = false;
+        sScriptMgr->OnGetAuraRankForLevel(ScriptUsed,level, appropriateLevel);
+        if (!ScriptUsed) appropriateLevel = uint32(level + 10);
+        if (appropriateLevel >= nextSpellInfo->SpellLevel)
             return nextSpellInfo;
 
         // one rank less then

@@ -2678,16 +2678,21 @@ void Player::Regenerate(Powers power)
     {
         case POWER_MANA:
         {
-            bool recentCast = IsUnderLastManaUseEffect();
-            float ManaIncreaseRate = sWorld->getRate(RATE_POWER_MANA);
+            bool ScriptUsed = false;
+            sScriptMgr->OnManaRestore(ScriptUsed, this, addvalue, m_regenTimer);
+            if(!ScriptUsed)
+            {
+                bool recentCast = IsUnderLastManaUseEffect();
+                float ManaIncreaseRate = sWorld->getRate(RATE_POWER_MANA);
 
-            if (getLevel() < 15)
-                ManaIncreaseRate = sWorld->getRate(RATE_POWER_MANA) * (2.066f - (getLevel() * 0.066f));
+                if (getLevel() < 15)
+                    ManaIncreaseRate = sWorld->getRate(RATE_POWER_MANA) * (2.066f - (getLevel() * 0.066f));
 
-            if (recentCast) // Trinity Updates Mana in intervals of 2s, which is correct
-                addvalue += GetFloatValue(UNIT_FIELD_POWER_REGEN_INTERRUPTED_FLAT_MODIFIER) *  ManaIncreaseRate * 0.001f * m_regenTimer;
-            else
-                addvalue += GetFloatValue(UNIT_FIELD_POWER_REGEN_FLAT_MODIFIER) * ManaIncreaseRate * 0.001f * m_regenTimer;
+                if (recentCast) // Trinity Updates Mana in intervals of 2s, which is correct
+                    addvalue += GetFloatValue(UNIT_FIELD_POWER_REGEN_INTERRUPTED_FLAT_MODIFIER) *  ManaIncreaseRate * 0.001f * m_regenTimer;
+                else
+                    addvalue += GetFloatValue(UNIT_FIELD_POWER_REGEN_FLAT_MODIFIER) * ManaIncreaseRate * 0.001f * m_regenTimer;
+            }
         }   break;
         case POWER_RAGE:                                    // Regenerate rage
         {
@@ -2786,42 +2791,46 @@ void Player::RegenerateHealth()
     if (curValue >= maxValue)
         return;
 
-    float HealthIncreaseRate = sWorld->getRate(RATE_HEALTH);
-
-    if (getLevel() < 15)
-        HealthIncreaseRate = sWorld->getRate(RATE_HEALTH) * (2.066f - (getLevel() * 0.066f));
 
     float addvalue = 0.0f;
-
-    // polymorphed case
-    if (IsPolymorphed())
-        addvalue = (float)GetMaxHealth()/3;
-    // normal regen case (maybe partly in combat case)
-    else if (!IsInCombat() || HasAuraType(SPELL_AURA_MOD_REGEN_DURING_COMBAT))
+    bool ScriptUsed = false;
+    sScriptMgr->OnHealthRestore(ScriptUsed, this, addvalue, m_baseHealthRegen);
+    if (!ScriptUsed)
     {
-        addvalue = OCTRegenHPPerSpirit() * HealthIncreaseRate;
-        if (!IsInCombat())
+        float HealthIncreaseRate = sWorld->getRate(RATE_HEALTH);
+
+        if (getLevel() < 15)
+            HealthIncreaseRate = sWorld->getRate(RATE_HEALTH) * (2.066f - (getLevel() * 0.066f));
+
+        // polymorphed case
+        if (IsPolymorphed())
+            addvalue = (float)GetMaxHealth() / 3;
+        // normal regen case (maybe partly in combat case)
+        else if (!IsInCombat() || HasAuraType(SPELL_AURA_MOD_REGEN_DURING_COMBAT))
         {
-            AuraEffectList const& mModHealthRegenPct = GetAuraEffectsByType(SPELL_AURA_MOD_HEALTH_REGEN_PERCENT);
-            for (AuraEffectList::const_iterator i = mModHealthRegenPct.begin(); i != mModHealthRegenPct.end(); ++i)
-                AddPct(addvalue, (*i)->GetAmount());
+            addvalue = OCTRegenHPPerSpirit() * HealthIncreaseRate;
+            if (!IsInCombat())
+            {
+                AuraEffectList const& mModHealthRegenPct = GetAuraEffectsByType(SPELL_AURA_MOD_HEALTH_REGEN_PERCENT);
+                for (AuraEffectList::const_iterator i = mModHealthRegenPct.begin(); i != mModHealthRegenPct.end(); ++i)
+                    AddPct(addvalue, (*i)->GetAmount());
 
-            addvalue += GetTotalAuraModifier(SPELL_AURA_MOD_REGEN) * 2 * IN_MILLISECONDS / (5 * IN_MILLISECONDS);
+                addvalue += GetTotalAuraModifier(SPELL_AURA_MOD_REGEN) * 2 * IN_MILLISECONDS / (5 * IN_MILLISECONDS);
+            }
+            else if (HasAuraType(SPELL_AURA_MOD_REGEN_DURING_COMBAT))
+                ApplyPct(addvalue, GetTotalAuraModifier(SPELL_AURA_MOD_REGEN_DURING_COMBAT));
+
+            if (!IsStandState())
+                addvalue *= 1.5f;
         }
-        else if (HasAuraType(SPELL_AURA_MOD_REGEN_DURING_COMBAT))
-            ApplyPct(addvalue, GetTotalAuraModifier(SPELL_AURA_MOD_REGEN_DURING_COMBAT));
 
-        if (!IsStandState())
-            addvalue *= 1.5f;
+        // always regeneration bonus (including combat)
+        addvalue += GetTotalAuraModifier(SPELL_AURA_MOD_HEALTH_REGEN_IN_COMBAT);
+        addvalue += m_baseHealthRegen / 2.5f;
+
+        if (addvalue < 0)
+            addvalue = 0;
     }
-
-    // always regeneration bonus (including combat)
-    addvalue += GetTotalAuraModifier(SPELL_AURA_MOD_HEALTH_REGEN_IN_COMBAT);
-    addvalue += m_baseHealthRegen / 2.5f;
-
-    if (addvalue < 0)
-        addvalue = 0;
-
     ModifyHealth(int32(addvalue));
 }
 
@@ -6375,21 +6384,25 @@ void Player::UpdateWeaponSkill(WeaponAttackType attType)
 }
 
 void Player::UpdateCombatSkills(Unit* victim, WeaponAttackType attType, bool defence)
-{ 
+{
     uint8 plevel = getLevel();                              // if defense than victim == attacker
     uint8 greylevel = Trinity::XP::GetGrayLevel(plevel);
     uint8 moblevel = victim->getLevelForTarget(this);
     /*if (moblevel < greylevel)
         return;*/ // Patch 3.0.8 (2009-01-20): You can no longer skill up weapons on mobs that are immune to damage.
+    bool ScriptUsed = false; uint8 lvldif = 0; uint32 skilldif =0;
+    sScriptMgr->OnUpdateCombatSkillLevelCalculate(ScriptUsed,this, attType, defence, plevel, greylevel,moblevel,lvldif, skilldif);
+    if (!ScriptUsed)
+    {
+        if (moblevel > plevel + 5)
+            moblevel = plevel + 5;
 
-    if (moblevel > plevel + 5)
-        moblevel = plevel + 5;
+        lvldif = moblevel - greylevel;
+        if (lvldif < 3)
+            lvldif = 3;
 
-    uint8 lvldif = moblevel - greylevel;
-    if (lvldif < 3)
-        lvldif = 3;
-
-    uint32 skilldif = 5 * plevel - (defence ? GetBaseDefenseSkillValue() : GetBaseWeaponSkillValue(attType));
+        skilldif = 5 * plevel - (defence ? GetBaseDefenseSkillValue() : GetBaseWeaponSkillValue(attType));
+    }
     if (skilldif <= 0)
         return;
 
@@ -12413,39 +12426,44 @@ InventoryResult Player::CanRollForItemInLFG(ItemTemplate const* proto, WorldObje
     if (proto->Class == ITEM_CLASS_WEAPON && GetSkillValue(item_weapon_skills[proto->SubClass]) == 0)
         return EQUIP_ERR_NO_REQUIRED_PROFICIENCY;
 
-    if (proto->Class == ITEM_CLASS_ARMOR && proto->SubClass > ITEM_SUBCLASS_ARMOR_MISC && proto->SubClass < ITEM_SUBCLASS_ARMOR_BUCKLER && proto->InventoryType != INVTYPE_CLOAK)
+    bool ScriptUsed = false;
+    InventoryResult RETURN_CODE = EQUIP_ERR_OK;
+    sScriptMgr->OnCanRollForItemInLFG(ScriptUsed, this, RETURN_CODE, proto);
+    if (!ScriptUsed)
     {
-        if (_class == CLASS_WARRIOR || _class == CLASS_PALADIN || _class == CLASS_DEATH_KNIGHT)
+        if (proto->Class == ITEM_CLASS_ARMOR && proto->SubClass > ITEM_SUBCLASS_ARMOR_MISC && proto->SubClass < ITEM_SUBCLASS_ARMOR_BUCKLER && proto->InventoryType != INVTYPE_CLOAK)
         {
-            if (getLevel() < 40)
+            if (_class == CLASS_WARRIOR || _class == CLASS_PALADIN || _class == CLASS_DEATH_KNIGHT)
             {
-                if (proto->SubClass != ITEM_SUBCLASS_ARMOR_MAIL)
-                    return EQUIP_ERR_CANT_DO_RIGHT_NOW;
+                if (getLevel() < 40)
+                {
+                    if (proto->SubClass != ITEM_SUBCLASS_ARMOR_MAIL)
+                        if (RETURN_CODE == EQUIP_ERR_OK)RETURN_CODE = EQUIP_ERR_CANT_DO_RIGHT_NOW;
+                }
+                else if (proto->SubClass != ITEM_SUBCLASS_ARMOR_PLATE)
+                    if (RETURN_CODE == EQUIP_ERR_OK)RETURN_CODE = EQUIP_ERR_CANT_DO_RIGHT_NOW;
             }
-            else if (proto->SubClass != ITEM_SUBCLASS_ARMOR_PLATE)
-                return EQUIP_ERR_CANT_DO_RIGHT_NOW;
-        }
-        else if (_class == CLASS_HUNTER || _class == CLASS_SHAMAN)
-        {
-            if (getLevel() < 40)
+            else if (_class == CLASS_HUNTER || _class == CLASS_SHAMAN)
             {
+                if (getLevel() < 40)
+                {
+                    if (proto->SubClass != ITEM_SUBCLASS_ARMOR_LEATHER)
+                        if (RETURN_CODE == EQUIP_ERR_OK)RETURN_CODE = EQUIP_ERR_CANT_DO_RIGHT_NOW;
+                }
+                else if (proto->SubClass != ITEM_SUBCLASS_ARMOR_MAIL)
+                    if (RETURN_CODE == EQUIP_ERR_OK)RETURN_CODE = EQUIP_ERR_CANT_DO_RIGHT_NOW;
+            }
+
+            if (_class == CLASS_ROGUE || _class == CLASS_DRUID)
                 if (proto->SubClass != ITEM_SUBCLASS_ARMOR_LEATHER)
-                    return EQUIP_ERR_CANT_DO_RIGHT_NOW;
-            }
-            else if (proto->SubClass != ITEM_SUBCLASS_ARMOR_MAIL)
-                return EQUIP_ERR_CANT_DO_RIGHT_NOW;
+                    if (RETURN_CODE == EQUIP_ERR_OK)RETURN_CODE = EQUIP_ERR_CANT_DO_RIGHT_NOW;
+
+            if (_class == CLASS_MAGE || _class == CLASS_PRIEST || _class == CLASS_WARLOCK)
+                if (proto->SubClass != ITEM_SUBCLASS_ARMOR_CLOTH)
+                    if (RETURN_CODE == EQUIP_ERR_OK)RETURN_CODE = EQUIP_ERR_CANT_DO_RIGHT_NOW;
         }
-
-        if (_class == CLASS_ROGUE || _class == CLASS_DRUID)
-            if (proto->SubClass != ITEM_SUBCLASS_ARMOR_LEATHER)
-                return EQUIP_ERR_CANT_DO_RIGHT_NOW;
-
-        if (_class == CLASS_MAGE || _class == CLASS_PRIEST || _class == CLASS_WARLOCK)
-            if (proto->SubClass != ITEM_SUBCLASS_ARMOR_CLOTH)
-                return EQUIP_ERR_CANT_DO_RIGHT_NOW;
     }
-
-    return EQUIP_ERR_OK;
+    return RETURN_CODE;
 }
 
 InventoryResult Player::CanUseAmmo(uint32 item) const
@@ -24695,7 +24713,7 @@ uint32 Player::GetBarberShopCost(uint8 newhairstyle, uint8 newhaircolor, uint8 n
 }
 
 void Player::InitGlyphsForLevel()
-{ 
+{
     for (uint32 i = 0; i < sGlyphSlotStore.GetNumRows(); ++i)
         if (GlyphSlotEntry const* gs = sGlyphSlotStore.LookupEntry(i))
             if (gs->Order)
@@ -24703,8 +24721,11 @@ void Player::InitGlyphsForLevel()
 
     uint8 level = getLevel();
     uint32 value = 0;
-
-    // 0x3F = 0x01 | 0x02 | 0x04 | 0x08 | 0x10 | 0x20 for 80 level
+    bool ScriptUsed = false;
+    sScriptMgr->OnGlyphInit(ScriptUsed, level, value);
+    if(!ScriptUsed)
+    {
+        // 0x3F = 0x01 | 0x02 | 0x04 | 0x08 | 0x10 | 0x20 for 80 level
     if (level >= 15)
         value |= (0x01 | 0x02);
     if (level >= 30)
@@ -24715,6 +24736,7 @@ void Player::InitGlyphsForLevel()
         value |= 0x10;
     if (level >= 80)
         value |= 0x20;
+    }
 
     SetUInt32Value(PLAYER_GLYPHS_ENABLED, value);
 }
@@ -25188,19 +25210,25 @@ void Player::UpdateLootAchievements(LootItem *item, Loot* loot)
 }
 
 uint32 Player::CalculateTalentsPoints() const
-{ 
-    uint32 base_talent = getLevel() < 10 ? 0 : getLevel()-9;
+{
+    bool ScriptUsed = false; uint32 result = 0;
+    sScriptMgr->OnTalentCalculation(ScriptUsed, this, result, m_questRewardTalentCount);
+    if(!ScriptUsed)
+    {
+        uint32 base_talent = getLevel() < 10 ? 0 : getLevel() - 9;
 
-    if (getClass() != CLASS_DEATH_KNIGHT || GetMapId() != 609)
-        return uint32(base_talent * sWorld->getRate(RATE_TALENT));
+        if (getClass() != CLASS_DEATH_KNIGHT || GetMapId() != 609)
+            return uint32(base_talent * sWorld->getRate(RATE_TALENT));
 
-    uint32 talentPointsForLevel = getLevel() < 56 ? 0 : getLevel() - 55;
-    talentPointsForLevel += m_questRewardTalentCount;
+        uint32 talentPointsForLevel = getLevel() < 56 ? 0 : getLevel() - 55;
+        talentPointsForLevel += m_questRewardTalentCount;
 
-    if (talentPointsForLevel > base_talent)
-        talentPointsForLevel = base_talent;
+        if (talentPointsForLevel > base_talent)
+            talentPointsForLevel = base_talent;
 
-    return uint32(talentPointsForLevel * sWorld->getRate(RATE_TALENT));
+        result = uint32(talentPointsForLevel * sWorld->getRate(RATE_TALENT));
+    }
+     return result;
 }
 
 bool Player::canFlyInZone(uint32 mapid, uint32 zone) const

@@ -162,33 +162,36 @@ void Quest::LoadQuestTemplateAddon(Field* fields)
 
 uint32 Quest::XPValue(Player* player) const
 {
-    if (player)
+    bool ScriptUsed; uint32 xp = 0;
+    sScriptMgr->OnQuestXPValue(ScriptUsed,player, xp, Level, RewardXPId);
+    if (!ScriptUsed)
     {
-        int32 quest_level = (Level == -1 ? player->getLevel() : Level);
-        const QuestXPEntry* xpentry = sQuestXPStore.LookupEntry(quest_level);
-        if (!xpentry)
-            return 0;
+        if (player)
+        {
+            int32 quest_level = (Level == -1 ? player->getLevel() : Level);
+            const QuestXPEntry* xpentry = sQuestXPStore.LookupEntry(quest_level);
+            if (xpentry)
+            {
+                int32 diffFactor = 2 * (quest_level - player->getLevel()) + 20;
+                if (diffFactor < 1)
+                    diffFactor = 1;
+                else if (diffFactor > 10)
+                    diffFactor = 10;
 
-        int32 diffFactor = 2 * (quest_level - player->getLevel()) + 20;
-        if (diffFactor < 1)
-            diffFactor = 1;
-        else if (diffFactor > 10)
-            diffFactor = 10;
-
-        uint32 xp = diffFactor * xpentry->Exp[RewardXPId] / 10;
-        if (xp <= 100)
-            xp = 5 * ((xp + 2) / 5);
-        else if (xp <= 500)
-            xp = 10 * ((xp + 5) / 10);
-        else if (xp <= 1000)
-            xp = 25 * ((xp + 12) / 25);
-        else
-            xp = 50 * ((xp + 25) / 50);
-
-        return xp;
+                xp = diffFactor * xpentry->Exp[RewardXPId] / 10;
+                if (xp <= 100)
+                    xp = 5 * ((xp + 2) / 5);
+                else if (xp <= 500)
+                    xp = 10 * ((xp + 5) / 10);
+                else if (xp <= 1000)
+                    xp = 25 * ((xp + 12) / 25);
+                else
+                    xp = 50 * ((xp + 25) / 50);
+            }
+            
+        }
     }
-
-    return 0;
+    return xp;
 }
 
 int32 Quest::GetRewOrReqMoney() const

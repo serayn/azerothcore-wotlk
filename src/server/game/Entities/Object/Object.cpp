@@ -40,7 +40,7 @@
 #include "Group.h"
 #include "Chat.h"
 #include "DynamicVisibility.h"
-
+#include "ScriptMgr.h"
 #ifdef ELUNA
 #include "LuaEngine.h"
 #include "ElunaEventMgr.h"
@@ -1781,8 +1781,12 @@ bool WorldObject::CanDetectStealthOf(WorldObject const* obj) const
         // Level difference: 5 point / level, starting from level 1.
         // There may be spells for this and the starting points too, but
         // not in the DBCs of the client.
-        detectionValue += int32(getLevelForTarget(obj) - 1) * 5;
-
+        bool ScriptUsed = false;
+        sScriptMgr->OnStealthDetectLevelCalculate( ScriptUsed, this, obj, detectionValue);
+        if(!ScriptUsed)
+        {
+            detectionValue += int32(getLevelForTarget(obj) - 1) * 5;
+        }
         // Apply modifiers
         detectionValue += m_stealthDetect.GetValue(StealthType(i));
         if (obj->isType(TYPEMASK_GAMEOBJECT))

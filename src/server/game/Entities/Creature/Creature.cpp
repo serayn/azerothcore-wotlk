@@ -2714,21 +2714,25 @@ float Creature::GetAggroRange(Unit const* target) const
     float aggroRate = sWorld->getRate(RATE_CREATURE_AGGRO);
     if (aggroRate == 0)
         return 0.0f;
-
-    uint32 targetLevel = target->getLevelForTarget(this);
-    uint32 myLevel = getLevelForTarget(target);
-    int32 levelDiff = int32(targetLevel) - int32(myLevel);
-    
-    // The maximum Aggro Radius is capped at 45 yards (25 level difference)
-    if (levelDiff < -25)
-        levelDiff = -25;
-
     // The base aggro radius for mob of same level
     float aggroRadius = 20.0f;
+    bool ScriptUsed = false;
+    sScriptMgr->OnAggroRangeLevelCalculation(ScriptUsed, this, target, aggroRadius);
+    if(!ScriptUsed)
+    {
+        uint32 targetLevel = target->getLevelForTarget(this);
+        uint32 myLevel = getLevelForTarget(target);
+        int32 levelDiff = int32(targetLevel) - int32(myLevel);
+    
+        // The maximum Aggro Radius is capped at 45 yards (25 level difference)
+        if (levelDiff < -25)
+            levelDiff = -25;
 
-    // Aggro Radius varies with level difference at a rate of roughly 1 yard/level
-    aggroRadius -= (float)levelDiff;
 
+    
+        // Aggro Radius varies with level difference at a rate of roughly 1 yard/level
+        aggroRadius -= (float)levelDiff;
+    }
     // detect range auras
     aggroRadius += GetTotalAuraModifier(SPELL_AURA_MOD_DETECT_RANGE);
 

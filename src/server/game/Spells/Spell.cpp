@@ -2340,7 +2340,10 @@ void Spell::AddUnitTarget(Unit* target, uint32 effectMask, bool checkIfValid /*=
             if (m_auraScaleMask && ihit->effectMask == m_auraScaleMask && m_caster != target)
             {
                 SpellInfo const* auraSpell = m_spellInfo->GetFirstRankSpell();
-                if (uint32(target->getLevel() + 10) >= auraSpell->SpellLevel)
+                bool ScriptUsed = false; uint32 targetLevelRange = 0;
+                //sScriptMgr->OnSpellAddUnitTarget(ScriptUsed, target, targetLevelRange );
+                if (!ScriptUsed)targetLevelRange = uint32(target->getLevel() + 10);
+                if (targetLevelRange >= auraSpell->SpellLevel)
                     ihit->scaleAura = true;
             }
             return;
