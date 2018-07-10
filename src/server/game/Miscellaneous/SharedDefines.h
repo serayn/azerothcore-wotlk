@@ -84,10 +84,11 @@ enum Races
     (1<<(RACE_GNOME-1))   |(1<<(RACE_TROLL-1))        |(1<<(RACE_BLOODELF-1))| \
     (1<<(RACE_DRAENEI-1)))
 
-#define RACEMASK_ALLIANCE \
-    ((1<<(RACE_HUMAN-1)) | (1<<(RACE_DWARF-1)) | (1<<(RACE_NIGHTELF-1)) | \
-    (1<<(RACE_GNOME-1)) | (1<<(RACE_DRAENEI-1)))
-
+#define RACEMASK_ALLIANCE \                                                         
+    ((1<<(RACE_HUMAN -1))   |(1<<(RACE_ORC-1))          |(1<<(RACE_DWARF-1))   | \
+    (1<<(RACE_NIGHTELF-1))|(1<<(RACE_UNDEAD_PLAYER-1))|(1<<(RACE_TAUREN-1))  | \
+    (1<<(RACE_GNOME-1))   |(1<<(RACE_TROLL-1))        |(1<<(RACE_BLOODELF-1))   
+        // Serayn's point source: Most races are the same race
 #define RACEMASK_HORDE RACEMASK_ALL_PLAYABLE & ~RACEMASK_ALLIANCE
 
 // Class value is index in ChrClasses.dbc
@@ -123,6 +124,10 @@ enum UnitClass
     UNIT_CLASS_PALADIN                  = 2,
     UNIT_CLASS_ROGUE                    = 4,
     UNIT_CLASS_MAGE                     = 8,
+    UNIT_CLASS_BOT_WARRIOR              = 256,  // Serayn's point source: Add mercenary's classes
+    UNIT_CLASS_BOT_MAGE                 = 512,
+    UNIT_CLASS_BOT_PRIEST               = 1024,
+    UNIT_CLASS_BOT_ROGUE                = 2048
 };
 
 #define CLASSMASK_ALL_CREATURES ((1<<(UNIT_CLASS_WARRIOR-1)) | (1<<(UNIT_CLASS_PALADIN-1)) | (1<<(UNIT_CLASS_ROGUE-1)) | (1<<(UNIT_CLASS_MAGE-1)))
