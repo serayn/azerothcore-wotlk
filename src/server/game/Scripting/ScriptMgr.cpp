@@ -692,9 +692,9 @@ void ScriptMgr::OnUpdateBlockPercentage(bool& ScriptUsed,Player const* player,fl
 {
     FOREACH_SCRIPT(FormulaScript)->OnUpdateBlockPercentage(ScriptUsed, player, value);
 }
-void ScriptMgr::OnUpdateCritPercentage(bool& ScriptUsed, Player const* player, WeaponAttackType attType, BaseModGroup modGroup, uint16 index, CombatRating cr,float& value)
+void ScriptMgr::OnUpdateCritPercentage(bool& ScriptUsed, Player* player, WeaponAttackType attType,float& value)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnUpdateCritPercentage(ScriptUsed, player, attType, modGroup, index, cr, value);
+    FOREACH_SCRIPT(FormulaScript)->OnUpdateCritPercentage(ScriptUsed, player, attType,value);
 }
 void ScriptMgr::OnGetMissPercentageFromDefense(bool& ScriptUsed, Player const* player,float& result)
 {
@@ -727,6 +727,35 @@ void ScriptMgr::OnGetWeaponSkillValue(bool& ScriptUsed, WeaponAttackType attType
 void ScriptMgr::OnSpellDamageClassRanged(bool& ScriptUsed, Unit const* me, Unit const* caster, float& crit_chance)
 {
     FOREACH_SCRIPT(FormulaScript)->OnSpellDamageClassRanged(ScriptUsed, me, caster, crit_chance);
+}
+
+void ScriptMgr::OnBuildPlayerLevelInfo(bool& ScriptUsed, uint8 race, uint8 _class, uint8 level, PlayerLevelInfo* info)
+{
+    FOREACH_SCRIPT(FormulaScript)->OnBuildPlayerLevelInfo(ScriptUsed, race, _class, level, info);
+}
+
+void ScriptMgr::UpdatePotionCooldown(bool& ScriptUsed, Player* me)
+{
+    FOREACH_SCRIPT(FormulaScript)->UpdatePotionCooldown(ScriptUsed, me);
+}
+
+void ScriptMgr::OnInitTaxiNodesForLevel(bool& ScriptUsed, uint32 race, uint32 chrClass, uint8 level, PlayerTaxi* me)
+{
+    FOREACH_SCRIPT(FormulaScript)->OnInitTaxiNodesForLevel(ScriptUsed, race, chrClass, level, me);
+}
+void ScriptMgr::OnCalculateMinMaxDamage(bool& ScriptUsed, Player* me, WeaponAttackType attType, bool normalized, bool addTotalPct, float& minDamage, float& maxDamage)
+{
+    FOREACH_SCRIPT(FormulaScript)->OnCalculateMinMaxDamage( ScriptUsed, me, attType,  normalized,  addTotalPct,  minDamage,  maxDamage);
+}
+
+void ScriptMgr::OnGetCreatureType(bool& ScriptUsed, Unit const* me, uint32& result)
+{
+    FOREACH_SCRIPT(FormulaScript)->OnGetCreatureType(ScriptUsed, me, result);
+}
+
+void ScriptMgr::OnHandleModStateImmunityMask(AuraEffect const* me, Unit* target, std::list <AuraType>& aura_immunity_list, uint32& mechanic_immunity_list,int32 miscVal, bool apply)
+{
+    FOREACH_SCRIPT(FormulaScript)->OnHandleModStateImmunityMask(me, target, aura_immunity_list, mechanic_immunity_list, miscVal, apply);
 }
 #define SCR_MAP_BGN(M, V, I, E, C, T) \
     if (V->GetEntry() && V->GetEntry()->T()) \

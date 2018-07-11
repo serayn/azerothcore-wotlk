@@ -20,7 +20,7 @@
 #include "AchievementMgr.h"
 #include "DynamicObject.h"
 #include "ArenaTeam.h"
-
+#include "Player.h"
 
 class AuctionHouseObject;
 class AuraScript;
@@ -282,8 +282,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnHonorCalculation script has been skipped cause of dupicated script of special type.");
+           // else
+           //     sLog->outError("Module error: There is one OnHonorCalculation script has been skipped cause of dupicated script of special type.");
         }
 
         // Called after gray level calculation.
@@ -293,8 +293,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnGrayLevelCalculation script has been skipped cause of dupicated script of special type.");
+            // else
+            //    sLog->outError("Module error: There is one OnGrayLevelCalculation script has been skipped cause of dupicated script of special type.");
         }
 
         // Called after calculating experience color.
@@ -304,8 +304,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnColorCodeCalculation script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnColorCodeCalculation script has been skipped cause of dupicated script of special type.");
         }
 
         // Called after calculating zero difference.
@@ -315,8 +315,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnZeroDifferenceCalculation script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnZeroDifferenceCalculation script has been skipped cause of dupicated script of special type.");
         }
 
         // Called after calculating base experience gain.
@@ -326,10 +326,9 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnBaseGainCalculation script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnBaseGainCalculation script has been skipped cause of dupicated script of special type.");        }
         }
-
         // Called after calculating experience gain.
         virtual void OnGainCalculation(bool &ScriptUsed, uint32& /*gain*/, Player* /*player*/, Unit* /*unit*/)
         {
@@ -337,8 +336,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnGainCalculation script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnGainCalculation script has been skipped cause of dupicated script of special type.");
         }
 
         // Called when calculating the experience rate for group experience.
@@ -348,8 +347,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnGroupRateCalculation script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnGroupRateCalculation script has been skipped cause of dupicated script of special type.");
         }
 
         // Called after calculating arena rating changes
@@ -359,8 +358,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnAfterArenaRatingCalculation script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnAfterArenaRatingCalculation script has been skipped cause of dupicated script of special type.");
         }
         
         // Called on talent calculating  
@@ -370,8 +369,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnTalentCalculation script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnTalentCalculation script has been skipped cause of dupicated script of special type.");
         }
 
         // Called on GlyphLevel initializing
@@ -381,8 +380,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnGlyphInit script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnGlyphInit script has been skipped cause of dupicated script of special type.");
         }
 
         // Called on Stat to AttackPower calculation
@@ -392,8 +391,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnStatToAttackPowerCalculation script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnStatToAttackPowerCalculation script has been skipped cause of dupicated script of special type.");
         }
 
         // Called on Stat to SpellDamge calculation
@@ -403,8 +402,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnSpellBaseDamageBonusDone script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnSpellBaseDamageBonusDone script has been skipped cause of dupicated script of special type.");
         }
 
         // Called on Stat to SpellHealing calculation
@@ -414,8 +413,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnSpellBaseHealingBonusDone script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnSpellBaseHealingBonusDone script has been skipped cause of dupicated script of special type.");
         }
 
         // Called on Stat to Resistance calculation
@@ -425,8 +424,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnUpdateResistance script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnUpdateResistance script has been skipped cause of dupicated script of special type.");
         }
 
         // Called on Stat to Armor calculation
@@ -436,8 +435,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnUpdateArmor script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnUpdateArmor script has been skipped cause of dupicated script of special type.");
         }
 
         // Called on calculating unit melee skill
@@ -447,8 +446,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnDefaultUnitMeleeSkill script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnDefaultUnitMeleeSkill script has been skipped cause of dupicated script of special type.");
         }
 
         // Called On Mana Restoring
@@ -458,8 +457,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnManaRestore script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnManaRestore script has been skipped cause of dupicated script of special type.");
         }
 
         // Called On Health Restoring
@@ -469,8 +468,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnHealthRestore script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnHealthRestore script has been skipped cause of dupicated script of special type.");
         }
 
         // Called On CanRollForItemInLFG
@@ -480,8 +479,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnCanRollForItemInLFG script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnCanRollForItemInLFG script has been skipped cause of dupicated script of special type.");
         }
 
         // Called OnQuestXPValue
@@ -491,8 +490,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnQuestXPValue script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnQuestXPValue script has been skipped cause of dupicated script of special type.");
         }
         
         // Called OnSpellAddUnitTarget
@@ -502,8 +501,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnSpellAddUnitTarget script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnSpellAddUnitTarget script has been skipped cause of dupicated script of special type.");
         }
 
         // Called OnGetAuraRankForLevel
@@ -513,8 +512,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnGetAuraRankForLevel script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnGetAuraRankForLevel script has been skipped cause of dupicated script of special type.");
         }
         // Called OnEffectApplyGlyph
         virtual void OnEffectApplyGlyph(bool& ScriptUsed, uint32 /*m_glyphIndex*/, uint8& /*minLevel*/)
@@ -523,8 +522,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnEffectApplyGlyph script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnEffectApplyGlyph script has been skipped cause of dupicated script of special type.");
         }
         // Called OnGLANCINGCalculation
         virtual void OnGLANCINGCalculation(bool & ScriptUsed, int32 /*leveldiff*/, float /*reducePercent*/)
@@ -533,8 +532,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnGLANCINGCalculation script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnGLANCINGCalculation script has been skipped cause of dupicated script of special type.");
         }
         // Called  OnCreatureDazePlayer
         virtual void OnCreatureDazePlayer(bool& ScriptUsed, CalcDamageInfo* /*damageInfo*/, Unit* /*attacker*/, Unit* /*victim*/)
@@ -543,8 +542,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnCreatureDazePlayer script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnCreatureDazePlayer script has been skipped cause of dupicated script of special type.");
         }
         // Called  OnArmorLevelPenaltyCalculation
         virtual void OnArmorLevelPenaltyCalculation(bool& ScriptUsed, Unit const* /*attacker*/, Unit const* /*victim*/, SpellInfo const * /*spellInfo*/, uint8 /*attackerLevel*/, float& /*armor*/, float& /*tmpvalue*/)
@@ -553,8 +552,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnArmorLevelPenaltyCalculation script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnArmorLevelPenaltyCalculation script has been skipped cause of dupicated script of special type.");
         }
         // Called  OnResistChanceCalculation
         virtual void OnResistChanceCalculation(bool& ScriptUsed, Unit const* /*victim*/, float& /*resistanceConstant*/)
@@ -563,8 +562,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnResistChanceCalculation script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnResistChanceCalculation script has been skipped cause of dupicated script of special type.");
         }
         // Called  OnCrushingCalculation
         virtual void OnCrushingCalculation(bool& ScriptUsed, Unit const* /*attacker*/, Unit const* /*victim*/, int32 /*victimDefenseSkill*/, int32  /*victimMaxSkillValueForLevel*/, int32  /*attackerMaxSkillValueForLevel*/,int32 /*roll*/, int32&  /*tmp*/, int32& /*sum*/, MeleeHitOutcome& /*RETURN_CODE*/)
@@ -573,8 +572,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnCrushingCalculation script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnCrushingCalculation script has been skipped cause of dupicated script of special type.");
         }
         // Called  OnCalculateLevelPanalty
         virtual void OnCalculateLevelPanalty(bool& ScriptUsed, SpellInfo const* /*spellProto*/, Unit const* /*me*/, float& /*result*/)
@@ -583,8 +582,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnCalculateLevelPanalty script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnCalculateLevelPanalty script has been skipped cause of dupicated script of special type.");
         }
         // Called  OnMeleeSpellSkillCheck
         virtual void OnMeleeSpellSkillCheck(bool& ScriptUsed, Unit const* /*me*/, WeaponAttackType /*attType*/, Unit* /*victim*/, SpellInfo const* /*spell*/, int32& /*skillDiff*/)
@@ -593,8 +592,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnMeleeSpellSkillCheck script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnMeleeSpellSkillCheck script has been skipped cause of dupicated script of special type.");
         }
         // Called  OnDefaultUnitDefenseSkill
         virtual void OnDefaultUnitDefenseSkill(bool& ScriptUsed, Unit const* /*me*/, Unit const* /*target*/, uint32& /*result*/)
@@ -603,8 +602,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnDefaultUnitDefenseSkill script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnDefaultUnitDefenseSkill script has been skipped cause of dupicated script of special type.");
         }
         // Called  OnAggroRangeLevelCalculation
         virtual void OnAggroRangeLevelCalculation(bool& ScriptUsed, Creature const* /*me*/, Unit const* /*target*/, float& /*aggroRadius*/)
@@ -613,8 +612,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnAggroRangeLevelCalculation script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnAggroRangeLevelCalculation script has been skipped cause of dupicated script of special type.");
         }
         // Called  OnStealthDetectLevelCalculate
         virtual void OnStealthDetectLevelCalculate(bool& ScriptUsed, WorldObject const* /*me*/, WorldObject const* /*obj*/,int32& /*detectionValue*/)
@@ -623,8 +622,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnStealthDetectLevelCalculate script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnStealthDetectLevelCalculate script has been skipped cause of dupicated script of special type.");
         }
         // Called  OnUpdateCombatSkillLevelCalculate
         virtual void OnUpdateCombatSkillLevelCalculate(bool& ScriptUsed, Player const* /*me*/, WeaponAttackType /*attType*/, bool /*defence*/, uint8 /*plevel*/, uint8 /*greylevel*/, uint8 /*moblevel*/, uint8& /*lvldif*/, uint32& /*skilldif*/)
@@ -633,8 +632,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnUpdateCombatSkillLevelCalculate script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnUpdateCombatSkillLevelCalculate script has been skipped cause of dupicated script of special type.");
         }
         // Called  OnAgainstGLANCINGCalculation
         virtual void OnAgainstGLANCINGCalculation(bool& ScriptUsed, Unit const* /*attacker*/, Unit const* /*victim*/, WeaponAttackType /*attType*/, int32 /*victimDefenseSkill*/, int32  /*attackerWeaponSkill*/, int32  /*attackerMaxSkillValueForLevel*/, int32 /*roll*/, int32&  /*tmp*/, int32& /*sum*/, MeleeHitOutcome& /*RETURN_CODE*/)
@@ -643,8 +642,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnAgainstGLANCINGCalculation script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnAgainstGLANCINGCalculation script has been skipped cause of dupicated script of special type.");
         }
         // Called  OnMagicSpellHitLevelCalculate
         virtual void OnMagicSpellHitLevelCalculate(bool& ScriptUsed, Unit const* /*me*/, Unit * /*victim*/, SpellInfo const* /*spell*/, int32& /*lchance*/, int32& /*leveldif*/)
@@ -653,8 +652,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnMagicSpellHitLevelCalculate script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnMagicSpellHitLevelCalculate script has been skipped cause of dupicated script of special type.");
         }
         // Called  OnUpdateBlockPercentage
         virtual void OnUpdateBlockPercentage(bool& ScriptUsed, Player const* /*player*/, float& /*value*/)
@@ -663,18 +662,18 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnUpdateBlockPercentage script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnUpdateBlockPercentage script has been skipped cause of dupicated script of special type.");
         }
         // Called  OnUpdateCritPercentage
-        virtual void OnUpdateCritPercentage(bool& ScriptUsed, Player const* /*player*/, WeaponAttackType /*attType*/, BaseModGroup /*modGroup*/, uint16 /*index*/, CombatRating /*cr*/, float& /*value*/)
+        virtual void OnUpdateCritPercentage(bool& ScriptUsed, Player* /*player*/, WeaponAttackType /*attType*/,  float& /*value*/)
         {
             if (!ScriptUsed)
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnUpdateCritPercentage script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnUpdateCritPercentage script has been skipped cause of dupicated script of special type.");
         }
         // Called  OnGetMissPercentageFromDefense
         virtual void OnGetMissPercentageFromDefense(bool& ScriptUsed, Player const* /*player*/, float& /*result*/)
@@ -683,8 +682,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnGetMissPercentageFromDefense script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnGetMissPercentageFromDefense script has been skipped cause of dupicated script of special type.");
         }
         // Called  OnUpdateParryPercentage
         virtual void OnUpdateParryPercentage(bool& ScriptUsed, Player const* /*player*/, float& /*m_realParry*/, float& /*value*/)
@@ -693,8 +692,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnUpdateParryPercentage script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnUpdateParryPercentage script has been skipped cause of dupicated script of special type.");
         }
         // Called  OnUpdateDodgePercentage
         virtual void OnUpdateDodgePercentage(bool& ScriptUsed, Player * /*player*/, float& /*m_realDodge*/, float&  /*value*/)
@@ -703,8 +702,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnUpdateDodgePercentage script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnUpdateDodgePercentage script has been skipped cause of dupicated script of special type.");
         }
         // Called  OnMeleeMissOutcomeAgainstAboutMiss
         virtual void OnMeleeMissOutcomeAgainstAboutMiss(bool& ScriptUsed, Unit const* /*me*/, Unit const* /*victim*/, WeaponAttackType /*attType*/, float& /*miss_chance*/)
@@ -713,8 +712,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnMeleeMissOutcomeAgainstAboutMiss script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnMeleeMissOutcomeAgainstAboutMiss script has been skipped cause of dupicated script of special type.");
         }
         // Called OnSpellBlockCalculation
         virtual void OnSpellBlockCalculation(bool& ScriptUsed, Unit* /*me*/, Unit const* /*victim*/, WeaponAttackType /*attackType*/, float& /*blockChance*/)
@@ -723,8 +722,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnSpellBlockCalculation script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnSpellBlockCalculation script has been skipped cause of dupicated script of special type.");
         }
         // Called OnGetUnitCriticalChanceAboutLevel
         virtual void OnGetUnitCriticalChanceAboutLevel(bool& ScriptUsed, Unit const* /*me*/, Unit const * /*victim*/, float& /*crit*/)
@@ -733,8 +732,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnGetUnitCriticalChanceAboutLevel script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnGetUnitCriticalChanceAboutLevel script has been skipped cause of dupicated script of special type.");
         }
         // Called OnGetWeaponSkillValue
         virtual void OnGetWeaponSkillValue(bool& ScriptUsed, WeaponAttackType /*attType*/, Unit const* /*me*/, Unit const * /*target*/, uint32& /*value*/)
@@ -743,8 +742,8 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnGetWeaponSkillValue script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnColorCodeCalculation script has been skipped cause of dupicated script of special type.");
         }
         // Called OnSpellDamageClassRanged
         virtual void OnSpellDamageClassRanged(bool& ScriptUsed, Unit const* /*me*/, Unit const* /*caster*/, float& /*crit_chance*/)
@@ -753,9 +752,65 @@ class FormulaScript : public ScriptObject
             {
 
             }
-            else
-                sLog->outError("Module error: There is one OnSpellDamageClassRanged script has been skipped cause of dupicated script of special type.");
+            //  else
+            //     sLog->outError("Module error: There is one OnSpellDamageClassRanged script has been skipped cause of dupicated script of special type.");
         }
+        
+        // Called OnBuildPlayerLevelInfo
+        virtual void OnBuildPlayerLevelInfo(bool& ScriptUsed, uint8 /*race*/, uint8 /*_class*/, uint8 /*level*/, PlayerLevelInfo* /*info*/)
+        {
+            if (!ScriptUsed)
+            {
+
+            }
+            //  else
+            //     sLog->outError("Module error: There is one OnBuildPlayerLevelInfo script has been skipped cause of dupicated script of special type.");
+        }
+
+        
+        // Called UpdatePotionCooldown
+        virtual void UpdatePotionCooldown(bool& ScriptUsed, Player* /*me*/)
+        {
+            if (!ScriptUsed)
+            {
+
+            }
+            //  else
+            //     sLog->outError("Module error: There is one UpdatePotionCooldown script has been skipped cause of dupicated script of special type.");
+        }
+        // Called OnInitTaxiNodesForLevel
+        virtual void OnInitTaxiNodesForLevel(bool& ScriptUsed, uint32 /*race*/, uint32 /*chrClass*/, uint8 /*level*/ , PlayerTaxi* /*me*/)
+        {
+            if (!ScriptUsed)
+            {
+
+            }
+            //  else
+            //     sLog->outError("Module error: There is one OnInitTaxiNodesForLevel script has been skipped cause of dupicated script of special type.");
+        }
+        // Called OnCalculateMinMaxDamage
+        virtual void OnCalculateMinMaxDamage(bool& ScriptUsed, Player* /*me*/, WeaponAttackType /*attType*/, bool /*normalized*/, bool /*addTotalPct*/, float& /*minDamage*/, float& /*maxDamage*/)
+        {
+            if (!ScriptUsed)
+            {
+
+            }
+            //  else
+            //     sLog->outError("Module error: There is one OnCalculateMinMaxDamage script has been skipped cause of dupicated script of special type.");
+        }
+        
+        // Called OnGetCreatureType
+        virtual void OnGetCreatureType(bool& ScriptUsed, Unit const* /*me*/, uint32& /*result*/)
+        {
+            if (!ScriptUsed)
+            {
+
+            }
+            //  else
+            //     sLog->outError("Module error: There is one OnGetCreatureType script has been skipped cause of dupicated script of special type.");
+        }
+        // Called OnHandleModStateImmunityMask
+        virtual void OnHandleModStateImmunityMask(AuraEffect const* /*me*/, Unit* /*target*/, std::list <AuraType>& /*aura_immunity_list*/, uint32& /*mechanic_immunity_list*/, int32 /*miscVal*/, bool /*apply*/) {}
 };
 
 template<class TMap> class MapScript : public UpdatableScript<TMap>
@@ -1657,7 +1712,7 @@ class ScriptMgr
         void OnAgainstGLANCINGCalculation(bool& ScriptUsed, Unit const* attacker, Unit const* victim, WeaponAttackType attType, int32 victimDefenseSkill, int32  attackerWeaponSkill, int32  attackerMaxSkillValueForLevel, int32 roll, int32& tmp, int32& sum, MeleeHitOutcome& RETURN_CODE);
         void OnMagicSpellHitLevelCalculate(bool& ScriptUsed, Unit const* me, Unit * victim, SpellInfo const* spell, int32& lchance, int32& leveldif);
         void OnUpdateBlockPercentage(bool& ScriptUsed, Player const* player, float& value);
-        void OnUpdateCritPercentage(bool& ScriptUsed, Player const* player, WeaponAttackType attType, BaseModGroup modGroup, uint16 index, CombatRating cr, float& value);
+        void OnUpdateCritPercentage(bool& ScriptUsed, Player* player, WeaponAttackType attType,  float& value);
         void OnGetMissPercentageFromDefense(bool& ScriptUsed, Player const* player, float& result);
         void OnUpdateParryPercentage(bool& ScriptUsed, Player const* player, float& m_realParry, float& value);
         void OnUpdateDodgePercentage(bool& ScriptUsed, Player * player, float& m_realDodge, float&  value);
@@ -1666,6 +1721,12 @@ class ScriptMgr
         void OnGetUnitCriticalChanceAboutLevel(bool& ScriptUsed, Unit const* me, Unit const * victim, float& crit);
         void OnGetWeaponSkillValue(bool& ScriptUsed, WeaponAttackType attType, Unit const* me, Unit const * target, uint32& value);
         void OnSpellDamageClassRanged(bool& ScriptUsed, Unit const* me, Unit const* caster, float& crit_chance);
+        void OnBuildPlayerLevelInfo(bool& ScriptUsed, uint8 race, uint8 _class, uint8 level, PlayerLevelInfo* info);
+        void UpdatePotionCooldown(bool& ScriptUsed, Player* me);
+        void OnInitTaxiNodesForLevel(bool& ScriptUsed, uint32 race, uint32 chrClass, uint8 level, PlayerTaxi* me);
+        void OnCalculateMinMaxDamage(bool& ScriptUsed, Player* me, WeaponAttackType attType, bool normalized, bool addTotalPct, float& minDamage, float& maxDamage);
+        void OnGetCreatureType(bool& ScriptUsed, Unit const* me, uint32& result);
+        void OnHandleModStateImmunityMask(AuraEffect const* me, Unit* target, std::list <AuraType>& aura_immunity_list, uint32& mechanic_immunity_list, int32 miscVal, bool apply);
     public: /* MapScript */
 
         void OnCreateMap(Map* map);

@@ -13946,17 +13946,23 @@ float Unit::GetSpellMinRangeForTarget(Unit const* target, SpellInfo const* spell
 
 uint32 Unit::GetCreatureType() const
 {
-    if (GetTypeId() == TYPEID_PLAYER)
+    bool ScriptUsed = false; uint32 result = 0;
+    sScriptMgr->OnGetCreatureType(ScriptUsed, this, result);
+    if(!ScriptUsed)
     {
-        ShapeshiftForm form = GetShapeshiftForm();
-        SpellShapeshiftEntry const* ssEntry = sSpellShapeshiftStore.LookupEntry(form);
-        if (ssEntry && ssEntry->creatureType > 0)
-            return ssEntry->creatureType;
+        if (GetTypeId() == TYPEID_PLAYER)
+        {
+            ShapeshiftForm form = GetShapeshiftForm();
+            SpellShapeshiftEntry const* ssEntry = sSpellShapeshiftStore.LookupEntry(form);
+            if (ssEntry && ssEntry->creatureType > 0)
+                result = ssEntry->creatureType;
+            else
+                result = CREATURE_TYPE_HUMANOID;
+        }
         else
-            return CREATURE_TYPE_HUMANOID;
+            result = ToCreature()->GetCreatureTemplate()->type;
     }
-    else
-        return ToCreature()->GetCreatureTemplate()->type;
+    return result;
 }
 
 /*#######################################

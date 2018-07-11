@@ -533,70 +533,75 @@ void Player::UpdateShieldBlockValue()
 }
 
 void Player::CalculateMinMaxDamage(WeaponAttackType attType, bool normalized, bool addTotalPct, float& minDamage, float& maxDamage)
-{ 
-    UnitMods unitMod;
-
-    switch (attType)
+{
+    bool ScriptUsed = false;
+    sScriptMgr->OnCalculateMinMaxDamage(ScriptUsed, this, attType, normalized, addTotalPct, minDamage, maxDamage);
+    if(!ScriptUsed)
     {
-        case BASE_ATTACK:
-        default:
-            unitMod = UNIT_MOD_DAMAGE_MAINHAND;
-            break;
-        case OFF_ATTACK:
-            unitMod = UNIT_MOD_DAMAGE_OFFHAND;
-            break;
-        case RANGED_ATTACK:
-            unitMod = UNIT_MOD_DAMAGE_RANGED;
-            break;
-    }
+        UnitMods unitMod;
 
-    float attackSpeedMod = GetAPMultiplier(attType, normalized);
-
-    float baseValue  = GetModifierValue(unitMod, BASE_VALUE) + GetTotalAttackPowerValue(attType) / 14.0f * attackSpeedMod;
-    float basePct    = GetModifierValue(unitMod, BASE_PCT);
-    float totalValue = GetModifierValue(unitMod, TOTAL_VALUE);
-    float totalPct   = addTotalPct ? GetModifierValue(unitMod, TOTAL_PCT) : 1.0f;
-
-    float weaponMinDamage = GetWeaponDamageRange(attType, MINDAMAGE);
-    float weaponMaxDamage = GetWeaponDamageRange(attType, MAXDAMAGE);
-
-    if (IsInFeralForm()) // check if player is druid and in cat or bear forms
-    {
-        uint8 lvl = getLevel();
-        if (lvl > 60)
-            lvl = 60;
-
-        weaponMinDamage = lvl * 0.85f * attackSpeedMod;
-        weaponMaxDamage = lvl * 1.25f * attackSpeedMod;
-    }
-    else if (!CanUseAttackType(attType)) // check if player not in form but still can't use (disarm case)
-    {
-        // cannot use ranged/off attack, set values to 0
-        if (attType != BASE_ATTACK)
+        switch (attType)
         {
-            minDamage = 0.0f;
-            maxDamage = 0.0f;
-            return;
+            case BASE_ATTACK:
+            default:
+                unitMod = UNIT_MOD_DAMAGE_MAINHAND;
+                break;
+            case OFF_ATTACK:
+                unitMod = UNIT_MOD_DAMAGE_OFFHAND;
+                break;
+            case RANGED_ATTACK:
+                unitMod = UNIT_MOD_DAMAGE_RANGED;
+                break;
         }
-        weaponMinDamage = BASE_MINDAMAGE;
-        weaponMaxDamage = BASE_MAXDAMAGE;
-    }
-    else if (attType == RANGED_ATTACK) // add ammo DPS to ranged damage
-    {
-        weaponMinDamage += GetAmmoDPS() * attackSpeedMod;
-        weaponMaxDamage += GetAmmoDPS() * attackSpeedMod;
-    }
 
-    minDamage = ((weaponMinDamage + baseValue) * basePct + totalValue) * totalPct;
-    maxDamage = ((weaponMaxDamage + baseValue) * basePct + totalValue) * totalPct;
+        float attackSpeedMod = GetAPMultiplier(attType, normalized);
 
-    // pussywizard: crashfix (casting negative to uint => min > max => assertion in urand)
-    if (minDamage < 0.0f || minDamage > 1000000000.0f)
-        minDamage = 0.0f;
-    if (maxDamage < 0.0f || maxDamage > 1000000000.0f)
-        maxDamage = 0.0f;
-    if (minDamage > maxDamage)
-        minDamage = maxDamage;
+        float baseValue  = GetModifierValue(unitMod, BASE_VALUE) + GetTotalAttackPowerValue(attType) / 14.0f * attackSpeedMod;
+        float basePct    = GetModifierValue(unitMod, BASE_PCT);
+        float totalValue = GetModifierValue(unitMod, TOTAL_VALUE);
+        float totalPct   = addTotalPct ? GetModifierValue(unitMod, TOTAL_PCT) : 1.0f;
+
+        float weaponMinDamage = GetWeaponDamageRange(attType, MINDAMAGE);
+        float weaponMaxDamage = GetWeaponDamageRange(attType, MAXDAMAGE);
+
+        if (IsInFeralForm()) // check if player is druid and in cat or bear forms
+        {
+            uint8 lvl = getLevel();
+            if (lvl > 60)
+                lvl = 60;
+
+            weaponMinDamage = lvl * 0.85f * attackSpeedMod;
+            weaponMaxDamage = lvl * 1.25f * attackSpeedMod;
+        }
+        else if (!CanUseAttackType(attType)) // check if player not in form but still can't use (disarm case)
+        {
+            // cannot use ranged/off attack, set values to 0
+            if (attType != BASE_ATTACK)
+            {
+                minDamage = 0.0f;
+                maxDamage = 0.0f;
+                return;
+            }
+            weaponMinDamage = BASE_MINDAMAGE;
+            weaponMaxDamage = BASE_MAXDAMAGE;
+        }
+        else if (attType == RANGED_ATTACK) // add ammo DPS to ranged damage
+        {
+            weaponMinDamage += GetAmmoDPS() * attackSpeedMod;
+            weaponMaxDamage += GetAmmoDPS() * attackSpeedMod;
+        }
+
+        minDamage = ((weaponMinDamage + baseValue) * basePct + totalValue) * totalPct;
+        maxDamage = ((weaponMaxDamage + baseValue) * basePct + totalValue) * totalPct;
+
+        // pussywizard: crashfix (casting negative to uint => min > max => assertion in urand)
+        if (minDamage < 0.0f || minDamage > 1000000000.0f)
+            minDamage = 0.0f;
+        if (maxDamage < 0.0f || maxDamage > 1000000000.0f)
+            maxDamage = 0.0f;
+        if (minDamage > maxDamage)
+            minDamage = maxDamage;
+    }
 }
 
 void Player::UpdateDefenseBonusesMod()
@@ -632,14 +637,15 @@ void Player::UpdateBlockPercentage()
 
 void Player::UpdateCritPercentage(WeaponAttackType attType)
 { 
-    BaseModGroup modGroup;
-    uint16 index;
-    CombatRating cr;
+
     float value = 0.0f;
     bool ScriptUsed = false;
-    sScriptMgr->OnUpdateCritPercentage(ScriptUsed, this, attType,modGroup, index,cr,  value);
+    sScriptMgr->OnUpdateCritPercentage(ScriptUsed, this, attType, value);
     if(!ScriptUsed)
     {
+        BaseModGroup modGroup;
+        uint16 index;
+        CombatRating cr;
         switch (attType)
         {
         case OFF_ATTACK:
@@ -663,9 +669,10 @@ void Player::UpdateCritPercentage(WeaponAttackType attType)
         // Modify crit from weapon skill and maximized defense skill of same level victim difference
         value += (int32(GetWeaponSkillValue(attType)) - int32(GetMaxSkillValueForLevel())) * 0.04f;
         value = value < 0.0f ? 0.0f : value;
+        SetStatFloatValue(index, value);
     }
 
-    SetStatFloatValue(index, value);
+    
 }
 
 void Player::UpdateAllCritPercentages()

@@ -153,43 +153,48 @@ PlayerTaxi::PlayerTaxi() : _taxiSegment(0)
 
 void PlayerTaxi::InitTaxiNodesForLevel(uint32 race, uint32 chrClass, uint8 level)
 {
-    // class specific initial known nodes
-    switch (chrClass)
+    bool ScriptUsed = false;
+    sScriptMgr->OnInitTaxiNodesForLevel(ScriptUsed, race, chrClass, level, this);
+    if(!ScriptUsed)
     {
+        // class specific initial known nodes
+        switch (chrClass)
+        {
         case CLASS_DEATH_KNIGHT:
         {
             for (uint8 i = 0; i < TaxiMaskSize; ++i)
                 m_taximask[i] |= sOldContinentsNodesMask[i];
             break;
         }
-    }
+        }
 
-    // race specific initial known nodes: capital and taxi hub masks
-    switch (race)
-    {
+        // race specific initial known nodes: capital and taxi hub masks
+        switch (race)
+        {
         case RACE_HUMAN:    SetTaximaskNode(2);  break;     // Human
         case RACE_ORC:      SetTaximaskNode(23); break;     // Orc
         case RACE_DWARF:    SetTaximaskNode(6);  break;     // Dwarf
         case RACE_NIGHTELF: SetTaximaskNode(26);
-                            SetTaximaskNode(27); break;     // Night Elf
+            SetTaximaskNode(27); break;     // Night Elf
         case RACE_UNDEAD_PLAYER: SetTaximaskNode(11); break;// Undead
         case RACE_TAUREN:   SetTaximaskNode(22); break;     // Tauren
         case RACE_GNOME:    SetTaximaskNode(6);  break;     // Gnome
         case RACE_TROLL:    SetTaximaskNode(23); break;     // Troll
         case RACE_BLOODELF: SetTaximaskNode(82); break;     // Blood Elf
         case RACE_DRAENEI:  SetTaximaskNode(94); break;     // Draenei
-    }
+        }
 
-    // new continent starting masks (It will be accessible only at new map)
-    switch (Player::TeamIdForRace(race))
-    {
+        // new continent starting masks (It will be accessible only at new map)
+        switch (Player::TeamIdForRace(race))
+        {
         case TEAM_ALLIANCE: SetTaximaskNode(100); break;
         case TEAM_HORDE:    SetTaximaskNode(99);  break;
         default: break;
+        }
+        // level dependent taxi hubs
+        if (level >= 68)
+            SetTaximaskNode(213);                               //Shattered Sun Staging Area
     }
-    // level dependent taxi hubs
-    if (level >= 68)
-        SetTaximaskNode(213);                               //Shattered Sun Staging Area
 }
 
 void PlayerTaxi::LoadTaxiMask(std::string const& data)
@@ -22407,19 +22412,24 @@ void Player::SendCooldownEvent(SpellInfo const* spellInfo, uint32 itemId /*= 0*/
 }
 
 void Player::UpdatePotionCooldown()
-{ 
-    // no potion used i combat or still in combat
-    if (!GetLastPotionId() || IsInCombat())
-        return;
+{
+    bool ScriptUsed = false;
+    sScriptMgr->UpdatePotionCooldown(ScriptUsed, this);
+    if (!ScriptUsed)
+    {
+        // no potion used i combat or still in combat
+        if (!GetLastPotionId() || IsInCombat())
+            return;
 
-    // spell/item pair let set proper cooldown (except not existed charged spell cooldown spellmods for potions)
-    if (ItemTemplate const* proto = sObjectMgr->GetItemTemplate(GetLastPotionId()))
-        for (uint8 idx = 0; idx < MAX_ITEM_SPELLS; ++idx)
-            if (proto->Spells[idx].SpellId && proto->Spells[idx].SpellTrigger == ITEM_SPELLTRIGGER_ON_USE)
-                if (SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(proto->Spells[idx].SpellId))
-                    SendCooldownEvent(spellInfo, GetLastPotionId());
+        // spell/item pair let set proper cooldown (except not existed charged spell cooldown spellmods for potions)
+        if (ItemTemplate const* proto = sObjectMgr->GetItemTemplate(GetLastPotionId()))
+            for (uint8 idx = 0; idx < MAX_ITEM_SPELLS; ++idx)
+                if (proto->Spells[idx].SpellId && proto->Spells[idx].SpellTrigger == ITEM_SPELLTRIGGER_ON_USE)
+                    if (SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(proto->Spells[idx].SpellId))
+                        SendCooldownEvent(spellInfo, GetLastPotionId());
 
-    SetLastPotionId(0);
+        SetLastPotionId(0);
+    }
 }
 
                                                            //slot to be excluded while counting
