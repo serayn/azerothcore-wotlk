@@ -524,233 +524,233 @@ void ScriptMgr::OnWorldUpdate(uint32 diff)
     FOREACH_SCRIPT(WorldScript)->OnUpdate(diff);
 }
 
-void ScriptMgr::OnHonorCalculation(bool &ScriptUsed, float& honor, uint8 level, float multiplier)
+void ScriptMgr::OnHonorCalculation(bool &SkipCoreCode, float& honor, uint8 level, float multiplier)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnHonorCalculation(ScriptUsed, honor, level, multiplier);
+    FOREACH_SCRIPT(FormulaScript)->OnHonorCalculation(SkipCoreCode, honor, level, multiplier);
 }
 
-void ScriptMgr::OnGrayLevelCalculation(bool &ScriptUsed, uint8& grayLevel, uint8 playerLevel)
+void ScriptMgr::OnGrayLevelCalculation(bool &SkipCoreCode, uint8& grayLevel, uint8 playerLevel)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnGrayLevelCalculation(ScriptUsed, grayLevel, playerLevel);
+    FOREACH_SCRIPT(FormulaScript)->OnGrayLevelCalculation(SkipCoreCode, grayLevel, playerLevel);
 }
 
-void ScriptMgr::OnColorCodeCalculation(bool &ScriptUsed, XPColorChar& color, uint8 playerLevel, uint8 mobLevel)
+void ScriptMgr::OnColorCodeCalculation(bool &SkipCoreCode, XPColorChar& color, uint8 playerLevel, uint8 mobLevel)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnColorCodeCalculation(ScriptUsed, color, playerLevel, mobLevel);
+    FOREACH_SCRIPT(FormulaScript)->OnColorCodeCalculation(SkipCoreCode, color, playerLevel, mobLevel);
 }
 
-void ScriptMgr::OnZeroDifferenceCalculation(bool &ScriptUsed, uint8& diff, uint8 playerLevel)
+void ScriptMgr::OnZeroDifferenceCalculation(bool &SkipCoreCode, uint8& diff, uint8 playerLevel)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnZeroDifferenceCalculation(ScriptUsed, diff, playerLevel);
+    FOREACH_SCRIPT(FormulaScript)->OnZeroDifferenceCalculation(SkipCoreCode, diff, playerLevel);
 }
 
-void ScriptMgr::OnBaseGainCalculation(bool &ScriptUsed, uint32& gain, uint8 playerLevel, uint8 mobLevel, ContentLevels content)
+void ScriptMgr::OnBaseGainCalculation(bool &SkipCoreCode, uint32& gain, uint8 playerLevel, uint8 mobLevel, ContentLevels content)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnBaseGainCalculation(ScriptUsed, gain, playerLevel, mobLevel, content);
+    FOREACH_SCRIPT(FormulaScript)->OnBaseGainCalculation(SkipCoreCode, gain, playerLevel, mobLevel, content);
 }
 
-void ScriptMgr::OnGainCalculation(bool &ScriptUsed, uint32& gain, Player* player, Unit* unit)
+void ScriptMgr::OnGainCalculation(bool &SkipCoreCode, uint32& gain, Player* player, Unit* unit)
 {
     ASSERT(player);
     ASSERT(unit);
 
-    FOREACH_SCRIPT(FormulaScript)->OnGainCalculation(ScriptUsed, gain, player, unit);
+    FOREACH_SCRIPT(FormulaScript)->OnGainCalculation(SkipCoreCode, gain, player, unit);
 }
 
-void ScriptMgr::OnGroupRateCalculation(bool &ScriptUsed, float& rate, uint32 count, bool isRaid)
+void ScriptMgr::OnGroupRateCalculation(bool &SkipCoreCode, float& rate, uint32 count, bool isRaid)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnGroupRateCalculation(ScriptUsed, rate, count, isRaid);
+    FOREACH_SCRIPT(FormulaScript)->OnGroupRateCalculation(SkipCoreCode, rate, count, isRaid);
 }
 
-void ScriptMgr::OnTalentCalculation(bool &ScriptUsed, Player const * player, uint32 & result, uint32 m_questRewardTalentCount)
+void ScriptMgr::OnTalentCalculation(bool &SkipCoreCode, Player const * player, uint32 & result, uint32 m_questRewardTalentCount)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnTalentCalculation(ScriptUsed, player, result, m_questRewardTalentCount);
+    FOREACH_SCRIPT(FormulaScript)->OnTalentCalculation(SkipCoreCode, player, result, m_questRewardTalentCount);
 }
 
-void ScriptMgr::OnGlyphInit(bool &ScriptUsed,uint32 level, uint32 & result)
+void ScriptMgr::OnGlyphInit(bool &SkipCoreCode,uint32 level, uint32 & result)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnGlyphInit(ScriptUsed, level, result);
+    FOREACH_SCRIPT(FormulaScript)->OnGlyphInit(SkipCoreCode, level, result);
 }
 
-void ScriptMgr::OnStatToAttackPowerCalculation(bool &ScriptUsed, Player const * player, float level, float & val2, bool ranged)
+void ScriptMgr::OnStatToAttackPowerCalculation(bool &SkipCoreCode, Player const * player, float level, float & val2, bool ranged)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnStatToAttackPowerCalculation(ScriptUsed,  player, level,  val2, ranged);
+    FOREACH_SCRIPT(FormulaScript)->OnStatToAttackPowerCalculation(SkipCoreCode,  player, level,  val2, ranged);
 }
 
-void ScriptMgr::OnSpellBaseDamageBonusDone(bool &ScriptUsed, Player const * player, int32 & DoneAdvertisedBenefit)
+void ScriptMgr::OnSpellBaseDamageBonusDone(bool &SkipCoreCode, Player const * player, int32 & DoneAdvertisedBenefit)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnSpellBaseDamageBonusDone(ScriptUsed, player, DoneAdvertisedBenefit);
+    FOREACH_SCRIPT(FormulaScript)->OnSpellBaseDamageBonusDone(SkipCoreCode, player, DoneAdvertisedBenefit);
 }
 
-void ScriptMgr::OnSpellBaseHealingBonusDone(bool &ScriptUsed, Player const * player, int32 & DoneAdvertisedBenefit)
+void ScriptMgr::OnSpellBaseHealingBonusDone(bool &SkipCoreCode, Player const * player, int32 & DoneAdvertisedBenefit)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnSpellBaseHealingBonusDone(ScriptUsed, player, DoneAdvertisedBenefit);
+    FOREACH_SCRIPT(FormulaScript)->OnSpellBaseHealingBonusDone(SkipCoreCode, player, DoneAdvertisedBenefit);
 }
 
-void ScriptMgr::OnUpdateResistance(bool &ScriptUsed, Player const * player, float & value)
+void ScriptMgr::OnUpdateResistance(bool &SkipCoreCode, Player const * player, float & value)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnUpdateResistance(ScriptUsed, player, value);
+    FOREACH_SCRIPT(FormulaScript)->OnUpdateResistance(SkipCoreCode, player, value);
 }
 
-void ScriptMgr::OnUpdateArmor(bool &ScriptUsed, Player const * player, float & value)
+void ScriptMgr::OnUpdateArmor(bool &SkipCoreCode, Player const * player, float & value)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnUpdateArmor(ScriptUsed, player, value);
+    FOREACH_SCRIPT(FormulaScript)->OnUpdateArmor(SkipCoreCode, player, value);
 }
 
-void ScriptMgr::OnDefaultUnitMeleeSkill(bool &ScriptUsed, Unit const * me, Unit const * target, uint32 & result)
+void ScriptMgr::OnDefaultUnitMeleeSkill(bool &SkipCoreCode, Unit const * me, Unit const * target, uint32 & result)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnDefaultUnitMeleeSkill(ScriptUsed, me, target, result);
+    FOREACH_SCRIPT(FormulaScript)->OnDefaultUnitMeleeSkill(SkipCoreCode, me, target, result);
 }
 
-void ScriptMgr::OnManaRestore(bool &ScriptUsed, Player const * player, float& addvalue, int32& m_regenTimer)
+void ScriptMgr::OnManaRestore(bool &SkipCoreCode, Player const * player, float& addvalue, int32& m_regenTimer)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnManaRestore(ScriptUsed, player, addvalue, m_regenTimer);
+    FOREACH_SCRIPT(FormulaScript)->OnManaRestore(SkipCoreCode, player, addvalue, m_regenTimer);
 }
 
-void ScriptMgr::OnHealthRestore(bool &ScriptUsed, Player * player, float& addvalue, uint32 m_baseHealthRegen)
+void ScriptMgr::OnHealthRestore(bool &SkipCoreCode, Player * player, float& addvalue, uint32 m_baseHealthRegen)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnHealthRestore(ScriptUsed, player, addvalue,  m_baseHealthRegen);
+    FOREACH_SCRIPT(FormulaScript)->OnHealthRestore(SkipCoreCode, player, addvalue,  m_baseHealthRegen);
 }
 
-void ScriptMgr::OnCanRollForItemInLFG(bool &ScriptUsed, Player const * player, InventoryResult &RETURN_CODE, ItemTemplate const* proto)
+void ScriptMgr::OnCanRollForItemInLFG(bool &SkipCoreCode, Player const * player, InventoryResult &RETURN_CODE, ItemTemplate const* proto)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnCanRollForItemInLFG(ScriptUsed, player, RETURN_CODE, proto);
+    FOREACH_SCRIPT(FormulaScript)->OnCanRollForItemInLFG(SkipCoreCode, player, RETURN_CODE, proto);
 }
 
-void ScriptMgr::OnQuestXPValue(bool &ScriptUsed, Player *player, uint32 &xp, int32 Level, uint32 RewardXPId)
+void ScriptMgr::OnQuestXPValue(bool &SkipCoreCode, Player *player, uint32 &xp, int32 Level, uint32 RewardXPId)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnQuestXPValue(ScriptUsed, player,  xp, Level, RewardXPId);
+    FOREACH_SCRIPT(FormulaScript)->OnQuestXPValue(SkipCoreCode, player,  xp, Level, RewardXPId);
 }
 
-void ScriptMgr::OnSpellAddUnitTarget(bool& ScriptUsed, Unit * target, uint32 & targetLevelRange)
+void ScriptMgr::OnSpellAddUnitTarget(bool& SkipCoreCode, Unit * target, uint32 & targetLevelRange)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnSpellAddUnitTarget(ScriptUsed, target, targetLevelRange);
+    FOREACH_SCRIPT(FormulaScript)->OnSpellAddUnitTarget(SkipCoreCode, target, targetLevelRange);
 }
 
-void ScriptMgr::OnGetAuraRankForLevel(bool & ScriptUsed, uint8 level, uint32& appropriateLevel)
+void ScriptMgr::OnGetAuraRankForLevel(bool & SkipCoreCode, uint8 level, uint32& appropriateLevel)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnGetAuraRankForLevel( ScriptUsed, level, appropriateLevel);
+    FOREACH_SCRIPT(FormulaScript)->OnGetAuraRankForLevel( SkipCoreCode, level, appropriateLevel);
 }
 
-void ScriptMgr::OnEffectApplyGlyph(bool& ScriptUsed, uint32 m_glyphIndex,uint8& minLevel)
+void ScriptMgr::OnEffectApplyGlyph(bool& SkipCoreCode, uint32 m_glyphIndex,uint8& minLevel)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnEffectApplyGlyph(ScriptUsed, m_glyphIndex, minLevel);
+    FOREACH_SCRIPT(FormulaScript)->OnEffectApplyGlyph(SkipCoreCode, m_glyphIndex, minLevel);
 }
-void ScriptMgr::OnGLANCINGCalculation(bool & ScriptUsed, int32 leveldiff,float reducePercent)
+void ScriptMgr::OnGLANCINGCalculation(bool & SkipCoreCode, int32 leveldiff,float reducePercent)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnGLANCINGCalculation(ScriptUsed, leveldiff, reducePercent);
+    FOREACH_SCRIPT(FormulaScript)->OnGLANCINGCalculation(SkipCoreCode, leveldiff, reducePercent);
 }
-void ScriptMgr::OnCreatureDazePlayer(bool& ScriptUsed, CalcDamageInfo* damageInfo, Unit* attacker, Unit* victim)
+void ScriptMgr::OnCreatureDazePlayer(bool& SkipCoreCode, CalcDamageInfo* damageInfo, Unit* attacker, Unit* victim)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnCreatureDazePlayer(ScriptUsed, damageInfo, attacker, victim);
+    FOREACH_SCRIPT(FormulaScript)->OnCreatureDazePlayer(SkipCoreCode, damageInfo, attacker, victim);
 }
-void ScriptMgr::OnArmorLevelPenaltyCalculation(bool& ScriptUsed, Unit const* attacker, Unit const* victim, SpellInfo const * spellInfo, uint8 attackerLevel, float& armor, float& tmpvalue)
+void ScriptMgr::OnArmorLevelPenaltyCalculation(bool& SkipCoreCode, Unit const* attacker, Unit const* victim, SpellInfo const * spellInfo, uint8 attackerLevel, float& armor, float& tmpvalue)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnArmorLevelPenaltyCalculation(ScriptUsed, attacker, victim, spellInfo, attackerLevel, armor, tmpvalue);
+    FOREACH_SCRIPT(FormulaScript)->OnArmorLevelPenaltyCalculation(SkipCoreCode, attacker, victim, spellInfo, attackerLevel, armor, tmpvalue);
 }
-void ScriptMgr::OnResistChanceCalculation(bool& ScriptUsed, Unit const* victim, float& resistanceConstant)
+void ScriptMgr::OnResistChanceCalculation(bool& SkipCoreCode, Unit const* victim, float& resistanceConstant)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnResistChanceCalculation(ScriptUsed, victim, resistanceConstant);
+    FOREACH_SCRIPT(FormulaScript)->OnResistChanceCalculation(SkipCoreCode, victim, resistanceConstant);
 }
-void ScriptMgr::OnCrushingCalculation(bool& ScriptUsed, Unit const* attacker, Unit const* victim, int32 victimDefenseSkill, int32  victimMaxSkillValueForLevel, int32  attackerMaxSkillValueForLevel,int32 roll, int32& tmp, int32& sum, MeleeHitOutcome& RETURN_CODE)
+void ScriptMgr::OnCrushingCalculation(bool& SkipCoreCode, Unit const* attacker, Unit const* victim, int32 victimDefenseSkill, int32  victimMaxSkillValueForLevel, int32  attackerMaxSkillValueForLevel,int32 roll, int32& tmp, int32& sum, MeleeHitOutcome& RETURN_CODE)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnCrushingCalculation(ScriptUsed, attacker, victim, victimDefenseSkill, victimMaxSkillValueForLevel, attackerMaxSkillValueForLevel,roll, tmp, sum, RETURN_CODE);
+    FOREACH_SCRIPT(FormulaScript)->OnCrushingCalculation(SkipCoreCode, attacker, victim, victimDefenseSkill, victimMaxSkillValueForLevel, attackerMaxSkillValueForLevel,roll, tmp, sum, RETURN_CODE);
 }
-void ScriptMgr::OnCalculateLevelPanalty(bool& ScriptUsed, SpellInfo const* spellProto,Unit const* me,float& result)
+void ScriptMgr::OnCalculateLevelPanalty(bool& SkipCoreCode, SpellInfo const* spellProto,Unit const* me,float& result)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnCalculateLevelPanalty(ScriptUsed, spellProto,me, result);
+    FOREACH_SCRIPT(FormulaScript)->OnCalculateLevelPanalty(SkipCoreCode, spellProto,me, result);
 }
-void ScriptMgr::OnMeleeSpellSkillCheck(bool& ScriptUsed, Unit const* me, WeaponAttackType attType, Unit* victim, SpellInfo const* spell, int32& skillDiff)
+void ScriptMgr::OnMeleeSpellSkillCheck(bool& SkipCoreCode, Unit const* me, WeaponAttackType attType, Unit* victim, SpellInfo const* spell, int32& skillDiff)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnMeleeSpellSkillCheck(ScriptUsed, me, attType, victim, spell, skillDiff);
+    FOREACH_SCRIPT(FormulaScript)->OnMeleeSpellSkillCheck(SkipCoreCode, me, attType, victim, spell, skillDiff);
 }
-void ScriptMgr::OnDefaultUnitDefenseSkill(bool& ScriptUsed,Unit const* me, Unit const* target,uint32& result)
+void ScriptMgr::OnDefaultUnitDefenseSkill(bool& SkipCoreCode,Unit const* me, Unit const* target,uint32& result)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnDefaultUnitDefenseSkill(ScriptUsed, me, target, result);
+    FOREACH_SCRIPT(FormulaScript)->OnDefaultUnitDefenseSkill(SkipCoreCode, me, target, result);
 }
-void ScriptMgr::OnAggroRangeLevelCalculation(bool& ScriptUsed, Creature const* me, Unit const* target, float& aggroRadius)
+void ScriptMgr::OnAggroRangeLevelCalculation(bool& SkipCoreCode, Creature const* me, Unit const* target, float& aggroRadius)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnAggroRangeLevelCalculation(ScriptUsed, me, target, aggroRadius);
+    FOREACH_SCRIPT(FormulaScript)->OnAggroRangeLevelCalculation(SkipCoreCode, me, target, aggroRadius);
 }
-void ScriptMgr::OnStealthDetectLevelCalculate(bool& ScriptUsed, WorldObject const* me, WorldObject const* obj , int32& detectionValue)
+void ScriptMgr::OnStealthDetectLevelCalculate(bool& SkipCoreCode, WorldObject const* me, WorldObject const* obj , int32& detectionValue)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnStealthDetectLevelCalculate(ScriptUsed, me,obj, detectionValue);
+    FOREACH_SCRIPT(FormulaScript)->OnStealthDetectLevelCalculate(SkipCoreCode, me,obj, detectionValue);
 }
-void ScriptMgr::OnUpdateCombatSkillLevelCalculate(bool& ScriptUsed,Player const* me, WeaponAttackType attType,bool defence,uint8 plevel, uint8 graylevel, uint8 moblevel, uint8& lvldif, uint32& skilldif)
+void ScriptMgr::OnUpdateCombatSkillLevelCalculate(bool& SkipCoreCode,Player const* me, WeaponAttackType attType,bool defence,uint8 plevel, uint8 graylevel, uint8 moblevel, uint8& lvldif, uint32& skilldif)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnUpdateCombatSkillLevelCalculate(ScriptUsed, me, attType, defence, plevel, graylevel, moblevel, lvldif, skilldif);
+    FOREACH_SCRIPT(FormulaScript)->OnUpdateCombatSkillLevelCalculate(SkipCoreCode, me, attType, defence, plevel, graylevel, moblevel, lvldif, skilldif);
 }
-void ScriptMgr::OnAgainstGLANCINGCalculation(bool& ScriptUsed, Unit const* attacker, Unit const* victim, WeaponAttackType attType, int32 victimDefenseSkill, int32  attackerWeaponSkill, int32  attackerMaxSkillValueForLevel, int32 roll, int32& tmp, int32& sum, MeleeHitOutcome& RETURN_CODE)
+void ScriptMgr::OnAgainstGLANCINGCalculation(bool& SkipCoreCode, Unit const* attacker, Unit const* victim, WeaponAttackType attType, int32 victimDefenseSkill, int32  attackerWeaponSkill, int32  attackerMaxSkillValueForLevel, int32 roll, int32& tmp, int32& sum, MeleeHitOutcome& RETURN_CODE)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnAgainstGLANCINGCalculation(ScriptUsed, attacker, victim,attType, victimDefenseSkill, attackerWeaponSkill, attackerMaxSkillValueForLevel, roll, tmp, sum, RETURN_CODE);
+    FOREACH_SCRIPT(FormulaScript)->OnAgainstGLANCINGCalculation(SkipCoreCode, attacker, victim,attType, victimDefenseSkill, attackerWeaponSkill, attackerMaxSkillValueForLevel, roll, tmp, sum, RETURN_CODE);
 }
-void ScriptMgr::OnMagicSpellHitLevelCalculate(bool& ScriptUsed, Unit const* me, Unit * victim, SpellInfo const* spell, int32& lchance, int32& leveldif)
+void ScriptMgr::OnMagicSpellHitLevelCalculate(bool& SkipCoreCode, Unit const* me, Unit * victim, SpellInfo const* spell, int32& lchance, int32& leveldif)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnMagicSpellHitLevelCalculate(ScriptUsed, me, victim, spell,lchance, leveldif);
+    FOREACH_SCRIPT(FormulaScript)->OnMagicSpellHitLevelCalculate(SkipCoreCode, me, victim, spell,lchance, leveldif);
 }
-void ScriptMgr::OnUpdateBlockPercentage(bool& ScriptUsed,Player const* player,float& value)
+void ScriptMgr::OnUpdateBlockPercentage(bool& SkipCoreCode,Player const* player,float& value)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnUpdateBlockPercentage(ScriptUsed, player, value);
+    FOREACH_SCRIPT(FormulaScript)->OnUpdateBlockPercentage(SkipCoreCode, player, value);
 }
-void ScriptMgr::OnUpdateCritPercentage(bool& ScriptUsed, Player* player, WeaponAttackType attType,float& value)
+void ScriptMgr::OnUpdateCritPercentage(bool& SkipCoreCode, Player* player, WeaponAttackType attType,float& value)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnUpdateCritPercentage(ScriptUsed, player, attType,value);
+    FOREACH_SCRIPT(FormulaScript)->OnUpdateCritPercentage(SkipCoreCode, player, attType,value);
 }
-void ScriptMgr::OnGetMissPercentageFromDefense(bool& ScriptUsed, Player const* player,float& result)
+void ScriptMgr::OnGetMissPercentageFromDefense(bool& SkipCoreCode, Player const* player,float& result)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnGetMissPercentageFromDefense(ScriptUsed, player, result);
+    FOREACH_SCRIPT(FormulaScript)->OnGetMissPercentageFromDefense(SkipCoreCode, player, result);
 }
-void ScriptMgr::OnUpdateParryPercentage(bool& ScriptUsed, Player const* player, float& m_realParry, float& value)
+void ScriptMgr::OnUpdateParryPercentage(bool& SkipCoreCode, Player const* player, float& m_realParry, float& value)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnUpdateParryPercentage(ScriptUsed, player, m_realParry, value);
+    FOREACH_SCRIPT(FormulaScript)->OnUpdateParryPercentage(SkipCoreCode, player, m_realParry, value);
 }
-void ScriptMgr::OnUpdateDodgePercentage(bool& ScriptUsed, Player * player, float& m_realDodge, float&  value)
+void ScriptMgr::OnUpdateDodgePercentage(bool& SkipCoreCode, Player * player, float& m_realDodge, float&  value)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnUpdateDodgePercentage(ScriptUsed, player, m_realDodge, value);
+    FOREACH_SCRIPT(FormulaScript)->OnUpdateDodgePercentage(SkipCoreCode, player, m_realDodge, value);
 }
-void ScriptMgr::OnMeleeMissOutcomeAgainstAboutMiss(bool& ScriptUsed,Unit const* me, Unit const* victim, WeaponAttackType attType, float& miss_chance)
+void ScriptMgr::OnMeleeMissOutcomeAgainstAboutMiss(bool& SkipCoreCode,Unit const* me, Unit const* victim, WeaponAttackType attType, float& miss_chance)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnMeleeMissOutcomeAgainstAboutMiss(ScriptUsed, me, victim, attType, miss_chance);
+    FOREACH_SCRIPT(FormulaScript)->OnMeleeMissOutcomeAgainstAboutMiss(SkipCoreCode, me, victim, attType, miss_chance);
 }
-void ScriptMgr::OnSpellBlockCalculation(bool& ScriptUsed, Unit* me, Unit const* victim, WeaponAttackType attackType, float& blockChance)
+void ScriptMgr::OnSpellBlockCalculation(bool& SkipCoreCode, Unit* me, Unit const* victim, WeaponAttackType attackType, float& blockChance)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnSpellBlockCalculation(ScriptUsed, me, victim, attackType, blockChance);
+    FOREACH_SCRIPT(FormulaScript)->OnSpellBlockCalculation(SkipCoreCode, me, victim, attackType, blockChance);
 }
-void ScriptMgr::OnGetUnitCriticalChanceAboutLevel(bool& ScriptUsed, Unit const* me, Unit const * victim, float& crit)
+void ScriptMgr::OnGetUnitCriticalChanceAboutLevel(bool& SkipCoreCode, Unit const* me, Unit const * victim, float& crit)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnGetUnitCriticalChanceAboutLevel(ScriptUsed, me, victim, crit);
+    FOREACH_SCRIPT(FormulaScript)->OnGetUnitCriticalChanceAboutLevel(SkipCoreCode, me, victim, crit);
 }
-void ScriptMgr::OnGetWeaponSkillValue(bool& ScriptUsed, WeaponAttackType attType, Unit const* me, Unit const * target, uint32& value)
+void ScriptMgr::OnGetWeaponSkillValue(bool& SkipCoreCode, WeaponAttackType attType, Unit const* me, Unit const * target, uint32& value)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnGetWeaponSkillValue(ScriptUsed, attType, me, target, value);
+    FOREACH_SCRIPT(FormulaScript)->OnGetWeaponSkillValue(SkipCoreCode, attType, me, target, value);
 }
-void ScriptMgr::OnSpellDamageClassRanged(bool& ScriptUsed, Unit const* me, Unit const* caster, float& crit_chance)
+void ScriptMgr::OnSpellDamageClassRanged(bool& SkipCoreCode, Unit const* me, Unit const* caster, float& crit_chance)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnSpellDamageClassRanged(ScriptUsed, me, caster, crit_chance);
-}
-
-void ScriptMgr::OnBuildPlayerLevelInfo(bool& ScriptUsed, uint8 race, uint8 _class, uint8 level, PlayerLevelInfo* info)
-{
-    FOREACH_SCRIPT(FormulaScript)->OnBuildPlayerLevelInfo(ScriptUsed, race, _class, level, info);
+    FOREACH_SCRIPT(FormulaScript)->OnSpellDamageClassRanged(SkipCoreCode, me, caster, crit_chance);
 }
 
-void ScriptMgr::UpdatePotionCooldown(bool& ScriptUsed, Player* me)
+void ScriptMgr::OnBuildPlayerLevelInfo(bool& SkipCoreCode, uint8 race, uint8 _class, uint8 level, PlayerLevelInfo* info)
 {
-    FOREACH_SCRIPT(FormulaScript)->UpdatePotionCooldown(ScriptUsed, me);
+    FOREACH_SCRIPT(FormulaScript)->OnBuildPlayerLevelInfo(SkipCoreCode, race, _class, level, info);
 }
 
-void ScriptMgr::OnInitTaxiNodesForLevel(bool& ScriptUsed, uint32 race, uint32 chrClass, uint8 level, PlayerTaxi* me)
+void ScriptMgr::UpdatePotionCooldown(bool& SkipCoreCode, Player* me)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnInitTaxiNodesForLevel(ScriptUsed, race, chrClass, level, me);
-}
-void ScriptMgr::OnCalculateMinMaxDamage(bool& ScriptUsed, Player* me, WeaponAttackType attType, bool normalized, bool addTotalPct, float& minDamage, float& maxDamage)
-{
-    FOREACH_SCRIPT(FormulaScript)->OnCalculateMinMaxDamage( ScriptUsed, me, attType,  normalized,  addTotalPct,  minDamage,  maxDamage);
+    FOREACH_SCRIPT(FormulaScript)->UpdatePotionCooldown(SkipCoreCode, me);
 }
 
-void ScriptMgr::OnGetCreatureType(bool& ScriptUsed, Unit const* me, uint32& result)
+void ScriptMgr::OnInitTaxiNodesForLevel(bool& SkipCoreCode, uint32 race, uint32 chrClass, uint8 level, PlayerTaxi* me)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnGetCreatureType(ScriptUsed, me, result);
+    FOREACH_SCRIPT(FormulaScript)->OnInitTaxiNodesForLevel(SkipCoreCode, race, chrClass, level, me);
+}
+void ScriptMgr::OnCalculateMinMaxDamage(bool& SkipCoreCode, Player* me, WeaponAttackType attType, bool normalized, bool addTotalPct, float& minDamage, float& maxDamage)
+{
+    FOREACH_SCRIPT(FormulaScript)->OnCalculateMinMaxDamage( SkipCoreCode, me, attType,  normalized,  addTotalPct,  minDamage,  maxDamage);
+}
+
+void ScriptMgr::OnGetCreatureType(bool& SkipCoreCode, Unit const* me, uint32& result)
+{
+    FOREACH_SCRIPT(FormulaScript)->OnGetCreatureType(SkipCoreCode, me, result);
 }
 
 void ScriptMgr::OnHandleModStateImmunityMask(AuraEffect const* me, Unit* target, std::list <AuraType>& aura_immunity_list, uint32& mechanic_immunity_list,int32 miscVal, bool apply)
@@ -2179,19 +2179,19 @@ void ScriptMgr::OnBattlegroundAddPlayer(Battleground* bg, Player* player)
     FOREACH_SCRIPT(BGScript)->OnBattlegroundAddPlayer(bg, player);
 }
 
-void ScriptMgr::OnApplyingNonSSDItemStatsBonus(bool &ScriptUsed, Player* player, ItemTemplate const* proto, uint8 slot, uint8 i, uint32 statType, int32 &value, uint32 &statsCount)
+void ScriptMgr::OnApplyingNonSSDItemStatsBonus(bool &SkipCoreCode, Player* player, ItemTemplate const* proto, uint8 slot, uint8 i, uint32 statType, int32 &value, uint32 &statsCount)
 {
-    FOREACH_SCRIPT(PlayerScript)->OnApplyingNonSSDItemStatsBonus(ScriptUsed, player , proto, slot ,i, statType, value, statsCount);
+    FOREACH_SCRIPT(PlayerScript)->OnApplyingNonSSDItemStatsBonus(SkipCoreCode, player , proto, slot ,i, statType, value, statsCount);
 }
 
-void ScriptMgr::OnApplyingItemBeforeArmorAndResistance(bool &ScriptUsed, Player* player, ItemTemplate const* proto,uint8 slot, uint32 &armor,int32 &holy_res, int32 &fire_res, int32 &nature_res, int32 &frost_res, int32 &shadow_res, int32 &arcane_res)
+void ScriptMgr::OnApplyingItemBeforeArmorAndResistance(bool &SkipCoreCode, Player* player, ItemTemplate const* proto,uint8 slot, uint32 &armor,int32 &holy_res, int32 &fire_res, int32 &nature_res, int32 &frost_res, int32 &shadow_res, int32 &arcane_res)
 {
-    FOREACH_SCRIPT(PlayerScript)->OnApplyingItemBeforeArmorAndResistance(ScriptUsed, player, proto, slot, armor, holy_res, fire_res, nature_res, frost_res, shadow_res, arcane_res);
+    FOREACH_SCRIPT(PlayerScript)->OnApplyingItemBeforeArmorAndResistance(SkipCoreCode, player, proto, slot, armor, holy_res, fire_res, nature_res, frost_res, shadow_res, arcane_res);
 }
 
-void ScriptMgr::OnBeforeApplyingWeaponDamage(bool &ScriptUsed, Player* player, ItemTemplate const* proto, uint8 slot, float &damage)
+void ScriptMgr::OnBeforeApplyingWeaponDamage(bool &SkipCoreCode, Player* player, ItemTemplate const* proto, uint8 slot, float &damage)
 {
-    FOREACH_SCRIPT(PlayerScript)->OnBeforeApplyingWeaponDamage(ScriptUsed, player, proto, slot, damage);
+    FOREACH_SCRIPT(PlayerScript)->OnBeforeApplyingWeaponDamage(SkipCoreCode, player, proto, slot, damage);
 }
 AllMapScript::AllMapScript(const char* name)
     : ScriptObject(name)

@@ -19,9 +19,9 @@ namespace Trinity
     {
         inline float hk_honor_at_level_f(uint8 level, float multiplier = 1.0f)
         {
-            bool ScriptUsed = false; float honor = 0.0f;
-            sScriptMgr->OnHonorCalculation(ScriptUsed, honor, level, multiplier);
-            if(!ScriptUsed)  honor = multiplier * level * 1.55f;
+            bool SkipCoreCode = false; float honor = 0.0f;
+            sScriptMgr->OnHonorCalculation(SkipCoreCode, honor, level, multiplier);
+            if(!SkipCoreCode)  honor = multiplier * level * 1.55f;
             return honor;
         }
 
@@ -35,9 +35,9 @@ namespace Trinity
         inline uint8 GetGrayLevel(uint8 pl_level)
         {
             uint8 level;
-            bool ScriptUsed = false;
-            sScriptMgr->OnGrayLevelCalculation(ScriptUsed,level, pl_level);
-            if(!ScriptUsed){
+            bool SkipCoreCode = false;
+            sScriptMgr->OnGrayLevelCalculation(SkipCoreCode,level, pl_level);
+            if(!SkipCoreCode){
             if (pl_level <= 5)
                 level = 0;
             else if (pl_level <= 39)
@@ -53,9 +53,9 @@ namespace Trinity
 
         inline XPColorChar GetColorCode(uint8 pl_level, uint8 mob_level)
         {
-            XPColorChar color; bool ScriptUsed = false;
-            sScriptMgr->OnColorCodeCalculation(ScriptUsed, color, pl_level, mob_level); 
-            if (!ScriptUsed) {
+            XPColorChar color; bool SkipCoreCode = false;
+            sScriptMgr->OnColorCodeCalculation(SkipCoreCode, color, pl_level, mob_level); 
+            if (!SkipCoreCode) {
                 if (mob_level >= pl_level + 5)
                     color = XP_RED;
                 else if (mob_level >= pl_level + 3)
@@ -74,9 +74,9 @@ namespace Trinity
         inline uint8 GetZeroDifference(uint8 pl_level)
         {
             uint8 diff;
-            bool ScriptUsed = false;
-            sScriptMgr->OnZeroDifferenceCalculation(ScriptUsed, diff, pl_level); // pussywizard: optimization
-            if (!ScriptUsed) {
+            bool SkipCoreCode = false;
+            sScriptMgr->OnZeroDifferenceCalculation(SkipCoreCode, diff, pl_level); // pussywizard: optimization
+            if (!SkipCoreCode) {
                 if (pl_level < 8)
                     diff = 5;
                 else if (pl_level < 10)
@@ -110,9 +110,9 @@ namespace Trinity
         {
             uint32 baseGain;
             uint32 nBaseExp;
-            bool ScriptUsed = false;
-            sScriptMgr->OnBaseGainCalculation(ScriptUsed, baseGain, pl_level, mob_level, content); // pussywizard: optimization
-            if (!ScriptUsed) {
+            bool SkipCoreCode = false;
+            sScriptMgr->OnBaseGainCalculation(SkipCoreCode, baseGain, pl_level, mob_level, content); // pussywizard: optimization
+            if (!SkipCoreCode) {
                 switch (content)
                 {
                 case CONTENT_1_60:
@@ -158,9 +158,9 @@ namespace Trinity
         {
             Creature* creature = u->ToCreature();
             uint32 gain = 0;
-            bool ScriptUsed = false;
-            sScriptMgr->OnGainCalculation(ScriptUsed, gain, player, u);
-            if (!ScriptUsed)
+            bool SkipCoreCode = false;
+            sScriptMgr->OnGainCalculation(SkipCoreCode, gain, player, u);
+            if (!SkipCoreCode)
             {
                 if (!creature || (!creature->IsTotem() && !creature->IsPet() && !creature->IsCritter() &&
                     !(creature->GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_NO_XP_AT_KILL)))
@@ -195,9 +195,9 @@ namespace Trinity
         inline float xp_in_group_rate(uint32 count, bool isRaid)
         {
             float rate;
-            bool ScriptUsed = false;
-            sScriptMgr->OnGroupRateCalculation(ScriptUsed, rate, count, isRaid); // pussywizard: optimization
-            if (!ScriptUsed) {
+            bool SkipCoreCode = false;
+            sScriptMgr->OnGroupRateCalculation(SkipCoreCode, rate, count, isRaid); // pussywizard: optimization
+            if (!SkipCoreCode) {
                 if (isRaid)
                 {
                     // FIXME: Must apply decrease modifiers depending on raid size.

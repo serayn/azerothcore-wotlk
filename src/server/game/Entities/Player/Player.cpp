@@ -153,9 +153,9 @@ PlayerTaxi::PlayerTaxi() : _taxiSegment(0)
 
 void PlayerTaxi::InitTaxiNodesForLevel(uint32 race, uint32 chrClass, uint8 level)
 {
-    bool ScriptUsed = false;
-    sScriptMgr->OnInitTaxiNodesForLevel(ScriptUsed, race, chrClass, level, this);
-    if(!ScriptUsed)
+    bool SkipCoreCode = false;
+    sScriptMgr->OnInitTaxiNodesForLevel(SkipCoreCode, race, chrClass, level, this);
+    if(!SkipCoreCode)
     {
         // class specific initial known nodes
         switch (chrClass)
@@ -2683,9 +2683,9 @@ void Player::Regenerate(Powers power)
     {
         case POWER_MANA:
         {
-            bool ScriptUsed = false;
-            sScriptMgr->OnManaRestore(ScriptUsed, this, addvalue, m_regenTimer);
-            if(!ScriptUsed)
+            bool SkipCoreCode = false;
+            sScriptMgr->OnManaRestore(SkipCoreCode, this, addvalue, m_regenTimer);
+            if(!SkipCoreCode)
             {
                 bool recentCast = IsUnderLastManaUseEffect();
                 float ManaIncreaseRate = sWorld->getRate(RATE_POWER_MANA);
@@ -2798,9 +2798,9 @@ void Player::RegenerateHealth()
 
 
     float addvalue = 0.0f;
-    bool ScriptUsed = false;
-    sScriptMgr->OnHealthRestore(ScriptUsed, this, addvalue, m_baseHealthRegen);
-    if (!ScriptUsed)
+    bool SkipCoreCode = false;
+    sScriptMgr->OnHealthRestore(SkipCoreCode, this, addvalue, m_baseHealthRegen);
+    if (!SkipCoreCode)
     {
         float HealthIncreaseRate = sWorld->getRate(RATE_HEALTH);
 
@@ -6395,9 +6395,9 @@ void Player::UpdateCombatSkills(Unit* victim, WeaponAttackType attType, bool def
     uint8 moblevel = victim->getLevelForTarget(this);
     /*if (moblevel < greylevel)
         return;*/ // Patch 3.0.8 (2009-01-20): You can no longer skill up weapons on mobs that are immune to damage.
-    bool ScriptUsed = false; uint8 lvldif = 0; uint32 skilldif =0;
-    sScriptMgr->OnUpdateCombatSkillLevelCalculate(ScriptUsed,this, attType, defence, plevel, greylevel,moblevel,lvldif, skilldif);
-    if (!ScriptUsed)
+    bool SkipCoreCode = false; uint8 lvldif = 0; uint32 skilldif =0;
+    sScriptMgr->OnUpdateCombatSkillLevelCalculate(SkipCoreCode,this, attType, defence, plevel, greylevel,moblevel,lvldif, skilldif);
+    if (!SkipCoreCode)
     {
         if (moblevel > plevel + 5)
             moblevel = plevel + 5;
@@ -7993,8 +7993,8 @@ void Player::_ApplyItemBonuses(ItemTemplate const* proto, uint8 slot, bool apply
                 statType = proto->ItemStat[i].ItemStatType;
                 val = proto->ItemStat[i].ItemStatValue;
             }
-            bool ScriptUsed = false;
-            sScriptMgr->OnApplyingNonSSDItemStatsBonus(ScriptUsed, this , proto, slot, i, statType, val, statType);
+            bool SkipCoreCode = false;
+            sScriptMgr->OnApplyingNonSSDItemStatsBonus(SkipCoreCode, this , proto, slot, i, statType, val, statType);
             if (i >= statsCount) continue;
         }
 
@@ -8167,8 +8167,8 @@ void Player::_ApplyItemBonuses(ItemTemplate const* proto, uint8 slot, bool apply
 	int32 frost_res = proto->FrostRes;
 	int32 shadow_res = proto->ShadowRes;
 	int32 arcane_res = proto->ArcaneRes;
-    bool ScriptUsed = false;
-    sScriptMgr->OnApplyingItemBeforeArmorAndResistance(ScriptUsed, this, proto, slot, armor, holy_res, fire_res, nature_res, frost_res, shadow_res, arcane_res);
+    bool SkipCoreCode = false;
+    sScriptMgr->OnApplyingItemBeforeArmorAndResistance(SkipCoreCode, this, proto, slot, armor, holy_res, fire_res, nature_res, frost_res, shadow_res, arcane_res);
 
     if (ssv)
     {
@@ -8258,9 +8258,9 @@ void Player::_ApplyItemBonuses(ItemTemplate const* proto, uint8 slot, bool apply
 
 void Player::_ApplyWeaponDamage(uint8 slot, ItemTemplate const* proto, ScalingStatValuesEntry const* ssv, bool apply)
 {
-    bool ScriptUsed = false;
+    bool SkipCoreCode = false;
     float dmg = 0;
-    sScriptMgr->OnBeforeApplyingWeaponDamage(ScriptUsed, this, proto, slot, dmg);
+    sScriptMgr->OnBeforeApplyingWeaponDamage(SkipCoreCode, this, proto, slot, dmg);
     dmg = dmg * proto->Delay / 1000;
     WeaponAttackType attType = BASE_ATTACK;
     float damage = 0.0f;
@@ -12431,10 +12431,10 @@ InventoryResult Player::CanRollForItemInLFG(ItemTemplate const* proto, WorldObje
     if (proto->Class == ITEM_CLASS_WEAPON && GetSkillValue(item_weapon_skills[proto->SubClass]) == 0)
         return EQUIP_ERR_NO_REQUIRED_PROFICIENCY;
 
-    bool ScriptUsed = false;
+    bool SkipCoreCode = false;
     InventoryResult RETURN_CODE = EQUIP_ERR_OK;
-    sScriptMgr->OnCanRollForItemInLFG(ScriptUsed, this, RETURN_CODE, proto);
-    if (!ScriptUsed)
+    sScriptMgr->OnCanRollForItemInLFG(SkipCoreCode, this, RETURN_CODE, proto);
+    if (!SkipCoreCode)
     {
         if (proto->Class == ITEM_CLASS_ARMOR && proto->SubClass > ITEM_SUBCLASS_ARMOR_MISC && proto->SubClass < ITEM_SUBCLASS_ARMOR_BUCKLER && proto->InventoryType != INVTYPE_CLOAK)
         {
@@ -22413,9 +22413,9 @@ void Player::SendCooldownEvent(SpellInfo const* spellInfo, uint32 itemId /*= 0*/
 
 void Player::UpdatePotionCooldown()
 {
-    bool ScriptUsed = false;
-    sScriptMgr->UpdatePotionCooldown(ScriptUsed, this);
-    if (!ScriptUsed)
+    bool SkipCoreCode = false;
+    sScriptMgr->UpdatePotionCooldown(SkipCoreCode, this);
+    if (!SkipCoreCode)
     {
         // no potion used i combat or still in combat
         if (!GetLastPotionId() || IsInCombat())
@@ -24731,9 +24731,9 @@ void Player::InitGlyphsForLevel()
 
     uint8 level = getLevel();
     uint32 value = 0;
-    bool ScriptUsed = false;
-    sScriptMgr->OnGlyphInit(ScriptUsed, level, value);
-    if(!ScriptUsed)
+    bool SkipCoreCode = false;
+    sScriptMgr->OnGlyphInit(SkipCoreCode, level, value);
+    if(!SkipCoreCode)
     {
         // 0x3F = 0x01 | 0x02 | 0x04 | 0x08 | 0x10 | 0x20 for 80 level
     if (level >= 15)
@@ -25221,9 +25221,9 @@ void Player::UpdateLootAchievements(LootItem *item, Loot* loot)
 
 uint32 Player::CalculateTalentsPoints() const
 {
-    bool ScriptUsed = false; uint32 result = 0;
-    sScriptMgr->OnTalentCalculation(ScriptUsed, this, result, m_questRewardTalentCount);
-    if(!ScriptUsed)
+    bool SkipCoreCode = false; uint32 result = 0;
+    sScriptMgr->OnTalentCalculation(SkipCoreCode, this, result, m_questRewardTalentCount);
+    if(!SkipCoreCode)
     {
         uint32 base_talent = getLevel() < 10 ? 0 : getLevel() - 9;
 
@@ -27523,3 +27523,5 @@ void Player::SetXP(uint32 value)
 {
     SetUInt32Value(PLAYER_XP, value);
 }
+
+

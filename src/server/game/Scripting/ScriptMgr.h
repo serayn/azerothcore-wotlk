@@ -276,9 +276,9 @@ class FormulaScript : public ScriptObject
 
     public:
         // Called after calculating honor.
-        virtual void OnHonorCalculation(bool &ScriptUsed, float& /*honor*/, uint8 /*level*/, float /*multiplier*/)
+        virtual void OnHonorCalculation(bool &SkipCoreCode, float& /*honor*/, uint8 /*level*/, float /*multiplier*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -287,9 +287,9 @@ class FormulaScript : public ScriptObject
         }
 
         // Called after gray level calculation.
-        virtual void OnGrayLevelCalculation(bool &ScriptUsed, uint8& /*grayLevel*/, uint8 /*playerLevel*/)
+        virtual void OnGrayLevelCalculation(bool &SkipCoreCode, uint8& /*grayLevel*/, uint8 /*playerLevel*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -298,9 +298,9 @@ class FormulaScript : public ScriptObject
         }
 
         // Called after calculating experience color.
-        virtual void OnColorCodeCalculation(bool &ScriptUsed, XPColorChar& /*color*/, uint8 /*playerLevel*/, uint8 /*mobLevel*/)
+        virtual void OnColorCodeCalculation(bool &SkipCoreCode, XPColorChar& /*color*/, uint8 /*playerLevel*/, uint8 /*mobLevel*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -309,9 +309,9 @@ class FormulaScript : public ScriptObject
         }
 
         // Called after calculating zero difference.
-        virtual void OnZeroDifferenceCalculation(bool &ScriptUsed, uint8& /*diff*/, uint8 /*playerLevel*/)
+        virtual void OnZeroDifferenceCalculation(bool &SkipCoreCode, uint8& /*diff*/, uint8 /*playerLevel*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -320,9 +320,9 @@ class FormulaScript : public ScriptObject
         }
 
         // Called after calculating base experience gain.
-        virtual void OnBaseGainCalculation(bool &ScriptUsed, uint32& /*gain*/, uint8 /*playerLevel*/, uint8 /*mobLevel*/, ContentLevels /*content*/)
+        virtual void OnBaseGainCalculation(bool &SkipCoreCode, uint32& /*gain*/, uint8 /*playerLevel*/, uint8 /*mobLevel*/, ContentLevels /*content*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -330,9 +330,9 @@ class FormulaScript : public ScriptObject
             //     sLog->outError("Module error: There is one OnBaseGainCalculation script has been skipped cause of dupicated script of special type.");        }
         }
         // Called after calculating experience gain.
-        virtual void OnGainCalculation(bool &ScriptUsed, uint32& /*gain*/, Player* /*player*/, Unit* /*unit*/)
+        virtual void OnGainCalculation(bool &SkipCoreCode, uint32& /*gain*/, Player* /*player*/, Unit* /*unit*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -341,9 +341,9 @@ class FormulaScript : public ScriptObject
         }
 
         // Called when calculating the experience rate for group experience.
-        virtual void OnGroupRateCalculation(bool &ScriptUsed, float& /*rate*/, uint32 /*count*/, bool /*isRaid*/)
+        virtual void OnGroupRateCalculation(bool &SkipCoreCode, float& /*rate*/, uint32 /*count*/, bool /*isRaid*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -352,9 +352,9 @@ class FormulaScript : public ScriptObject
         }
 
         // Called after calculating arena rating changes
-        virtual void OnAfterArenaRatingCalculation(bool &ScriptUsed, Battleground *const /*bg*/, int32& /*winnerMatchmakerChange*/, int32& /*loserMatchmakerChange*/, int32& /*winnerChange*/, int32& /*loserChange*/)
+        virtual void OnAfterArenaRatingCalculation(bool &SkipCoreCode, Battleground *const /*bg*/, int32& /*winnerMatchmakerChange*/, int32& /*loserMatchmakerChange*/, int32& /*winnerChange*/, int32& /*loserChange*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -363,9 +363,9 @@ class FormulaScript : public ScriptObject
         }
         
         // Called on talent calculating  
-        virtual void OnTalentCalculation(bool &ScriptUsed, Player const * /*player*/,uint32 & /*result*/, uint32 /*m_questRewardTalentCount*/)
+        virtual void OnTalentCalculation(bool &SkipCoreCode, Player const * /*player*/,uint32 & /*result*/, uint32 /*m_questRewardTalentCount*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -374,9 +374,9 @@ class FormulaScript : public ScriptObject
         }
 
         // Called on GlyphLevel initializing
-        virtual void OnGlyphInit(bool &ScriptUsed,uint32 /*level*/, uint32 & /*result*/)
+        virtual void OnGlyphInit(bool &SkipCoreCode,uint32 /*level*/, uint32 & /*result*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -385,9 +385,9 @@ class FormulaScript : public ScriptObject
         }
 
         // Called on Stat to AttackPower calculation
-        virtual void OnStatToAttackPowerCalculation(bool &ScriptUsed, Player const * /*player*/, float /*level*/, float & /*val2*/, bool /*ranged*/)
+        virtual void OnStatToAttackPowerCalculation(bool &SkipCoreCode, Player const * /*player*/, float /*level*/, float & /*val2*/, bool /*ranged*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -396,9 +396,9 @@ class FormulaScript : public ScriptObject
         }
 
         // Called on Stat to SpellDamge calculation
-        virtual void OnSpellBaseDamageBonusDone(bool &ScriptUsed, Player const * /*player*/, int32 & /*DoneAdvertisedBenefit*/)
+        virtual void OnSpellBaseDamageBonusDone(bool &SkipCoreCode, Player const * /*player*/, int32 & /*DoneAdvertisedBenefit*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -407,9 +407,9 @@ class FormulaScript : public ScriptObject
         }
 
         // Called on Stat to SpellHealing calculation
-        virtual void OnSpellBaseHealingBonusDone(bool &ScriptUsed, Player const * /*player*/, int32 & /*DoneAdvertisedBenefit*/)
+        virtual void OnSpellBaseHealingBonusDone(bool &SkipCoreCode, Player const * /*player*/, int32 & /*DoneAdvertisedBenefit*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -418,9 +418,9 @@ class FormulaScript : public ScriptObject
         }
 
         // Called on Stat to Resistance calculation
-        virtual void OnUpdateResistance(bool &ScriptUsed, Player const * /*player*/, float & /*value*/)
+        virtual void OnUpdateResistance(bool &SkipCoreCode, Player const * /*player*/, float & /*value*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -429,9 +429,9 @@ class FormulaScript : public ScriptObject
         }
 
         // Called on Stat to Armor calculation
-        virtual void OnUpdateArmor(bool &ScriptUsed, Player const * /*player*/, float & /*value*/)
+        virtual void OnUpdateArmor(bool &SkipCoreCode, Player const * /*player*/, float & /*value*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -440,9 +440,9 @@ class FormulaScript : public ScriptObject
         }
 
         // Called on calculating unit melee skill
-        virtual void OnDefaultUnitMeleeSkill(bool &ScriptUsed, Unit const * /*me*/, Unit const * /*target*/, uint32 & /*result*/)
+        virtual void OnDefaultUnitMeleeSkill(bool &SkipCoreCode, Unit const * /*me*/, Unit const * /*target*/, uint32 & /*result*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -451,9 +451,9 @@ class FormulaScript : public ScriptObject
         }
 
         // Called On Mana Restoring
-        virtual void OnManaRestore(bool &ScriptUsed, Player const * /*player*/, float& /*addvalue*/, int32& /*m_regenTimer*/)
+        virtual void OnManaRestore(bool &SkipCoreCode, Player const * /*player*/, float& /*addvalue*/, int32& /*m_regenTimer*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -462,9 +462,9 @@ class FormulaScript : public ScriptObject
         }
 
         // Called On Health Restoring
-        virtual void OnHealthRestore(bool &ScriptUsed, Player* /*player*/, float& /*addvalue*/, uint32 /*m_baseHealthRegen*/)
+        virtual void OnHealthRestore(bool &SkipCoreCode, Player* /*player*/, float& /*addvalue*/, uint32 /*m_baseHealthRegen*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -473,9 +473,9 @@ class FormulaScript : public ScriptObject
         }
 
         // Called On CanRollForItemInLFG
-        virtual void  OnCanRollForItemInLFG(bool &ScriptUsed, Player const* /*player*/, InventoryResult &/*RETURN_CODE*/, ItemTemplate const* /*proto*/)
+        virtual void  OnCanRollForItemInLFG(bool &SkipCoreCode, Player const* /*player*/, InventoryResult &/*RETURN_CODE*/, ItemTemplate const* /*proto*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -484,9 +484,9 @@ class FormulaScript : public ScriptObject
         }
 
         // Called OnQuestXPValue
-        virtual void  OnQuestXPValue(bool &ScriptUsed, Player* /*player*/, uint32 &/*xp*/, int32 /*Level*/, uint32 /*RewardXPId*/)
+        virtual void  OnQuestXPValue(bool &SkipCoreCode, Player* /*player*/, uint32 &/*xp*/, int32 /*Level*/, uint32 /*RewardXPId*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -495,9 +495,9 @@ class FormulaScript : public ScriptObject
         }
         
         // Called OnSpellAddUnitTarget
-        virtual void  OnSpellAddUnitTarget(bool& ScriptUsed, Unit* /*target*/, uint32 & /*targetLevelRange*/)
+        virtual void  OnSpellAddUnitTarget(bool& SkipCoreCode, Unit* /*target*/, uint32 & /*targetLevelRange*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -506,9 +506,9 @@ class FormulaScript : public ScriptObject
         }
 
         // Called OnGetAuraRankForLevel
-        virtual void OnGetAuraRankForLevel(bool & ScriptUsed, uint8 /*level*/, uint32& /*appropriateLevel*/)
+        virtual void OnGetAuraRankForLevel(bool & SkipCoreCode, uint8 /*level*/, uint32& /*appropriateLevel*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -516,9 +516,9 @@ class FormulaScript : public ScriptObject
             //     sLog->outError("Module error: There is one OnGetAuraRankForLevel script has been skipped cause of dupicated script of special type.");
         }
         // Called OnEffectApplyGlyph
-        virtual void OnEffectApplyGlyph(bool& ScriptUsed, uint32 /*m_glyphIndex*/, uint8& /*minLevel*/)
+        virtual void OnEffectApplyGlyph(bool& SkipCoreCode, uint32 /*m_glyphIndex*/, uint8& /*minLevel*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -526,9 +526,9 @@ class FormulaScript : public ScriptObject
             //     sLog->outError("Module error: There is one OnEffectApplyGlyph script has been skipped cause of dupicated script of special type.");
         }
         // Called OnGLANCINGCalculation
-        virtual void OnGLANCINGCalculation(bool & ScriptUsed, int32 /*leveldiff*/, float /*reducePercent*/)
+        virtual void OnGLANCINGCalculation(bool & SkipCoreCode, int32 /*leveldiff*/, float /*reducePercent*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -536,9 +536,9 @@ class FormulaScript : public ScriptObject
             //     sLog->outError("Module error: There is one OnGLANCINGCalculation script has been skipped cause of dupicated script of special type.");
         }
         // Called  OnCreatureDazePlayer
-        virtual void OnCreatureDazePlayer(bool& ScriptUsed, CalcDamageInfo* /*damageInfo*/, Unit* /*attacker*/, Unit* /*victim*/)
+        virtual void OnCreatureDazePlayer(bool& SkipCoreCode, CalcDamageInfo* /*damageInfo*/, Unit* /*attacker*/, Unit* /*victim*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -546,9 +546,9 @@ class FormulaScript : public ScriptObject
             //     sLog->outError("Module error: There is one OnCreatureDazePlayer script has been skipped cause of dupicated script of special type.");
         }
         // Called  OnArmorLevelPenaltyCalculation
-        virtual void OnArmorLevelPenaltyCalculation(bool& ScriptUsed, Unit const* /*attacker*/, Unit const* /*victim*/, SpellInfo const * /*spellInfo*/, uint8 /*attackerLevel*/, float& /*armor*/, float& /*tmpvalue*/)
+        virtual void OnArmorLevelPenaltyCalculation(bool& SkipCoreCode, Unit const* /*attacker*/, Unit const* /*victim*/, SpellInfo const * /*spellInfo*/, uint8 /*attackerLevel*/, float& /*armor*/, float& /*tmpvalue*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -556,9 +556,9 @@ class FormulaScript : public ScriptObject
             //     sLog->outError("Module error: There is one OnArmorLevelPenaltyCalculation script has been skipped cause of dupicated script of special type.");
         }
         // Called  OnResistChanceCalculation
-        virtual void OnResistChanceCalculation(bool& ScriptUsed, Unit const* /*victim*/, float& /*resistanceConstant*/)
+        virtual void OnResistChanceCalculation(bool& SkipCoreCode, Unit const* /*victim*/, float& /*resistanceConstant*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -566,9 +566,9 @@ class FormulaScript : public ScriptObject
             //     sLog->outError("Module error: There is one OnResistChanceCalculation script has been skipped cause of dupicated script of special type.");
         }
         // Called  OnCrushingCalculation
-        virtual void OnCrushingCalculation(bool& ScriptUsed, Unit const* /*attacker*/, Unit const* /*victim*/, int32 /*victimDefenseSkill*/, int32  /*victimMaxSkillValueForLevel*/, int32  /*attackerMaxSkillValueForLevel*/,int32 /*roll*/, int32&  /*tmp*/, int32& /*sum*/, MeleeHitOutcome& /*RETURN_CODE*/)
+        virtual void OnCrushingCalculation(bool& SkipCoreCode, Unit const* /*attacker*/, Unit const* /*victim*/, int32 /*victimDefenseSkill*/, int32  /*victimMaxSkillValueForLevel*/, int32  /*attackerMaxSkillValueForLevel*/,int32 /*roll*/, int32&  /*tmp*/, int32& /*sum*/, MeleeHitOutcome& /*RETURN_CODE*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -576,9 +576,9 @@ class FormulaScript : public ScriptObject
             //     sLog->outError("Module error: There is one OnCrushingCalculation script has been skipped cause of dupicated script of special type.");
         }
         // Called  OnCalculateLevelPanalty
-        virtual void OnCalculateLevelPanalty(bool& ScriptUsed, SpellInfo const* /*spellProto*/, Unit const* /*me*/, float& /*result*/)
+        virtual void OnCalculateLevelPanalty(bool& SkipCoreCode, SpellInfo const* /*spellProto*/, Unit const* /*me*/, float& /*result*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -586,9 +586,9 @@ class FormulaScript : public ScriptObject
             //     sLog->outError("Module error: There is one OnCalculateLevelPanalty script has been skipped cause of dupicated script of special type.");
         }
         // Called  OnMeleeSpellSkillCheck
-        virtual void OnMeleeSpellSkillCheck(bool& ScriptUsed, Unit const* /*me*/, WeaponAttackType /*attType*/, Unit* /*victim*/, SpellInfo const* /*spell*/, int32& /*skillDiff*/)
+        virtual void OnMeleeSpellSkillCheck(bool& SkipCoreCode, Unit const* /*me*/, WeaponAttackType /*attType*/, Unit* /*victim*/, SpellInfo const* /*spell*/, int32& /*skillDiff*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -596,9 +596,9 @@ class FormulaScript : public ScriptObject
             //     sLog->outError("Module error: There is one OnMeleeSpellSkillCheck script has been skipped cause of dupicated script of special type.");
         }
         // Called  OnDefaultUnitDefenseSkill
-        virtual void OnDefaultUnitDefenseSkill(bool& ScriptUsed, Unit const* /*me*/, Unit const* /*target*/, uint32& /*result*/)
+        virtual void OnDefaultUnitDefenseSkill(bool& SkipCoreCode, Unit const* /*me*/, Unit const* /*target*/, uint32& /*result*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -606,9 +606,9 @@ class FormulaScript : public ScriptObject
             //     sLog->outError("Module error: There is one OnDefaultUnitDefenseSkill script has been skipped cause of dupicated script of special type.");
         }
         // Called  OnAggroRangeLevelCalculation
-        virtual void OnAggroRangeLevelCalculation(bool& ScriptUsed, Creature const* /*me*/, Unit const* /*target*/, float& /*aggroRadius*/)
+        virtual void OnAggroRangeLevelCalculation(bool& SkipCoreCode, Creature const* /*me*/, Unit const* /*target*/, float& /*aggroRadius*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -616,9 +616,9 @@ class FormulaScript : public ScriptObject
             //     sLog->outError("Module error: There is one OnAggroRangeLevelCalculation script has been skipped cause of dupicated script of special type.");
         }
         // Called  OnStealthDetectLevelCalculate
-        virtual void OnStealthDetectLevelCalculate(bool& ScriptUsed, WorldObject const* /*me*/, WorldObject const* /*obj*/,int32& /*detectionValue*/)
+        virtual void OnStealthDetectLevelCalculate(bool& SkipCoreCode, WorldObject const* /*me*/, WorldObject const* /*obj*/,int32& /*detectionValue*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -626,9 +626,9 @@ class FormulaScript : public ScriptObject
             //     sLog->outError("Module error: There is one OnStealthDetectLevelCalculate script has been skipped cause of dupicated script of special type.");
         }
         // Called  OnUpdateCombatSkillLevelCalculate
-        virtual void OnUpdateCombatSkillLevelCalculate(bool& ScriptUsed, Player const* /*me*/, WeaponAttackType /*attType*/, bool /*defence*/, uint8 /*plevel*/, uint8 /*greylevel*/, uint8 /*moblevel*/, uint8& /*lvldif*/, uint32& /*skilldif*/)
+        virtual void OnUpdateCombatSkillLevelCalculate(bool& SkipCoreCode, Player const* /*me*/, WeaponAttackType /*attType*/, bool /*defence*/, uint8 /*plevel*/, uint8 /*greylevel*/, uint8 /*moblevel*/, uint8& /*lvldif*/, uint32& /*skilldif*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -636,9 +636,9 @@ class FormulaScript : public ScriptObject
             //     sLog->outError("Module error: There is one OnUpdateCombatSkillLevelCalculate script has been skipped cause of dupicated script of special type.");
         }
         // Called  OnAgainstGLANCINGCalculation
-        virtual void OnAgainstGLANCINGCalculation(bool& ScriptUsed, Unit const* /*attacker*/, Unit const* /*victim*/, WeaponAttackType /*attType*/, int32 /*victimDefenseSkill*/, int32  /*attackerWeaponSkill*/, int32  /*attackerMaxSkillValueForLevel*/, int32 /*roll*/, int32&  /*tmp*/, int32& /*sum*/, MeleeHitOutcome& /*RETURN_CODE*/)
+        virtual void OnAgainstGLANCINGCalculation(bool& SkipCoreCode, Unit const* /*attacker*/, Unit const* /*victim*/, WeaponAttackType /*attType*/, int32 /*victimDefenseSkill*/, int32  /*attackerWeaponSkill*/, int32  /*attackerMaxSkillValueForLevel*/, int32 /*roll*/, int32&  /*tmp*/, int32& /*sum*/, MeleeHitOutcome& /*RETURN_CODE*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -646,9 +646,9 @@ class FormulaScript : public ScriptObject
             //     sLog->outError("Module error: There is one OnAgainstGLANCINGCalculation script has been skipped cause of dupicated script of special type.");
         }
         // Called  OnMagicSpellHitLevelCalculate
-        virtual void OnMagicSpellHitLevelCalculate(bool& ScriptUsed, Unit const* /*me*/, Unit * /*victim*/, SpellInfo const* /*spell*/, int32& /*lchance*/, int32& /*leveldif*/)
+        virtual void OnMagicSpellHitLevelCalculate(bool& SkipCoreCode, Unit const* /*me*/, Unit * /*victim*/, SpellInfo const* /*spell*/, int32& /*lchance*/, int32& /*leveldif*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -656,9 +656,9 @@ class FormulaScript : public ScriptObject
             //     sLog->outError("Module error: There is one OnMagicSpellHitLevelCalculate script has been skipped cause of dupicated script of special type.");
         }
         // Called  OnUpdateBlockPercentage
-        virtual void OnUpdateBlockPercentage(bool& ScriptUsed, Player const* /*player*/, float& /*value*/)
+        virtual void OnUpdateBlockPercentage(bool& SkipCoreCode, Player const* /*player*/, float& /*value*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -666,9 +666,9 @@ class FormulaScript : public ScriptObject
             //     sLog->outError("Module error: There is one OnUpdateBlockPercentage script has been skipped cause of dupicated script of special type.");
         }
         // Called  OnUpdateCritPercentage
-        virtual void OnUpdateCritPercentage(bool& ScriptUsed, Player* /*player*/, WeaponAttackType /*attType*/,  float& /*value*/)
+        virtual void OnUpdateCritPercentage(bool& SkipCoreCode, Player* /*player*/, WeaponAttackType /*attType*/,  float& /*value*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -676,9 +676,9 @@ class FormulaScript : public ScriptObject
             //     sLog->outError("Module error: There is one OnUpdateCritPercentage script has been skipped cause of dupicated script of special type.");
         }
         // Called  OnGetMissPercentageFromDefense
-        virtual void OnGetMissPercentageFromDefense(bool& ScriptUsed, Player const* /*player*/, float& /*result*/)
+        virtual void OnGetMissPercentageFromDefense(bool& SkipCoreCode, Player const* /*player*/, float& /*result*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -686,9 +686,9 @@ class FormulaScript : public ScriptObject
             //     sLog->outError("Module error: There is one OnGetMissPercentageFromDefense script has been skipped cause of dupicated script of special type.");
         }
         // Called  OnUpdateParryPercentage
-        virtual void OnUpdateParryPercentage(bool& ScriptUsed, Player const* /*player*/, float& /*m_realParry*/, float& /*value*/)
+        virtual void OnUpdateParryPercentage(bool& SkipCoreCode, Player const* /*player*/, float& /*m_realParry*/, float& /*value*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -696,9 +696,9 @@ class FormulaScript : public ScriptObject
             //     sLog->outError("Module error: There is one OnUpdateParryPercentage script has been skipped cause of dupicated script of special type.");
         }
         // Called  OnUpdateDodgePercentage
-        virtual void OnUpdateDodgePercentage(bool& ScriptUsed, Player * /*player*/, float& /*m_realDodge*/, float&  /*value*/)
+        virtual void OnUpdateDodgePercentage(bool& SkipCoreCode, Player * /*player*/, float& /*m_realDodge*/, float&  /*value*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -706,9 +706,9 @@ class FormulaScript : public ScriptObject
             //     sLog->outError("Module error: There is one OnUpdateDodgePercentage script has been skipped cause of dupicated script of special type.");
         }
         // Called  OnMeleeMissOutcomeAgainstAboutMiss
-        virtual void OnMeleeMissOutcomeAgainstAboutMiss(bool& ScriptUsed, Unit const* /*me*/, Unit const* /*victim*/, WeaponAttackType /*attType*/, float& /*miss_chance*/)
+        virtual void OnMeleeMissOutcomeAgainstAboutMiss(bool& SkipCoreCode, Unit const* /*me*/, Unit const* /*victim*/, WeaponAttackType /*attType*/, float& /*miss_chance*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -716,9 +716,9 @@ class FormulaScript : public ScriptObject
             //     sLog->outError("Module error: There is one OnMeleeMissOutcomeAgainstAboutMiss script has been skipped cause of dupicated script of special type.");
         }
         // Called OnSpellBlockCalculation
-        virtual void OnSpellBlockCalculation(bool& ScriptUsed, Unit* /*me*/, Unit const* /*victim*/, WeaponAttackType /*attackType*/, float& /*blockChance*/)
+        virtual void OnSpellBlockCalculation(bool& SkipCoreCode, Unit* /*me*/, Unit const* /*victim*/, WeaponAttackType /*attackType*/, float& /*blockChance*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -726,9 +726,9 @@ class FormulaScript : public ScriptObject
             //     sLog->outError("Module error: There is one OnSpellBlockCalculation script has been skipped cause of dupicated script of special type.");
         }
         // Called OnGetUnitCriticalChanceAboutLevel
-        virtual void OnGetUnitCriticalChanceAboutLevel(bool& ScriptUsed, Unit const* /*me*/, Unit const * /*victim*/, float& /*crit*/)
+        virtual void OnGetUnitCriticalChanceAboutLevel(bool& SkipCoreCode, Unit const* /*me*/, Unit const * /*victim*/, float& /*crit*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -736,9 +736,9 @@ class FormulaScript : public ScriptObject
             //     sLog->outError("Module error: There is one OnGetUnitCriticalChanceAboutLevel script has been skipped cause of dupicated script of special type.");
         }
         // Called OnGetWeaponSkillValue
-        virtual void OnGetWeaponSkillValue(bool& ScriptUsed, WeaponAttackType /*attType*/, Unit const* /*me*/, Unit const * /*target*/, uint32& /*value*/)
+        virtual void OnGetWeaponSkillValue(bool& SkipCoreCode, WeaponAttackType /*attType*/, Unit const* /*me*/, Unit const * /*target*/, uint32& /*value*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -746,9 +746,9 @@ class FormulaScript : public ScriptObject
             //     sLog->outError("Module error: There is one OnColorCodeCalculation script has been skipped cause of dupicated script of special type.");
         }
         // Called OnSpellDamageClassRanged
-        virtual void OnSpellDamageClassRanged(bool& ScriptUsed, Unit const* /*me*/, Unit const* /*caster*/, float& /*crit_chance*/)
+        virtual void OnSpellDamageClassRanged(bool& SkipCoreCode, Unit const* /*me*/, Unit const* /*caster*/, float& /*crit_chance*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -757,9 +757,9 @@ class FormulaScript : public ScriptObject
         }
         
         // Called OnBuildPlayerLevelInfo
-        virtual void OnBuildPlayerLevelInfo(bool& ScriptUsed, uint8 /*race*/, uint8 /*_class*/, uint8 /*level*/, PlayerLevelInfo* /*info*/)
+        virtual void OnBuildPlayerLevelInfo(bool& SkipCoreCode, uint8 /*race*/, uint8 /*_class*/, uint8 /*level*/, PlayerLevelInfo* /*info*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -769,9 +769,9 @@ class FormulaScript : public ScriptObject
 
         
         // Called UpdatePotionCooldown
-        virtual void UpdatePotionCooldown(bool& ScriptUsed, Player* /*me*/)
+        virtual void UpdatePotionCooldown(bool& SkipCoreCode, Player* /*me*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -779,9 +779,9 @@ class FormulaScript : public ScriptObject
             //     sLog->outError("Module error: There is one UpdatePotionCooldown script has been skipped cause of dupicated script of special type.");
         }
         // Called OnInitTaxiNodesForLevel
-        virtual void OnInitTaxiNodesForLevel(bool& ScriptUsed, uint32 /*race*/, uint32 /*chrClass*/, uint8 /*level*/ , PlayerTaxi* /*me*/)
+        virtual void OnInitTaxiNodesForLevel(bool& SkipCoreCode, uint32 /*race*/, uint32 /*chrClass*/, uint8 /*level*/ , PlayerTaxi* /*me*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -789,9 +789,9 @@ class FormulaScript : public ScriptObject
             //     sLog->outError("Module error: There is one OnInitTaxiNodesForLevel script has been skipped cause of dupicated script of special type.");
         }
         // Called OnCalculateMinMaxDamage
-        virtual void OnCalculateMinMaxDamage(bool& ScriptUsed, Player* /*me*/, WeaponAttackType /*attType*/, bool /*normalized*/, bool /*addTotalPct*/, float& /*minDamage*/, float& /*maxDamage*/)
+        virtual void OnCalculateMinMaxDamage(bool& SkipCoreCode, Player* /*me*/, WeaponAttackType /*attType*/, bool /*normalized*/, bool /*addTotalPct*/, float& /*minDamage*/, float& /*maxDamage*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -800,9 +800,9 @@ class FormulaScript : public ScriptObject
         }
         
         // Called OnGetCreatureType
-        virtual void OnGetCreatureType(bool& ScriptUsed, Unit const* /*me*/, uint32& /*result*/)
+        virtual void OnGetCreatureType(bool& SkipCoreCode, Unit const* /*me*/, uint32& /*result*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
@@ -1453,37 +1453,37 @@ class PlayerScript : public ScriptObject
 
         virtual void OnFirstLogin(Player* /*player*/) { }
 
-        //  Called on _ApplyItemBonuses of class player, ScriptUsed is a way to optimize the efficiency.
-        virtual void OnApplyingNonSSDItemStatsBonus(bool& ScriptUsed, Player* /*player*/, ItemTemplate const* /*proto*/, uint8 /*slot*/, uint8 /*i*/, uint32 /*statType*/, int32& /*value*/, uint32& /*statsCount*/)
+        //  Called on _ApplyItemBonuses of class player, SkipCoreCode is a way to optimize the efficiency.
+        virtual void OnApplyingNonSSDItemStatsBonus(bool& SkipCoreCode, Player* /*player*/, ItemTemplate const* /*proto*/, uint8 /*slot*/, uint8 /*i*/, uint32 /*statType*/, int32& /*value*/, uint32& /*statsCount*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
-            else
-                sLog->outError("Module error: There is one script has been skipped cause of dupicated script of special type.");
+            // else
+           //     sLog->outError("Module error: There is one script has been skipped cause of dupicated script of special type.");
         }
 
-        //  Called on _ApplyItemBonuses of class player, ScriptUsed is a way to optimize the efficiency.
-        virtual void OnApplyingItemBeforeArmorAndResistance(bool &ScriptUsed, Player* /*player*/, ItemTemplate const* /*proto*/, uint8 /*slot*/, uint32& /*armor*/, int32& /*holy_res*/, int32& /*fire_res*/, int32& /*nature_res*/ , int32& /*frost_res*/ , int32& /*shadow_res*/ , int32& /*arcane_res*/)
+        //  Called on _ApplyItemBonuses of class player, SkipCoreCode is a way to optimize the efficiency.
+        virtual void OnApplyingItemBeforeArmorAndResistance(bool &SkipCoreCode, Player* /*player*/, ItemTemplate const* /*proto*/, uint8 /*slot*/, uint32& /*armor*/, int32& /*holy_res*/, int32& /*fire_res*/, int32& /*nature_res*/ , int32& /*frost_res*/ , int32& /*shadow_res*/ , int32& /*arcane_res*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
-            else
-                sLog->outError("Module error: There is one script has been skipped cause of dupicated script of special type.");
+            // else
+            //     sLog->outError("Module error: There is one script has been skipped cause of dupicated script of special type.");
         }
 
-        //  Called on _ApplyItemBonuses of class player, ScriptUsed is a way to optimize the efficiency.
-        virtual void OnBeforeApplyingWeaponDamage(bool &ScriptUsed, Player* /*player*/, ItemTemplate const* /*proto*/, uint8 /*slot*/, float &/*damage*/)
+        //  Called on _ApplyItemBonuses of class player, SkipCoreCode is a way to optimize the efficiency.
+        virtual void OnBeforeApplyingWeaponDamage(bool &SkipCoreCode, Player* /*player*/, ItemTemplate const* /*proto*/, uint8 /*slot*/, float &/*damage*/)
         {
-            if (!ScriptUsed)
+            if (!SkipCoreCode)
             {
 
             }
-            else
-                sLog->outError("Module error: There is one script has been skipped cause of dupicated script of special type.");
+            // else
+            //    sLog->outError("Module error: There is one script has been skipped cause of dupicated script of special type.");
         }
 };
 
@@ -1675,57 +1675,57 @@ class ScriptMgr
 
     public: /* FormulaScript */
 
-        void OnHonorCalculation(bool &ScriptUsed, float& honor, uint8 level, float multiplier);
-        void OnGrayLevelCalculation(bool &ScriptUsed, uint8& grayLevel, uint8 playerLevel);
-        void OnColorCodeCalculation(bool &ScriptUsed, XPColorChar& color, uint8 playerLevel, uint8 mobLevel);
-        void OnZeroDifferenceCalculation(bool &ScriptUsed, uint8& diff, uint8 playerLevel);
-        void OnBaseGainCalculation(bool &ScriptUsed, uint32& gain, uint8 playerLevel, uint8 mobLevel, ContentLevels content);
-        void OnGainCalculation(bool &ScriptUsed, uint32& gain, Player* player, Unit* unit);
-        void OnGroupRateCalculation(bool &ScriptUsed, float& rate, uint32 count, bool isRaid);
-        void OnAfterArenaRatingCalculation(bool &ScriptUsed, Battleground *const bg, int32 &winnerMatchmakerChange, int32 &loserMatchmakerChange, int32 &winnerChange, int32 &loserChange);
-        void OnTalentCalculation(bool &ScriptUsed, Player const * player,uint32 & result, uint32 m_questRewardTalentCount);
-        void OnGlyphInit(bool &ScriptUsed,uint32 level, uint32 & result);
-        void OnStatToAttackPowerCalculation(bool &ScriptUsed, Player const * player, float level, float & val2, bool ranged);
-        void OnSpellBaseDamageBonusDone(bool &ScriptUsed, Player const * player, int32 & DoneAdvertisedBenefit);
-        void OnSpellBaseHealingBonusDone(bool &ScriptUsed, Player const * player, int32 & DoneAdvertisedBenefit);
-        void OnUpdateResistance(bool &ScriptUsed, Player const * player, float & value);
-        void OnUpdateArmor(bool &ScriptUsed, Player const * player, float & value);
-        void OnDefaultUnitMeleeSkill(bool &ScriptUsed, Unit const * me, Unit const * target, uint32 & result);
-        void OnManaRestore(bool &ScriptUsed, Player const * player, float& addvalue, int32& m_regenTimer);
-        void OnHealthRestore(bool &ScriptUsed, Player * player, float& addvalue, uint32 m_baseHealthRegen);
-        void OnCanRollForItemInLFG(bool &ScriptUsed, Player const * player, InventoryResult &RETURN_CODE, ItemTemplate const* proto);
-        void OnQuestXPValue(bool &ScriptUsed, Player *player,uint32 &xp, int32 Level, uint32 RewardXPId);
-        void OnSpellAddUnitTarget(bool& ScriptUsed,Unit * target, uint32 & targetLevelRange);
-        void OnGetAuraRankForLevel(bool & ScriptUsed, uint8 level, uint32& appropriateLevel);
-        void OnEffectApplyGlyph(bool& ScriptUsed, uint32 m_glyphIndex, uint8& minLevel);
-        void OnGLANCINGCalculation(bool & ScriptUsed, int32 leveldiff, float reducePercent);
-        void OnCreatureDazePlayer(bool& ScriptUsed, CalcDamageInfo* damageInfo, Unit* attacker, Unit* victim);
-        void OnArmorLevelPenaltyCalculation(bool& ScriptUsed, Unit const* attacker, Unit const* victim, SpellInfo const * spellInfo, uint8 attackerLevel, float& armor, float& tmpvalue);
-        void OnResistChanceCalculation(bool& ScriptUsed, Unit const* victim, float& resistanceConstant);
-        void OnCrushingCalculation(bool& ScriptUsed, Unit const* attacker, Unit const* victim, int32 victimDefenseSkill, int32  victimMaxSkillValueForLevel, int32  attackerMaxSkillValueForLevel,int32 roll, int32& tmp, int32& sum, MeleeHitOutcome& RETURN_CODE);
-        void OnCalculateLevelPanalty(bool& ScriptUsed, SpellInfo const* spellProto, Unit const* me, float& result);
-        void OnMeleeSpellSkillCheck(bool& ScriptUsed, Unit const* me, WeaponAttackType attType, Unit* victim, SpellInfo const* spell, int32& skillDiff);
-        void OnDefaultUnitDefenseSkill(bool& ScriptUsed, Unit const* me, Unit const* target, uint32& result);
-        void OnAggroRangeLevelCalculation(bool& ScriptUsed, Creature const* me, Unit const* target, float& aggroRadius);
-        void OnStealthDetectLevelCalculate(bool& ScriptUsed, WorldObject const* me, WorldObject const* obj, int32& detectionValue);
-        void OnUpdateCombatSkillLevelCalculate(bool& ScriptUsed, Player const* me, WeaponAttackType attType, bool defence, uint8 plevel, uint8 greylevel, uint8 moblevel, uint8& lvldif, uint32& skilldif);
-        void OnAgainstGLANCINGCalculation(bool& ScriptUsed, Unit const* attacker, Unit const* victim, WeaponAttackType attType, int32 victimDefenseSkill, int32  attackerWeaponSkill, int32  attackerMaxSkillValueForLevel, int32 roll, int32& tmp, int32& sum, MeleeHitOutcome& RETURN_CODE);
-        void OnMagicSpellHitLevelCalculate(bool& ScriptUsed, Unit const* me, Unit * victim, SpellInfo const* spell, int32& lchance, int32& leveldif);
-        void OnUpdateBlockPercentage(bool& ScriptUsed, Player const* player, float& value);
-        void OnUpdateCritPercentage(bool& ScriptUsed, Player* player, WeaponAttackType attType,  float& value);
-        void OnGetMissPercentageFromDefense(bool& ScriptUsed, Player const* player, float& result);
-        void OnUpdateParryPercentage(bool& ScriptUsed, Player const* player, float& m_realParry, float& value);
-        void OnUpdateDodgePercentage(bool& ScriptUsed, Player * player, float& m_realDodge, float&  value);
-        void OnMeleeMissOutcomeAgainstAboutMiss(bool& ScriptUsed, Unit const* me, Unit const* victim, WeaponAttackType attType, float& miss_chance);
-        void OnSpellBlockCalculation(bool& ScriptUsed, Unit* me, Unit const* victim, WeaponAttackType attackType, float& blockChance);
-        void OnGetUnitCriticalChanceAboutLevel(bool& ScriptUsed, Unit const* me, Unit const * victim, float& crit);
-        void OnGetWeaponSkillValue(bool& ScriptUsed, WeaponAttackType attType, Unit const* me, Unit const * target, uint32& value);
-        void OnSpellDamageClassRanged(bool& ScriptUsed, Unit const* me, Unit const* caster, float& crit_chance);
-        void OnBuildPlayerLevelInfo(bool& ScriptUsed, uint8 race, uint8 _class, uint8 level, PlayerLevelInfo* info);
-        void UpdatePotionCooldown(bool& ScriptUsed, Player* me);
-        void OnInitTaxiNodesForLevel(bool& ScriptUsed, uint32 race, uint32 chrClass, uint8 level, PlayerTaxi* me);
-        void OnCalculateMinMaxDamage(bool& ScriptUsed, Player* me, WeaponAttackType attType, bool normalized, bool addTotalPct, float& minDamage, float& maxDamage);
-        void OnGetCreatureType(bool& ScriptUsed, Unit const* me, uint32& result);
+        void OnHonorCalculation(bool &SkipCoreCode, float& honor, uint8 level, float multiplier);
+        void OnGrayLevelCalculation(bool &SkipCoreCode, uint8& grayLevel, uint8 playerLevel);
+        void OnColorCodeCalculation(bool &SkipCoreCode, XPColorChar& color, uint8 playerLevel, uint8 mobLevel);
+        void OnZeroDifferenceCalculation(bool &SkipCoreCode, uint8& diff, uint8 playerLevel);
+        void OnBaseGainCalculation(bool &SkipCoreCode, uint32& gain, uint8 playerLevel, uint8 mobLevel, ContentLevels content);
+        void OnGainCalculation(bool &SkipCoreCode, uint32& gain, Player* player, Unit* unit);
+        void OnGroupRateCalculation(bool &SkipCoreCode, float& rate, uint32 count, bool isRaid);
+        void OnAfterArenaRatingCalculation(bool &SkipCoreCode, Battleground *const bg, int32 &winnerMatchmakerChange, int32 &loserMatchmakerChange, int32 &winnerChange, int32 &loserChange);
+        void OnTalentCalculation(bool &SkipCoreCode, Player const * player,uint32 & result, uint32 m_questRewardTalentCount);
+        void OnGlyphInit(bool &SkipCoreCode,uint32 level, uint32 & result);
+        void OnStatToAttackPowerCalculation(bool &SkipCoreCode, Player const * player, float level, float & val2, bool ranged);
+        void OnSpellBaseDamageBonusDone(bool &SkipCoreCode, Player const * player, int32 & DoneAdvertisedBenefit);
+        void OnSpellBaseHealingBonusDone(bool &SkipCoreCode, Player const * player, int32 & DoneAdvertisedBenefit);
+        void OnUpdateResistance(bool &SkipCoreCode, Player const * player, float & value);
+        void OnUpdateArmor(bool &SkipCoreCode, Player const * player, float & value);
+        void OnDefaultUnitMeleeSkill(bool &SkipCoreCode, Unit const * me, Unit const * target, uint32 & result);
+        void OnManaRestore(bool &SkipCoreCode, Player const * player, float& addvalue, int32& m_regenTimer);
+        void OnHealthRestore(bool &SkipCoreCode, Player * player, float& addvalue, uint32 m_baseHealthRegen);
+        void OnCanRollForItemInLFG(bool &SkipCoreCode, Player const * player, InventoryResult &RETURN_CODE, ItemTemplate const* proto);
+        void OnQuestXPValue(bool &SkipCoreCode, Player *player,uint32 &xp, int32 Level, uint32 RewardXPId);
+        void OnSpellAddUnitTarget(bool& SkipCoreCode,Unit * target, uint32 & targetLevelRange);
+        void OnGetAuraRankForLevel(bool & SkipCoreCode, uint8 level, uint32& appropriateLevel);
+        void OnEffectApplyGlyph(bool& SkipCoreCode, uint32 m_glyphIndex, uint8& minLevel);
+        void OnGLANCINGCalculation(bool & SkipCoreCode, int32 leveldiff, float reducePercent);
+        void OnCreatureDazePlayer(bool& SkipCoreCode, CalcDamageInfo* damageInfo, Unit* attacker, Unit* victim);
+        void OnArmorLevelPenaltyCalculation(bool& SkipCoreCode, Unit const* attacker, Unit const* victim, SpellInfo const * spellInfo, uint8 attackerLevel, float& armor, float& tmpvalue);
+        void OnResistChanceCalculation(bool& SkipCoreCode, Unit const* victim, float& resistanceConstant);
+        void OnCrushingCalculation(bool& SkipCoreCode, Unit const* attacker, Unit const* victim, int32 victimDefenseSkill, int32  victimMaxSkillValueForLevel, int32  attackerMaxSkillValueForLevel,int32 roll, int32& tmp, int32& sum, MeleeHitOutcome& RETURN_CODE);
+        void OnCalculateLevelPanalty(bool& SkipCoreCode, SpellInfo const* spellProto, Unit const* me, float& result);
+        void OnMeleeSpellSkillCheck(bool& SkipCoreCode, Unit const* me, WeaponAttackType attType, Unit* victim, SpellInfo const* spell, int32& skillDiff);
+        void OnDefaultUnitDefenseSkill(bool& SkipCoreCode, Unit const* me, Unit const* target, uint32& result);
+        void OnAggroRangeLevelCalculation(bool& SkipCoreCode, Creature const* me, Unit const* target, float& aggroRadius);
+        void OnStealthDetectLevelCalculate(bool& SkipCoreCode, WorldObject const* me, WorldObject const* obj, int32& detectionValue);
+        void OnUpdateCombatSkillLevelCalculate(bool& SkipCoreCode, Player const* me, WeaponAttackType attType, bool defence, uint8 plevel, uint8 greylevel, uint8 moblevel, uint8& lvldif, uint32& skilldif);
+        void OnAgainstGLANCINGCalculation(bool& SkipCoreCode, Unit const* attacker, Unit const* victim, WeaponAttackType attType, int32 victimDefenseSkill, int32  attackerWeaponSkill, int32  attackerMaxSkillValueForLevel, int32 roll, int32& tmp, int32& sum, MeleeHitOutcome& RETURN_CODE);
+        void OnMagicSpellHitLevelCalculate(bool& SkipCoreCode, Unit const* me, Unit * victim, SpellInfo const* spell, int32& lchance, int32& leveldif);
+        void OnUpdateBlockPercentage(bool& SkipCoreCode, Player const* player, float& value);
+        void OnUpdateCritPercentage(bool& SkipCoreCode, Player* player, WeaponAttackType attType,  float& value);
+        void OnGetMissPercentageFromDefense(bool& SkipCoreCode, Player const* player, float& result);
+        void OnUpdateParryPercentage(bool& SkipCoreCode, Player const* player, float& m_realParry, float& value);
+        void OnUpdateDodgePercentage(bool& SkipCoreCode, Player * player, float& m_realDodge, float&  value);
+        void OnMeleeMissOutcomeAgainstAboutMiss(bool& SkipCoreCode, Unit const* me, Unit const* victim, WeaponAttackType attType, float& miss_chance);
+        void OnSpellBlockCalculation(bool& SkipCoreCode, Unit* me, Unit const* victim, WeaponAttackType attackType, float& blockChance);
+        void OnGetUnitCriticalChanceAboutLevel(bool& SkipCoreCode, Unit const* me, Unit const * victim, float& crit);
+        void OnGetWeaponSkillValue(bool& SkipCoreCode, WeaponAttackType attType, Unit const* me, Unit const * target, uint32& value);
+        void OnSpellDamageClassRanged(bool& SkipCoreCode, Unit const* me, Unit const* caster, float& crit_chance);
+        void OnBuildPlayerLevelInfo(bool& SkipCoreCode, uint8 race, uint8 _class, uint8 level, PlayerLevelInfo* info);
+        void UpdatePotionCooldown(bool& SkipCoreCode, Player* me);
+        void OnInitTaxiNodesForLevel(bool& SkipCoreCode, uint32 race, uint32 chrClass, uint8 level, PlayerTaxi* me);
+        void OnCalculateMinMaxDamage(bool& SkipCoreCode, Player* me, WeaponAttackType attType, bool normalized, bool addTotalPct, float& minDamage, float& maxDamage);
+        void OnGetCreatureType(bool& SkipCoreCode, Unit const* me, uint32& result);
         void OnHandleModStateImmunityMask(AuraEffect const* me, Unit* target, std::list <AuraType>& aura_immunity_list, uint32& mechanic_immunity_list, int32 miscVal, bool apply);
     public: /* MapScript */
 
@@ -1898,9 +1898,9 @@ class ScriptMgr
         void OnAfterUpdateAttackPowerAndDamage(Player* player, float& level, float& base_attPower, float& attPowerMod, float& attPowerMultiplier, bool ranged);
         void OnBeforeInitTalentForLevel(Player* player, uint8& level, uint32& talentPointsForLevel);
         void OnFirstLogin(Player* player);
-        void OnApplyingNonSSDItemStatsBonus(bool &ScriptUsed, Player* player, ItemTemplate const* proto, uint8 slot, uint8 i, uint32 statType, int32 & value, uint32 & statsCount);
-        void OnApplyingItemBeforeArmorAndResistance(bool &ScriptUsed, Player* player, ItemTemplate const* proto, uint8 slot, uint32 &armor, int32 &holy_res, int32 &fire_res, int32 &nature_res, int32 &frost_res, int32 &shadow_res, int32 &arcane_res);
-        void OnBeforeApplyingWeaponDamage(bool &ScriptUsed, Player* player, ItemTemplate const* proto, uint8 slot, float &damage);
+        void OnApplyingNonSSDItemStatsBonus(bool &SkipCoreCode, Player* player, ItemTemplate const* proto, uint8 slot, uint8 i, uint32 statType, int32 & value, uint32 & statsCount);
+        void OnApplyingItemBeforeArmorAndResistance(bool &SkipCoreCode, Player* player, ItemTemplate const* proto, uint8 slot, uint32 &armor, int32 &holy_res, int32 &fire_res, int32 &nature_res, int32 &frost_res, int32 &shadow_res, int32 &arcane_res);
+        void OnBeforeApplyingWeaponDamage(bool &SkipCoreCode, Player* player, ItemTemplate const* proto, uint8 slot, float &damage);
 
     public: /* GuildScript */
 

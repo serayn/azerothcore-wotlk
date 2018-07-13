@@ -209,8 +209,8 @@ void Player::UpdateResistances(uint32 school)
     {
         // cant use GetTotalAuraModValue because of total pct multiplier :P
         float value = 0.0f;
-        bool ScriptUsed = false;
-        sScriptMgr->OnUpdateResistance(ScriptUsed,  this,  value);
+        bool SkipCoreCode = false;
+        sScriptMgr->OnUpdateResistance(SkipCoreCode,  this,  value);
         UnitMods unitMod = UnitMods(UNIT_MOD_RESISTANCE_START + school);
         
         value  = GetModifierValue(unitMod, BASE_VALUE);
@@ -238,9 +238,9 @@ void Player::UpdateArmor()
 
     float value = GetModifierValue(unitMod, BASE_VALUE);   // base armor (from items)
     value *= GetModifierValue(unitMod, BASE_PCT);           // armor percent from items
-    bool ScriptUsed = false;
-    sScriptMgr->OnUpdateResistance(ScriptUsed, this, value);
-    if(!ScriptUsed)value += GetStat(STAT_AGILITY) * 2.0f;             // armor bonus from stats
+    bool SkipCoreCode = false;
+    sScriptMgr->OnUpdateResistance(SkipCoreCode, this, value);
+    if(!SkipCoreCode)value += GetStat(STAT_AGILITY) * 2.0f;             // armor bonus from stats
     value += GetModifierValue(unitMod, TOTAL_VALUE);
     
     //add dynamic flat mods
@@ -325,15 +325,15 @@ void Player::UpdateAttackPowerAndDamage(bool ranged)
     uint16 index_mod = UNIT_FIELD_ATTACK_POWER_MODS;
     uint16 index_mult = UNIT_FIELD_ATTACK_POWER_MULTIPLIER;
 
-    bool ScriptUsed = false;
-    sScriptMgr->OnStatToAttackPowerCalculation(ScriptUsed, this, level, val2, ranged);
+    bool SkipCoreCode = false;
+    sScriptMgr->OnStatToAttackPowerCalculation(SkipCoreCode, this, level, val2, ranged);
     if (ranged)
     {
         index = UNIT_FIELD_RANGED_ATTACK_POWER;
         index_mod = UNIT_FIELD_RANGED_ATTACK_POWER_MODS;
         index_mult = UNIT_FIELD_RANGED_ATTACK_POWER_MULTIPLIER;
     }
-    if(!ScriptUsed)
+    if(!SkipCoreCode)
     {
         if (ranged)
         {
@@ -534,9 +534,9 @@ void Player::UpdateShieldBlockValue()
 
 void Player::CalculateMinMaxDamage(WeaponAttackType attType, bool normalized, bool addTotalPct, float& minDamage, float& maxDamage)
 {
-    bool ScriptUsed = false;
-    sScriptMgr->OnCalculateMinMaxDamage(ScriptUsed, this, attType, normalized, addTotalPct, minDamage, maxDamage);
-    if(!ScriptUsed)
+    bool SkipCoreCode = false;
+    sScriptMgr->OnCalculateMinMaxDamage(SkipCoreCode, this, attType, normalized, addTotalPct, minDamage, maxDamage);
+    if(!SkipCoreCode)
     {
         UnitMods unitMod;
 
@@ -615,9 +615,9 @@ void Player::UpdateBlockPercentage()
 { 
     // No block
     float value = 0.0f;
-    bool ScriptUsed = false;
-    sScriptMgr->OnUpdateBlockPercentage(ScriptUsed, this, value);
-    if(!ScriptUsed)
+    bool SkipCoreCode = false;
+    sScriptMgr->OnUpdateBlockPercentage(SkipCoreCode, this, value);
+    if(!SkipCoreCode)
     {
         if (CanBlock())
         {
@@ -639,9 +639,9 @@ void Player::UpdateCritPercentage(WeaponAttackType attType)
 { 
 
     float value = 0.0f;
-    bool ScriptUsed = false;
-    sScriptMgr->OnUpdateCritPercentage(ScriptUsed, this, attType, value);
-    if(!ScriptUsed)
+    bool SkipCoreCode = false;
+    sScriptMgr->OnUpdateCritPercentage(SkipCoreCode, this, attType, value);
+    if(!SkipCoreCode)
     {
         BaseModGroup modGroup;
         uint16 index;
@@ -706,9 +706,9 @@ const float m_diminishing_k[MAX_CLASSES] =
 float Player::GetMissPercentageFromDefence() const
 {
     float  result;
-    bool ScriptUsed = false;
-    sScriptMgr->OnGetMissPercentageFromDefense(ScriptUsed, this, result);
-    if(!ScriptUsed)
+    bool SkipCoreCode = false;
+    sScriptMgr->OnGetMissPercentageFromDefense(SkipCoreCode, this, result);
+    if(!SkipCoreCode)
     {
         float diminishing = 0.0f, nondiminishing = 0.0f;
         float const miss_cap[MAX_CLASSES] =
@@ -742,9 +742,9 @@ void Player::UpdateParryPercentage()
 {
 
     float value = 0.0f;
-    bool ScriptUsed = false;
-    sScriptMgr->OnUpdateParryPercentage(ScriptUsed, this, m_realParry, value);
-    if(!ScriptUsed)
+    bool SkipCoreCode = false;
+    sScriptMgr->OnUpdateParryPercentage(SkipCoreCode, this, m_realParry, value);
+    if(!SkipCoreCode)
     {
         const float parry_cap[MAX_CLASSES] =
         {
@@ -787,9 +787,9 @@ void Player::UpdateParryPercentage()
 void Player::UpdateDodgePercentage()
 {
     float value;
-    bool ScriptUsed = false;
-    sScriptMgr->OnUpdateDodgePercentage(ScriptUsed , this ,m_realDodge, value);
-    if(!ScriptUsed)
+    bool SkipCoreCode = false;
+    sScriptMgr->OnUpdateDodgePercentage(SkipCoreCode , this ,m_realDodge, value);
+    if(!SkipCoreCode)
     {
         const float dodge_cap[MAX_CLASSES] =
         {

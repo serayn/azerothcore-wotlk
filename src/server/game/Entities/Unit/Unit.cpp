@@ -1401,9 +1401,9 @@ void Unit::CalculateMeleeDamage(Unit* victim, uint32 damage, CalcDamageInfo* dam
             damageInfo->TargetState = VICTIMSTATE_HIT;
             damageInfo->procEx |= PROC_EX_NORMAL_HIT;
             int32 leveldif = int32(victim->getLevel()) - int32(getLevel());
-            float reducePercent = 0; bool ScriptUsed = false;
-            sScriptMgr->OnGLANCINGCalculation(ScriptUsed, leveldif, reducePercent);
-            if(!ScriptUsed)
+            float reducePercent = 0; bool SkipCoreCode = false;
+            sScriptMgr->OnGLANCINGCalculation(SkipCoreCode, leveldif, reducePercent);
+            if(!SkipCoreCode)
             {
                 if (leveldif > 3)
                 leveldif = 3;
@@ -1509,9 +1509,9 @@ void Unit::DealMeleeDamage(CalcDamageInfo* damageInfo, bool durabilityLoss)
     CleanDamage cleanDamage(damageInfo->cleanDamage, damageInfo->absorb, damageInfo->attackType, damageInfo->hitOutCome);
     Unit::DealDamage(this, victim, damageInfo->damage, &cleanDamage, DIRECT_DAMAGE, SpellSchoolMask(damageInfo->damageSchoolMask), NULL, durabilityLoss);
 
-    bool ScriptUsed = false;
-    sScriptMgr->OnCreatureDazePlayer(ScriptUsed, damageInfo, this, victim);
-    if (!ScriptUsed)
+    bool SkipCoreCode = false;
+    sScriptMgr->OnCreatureDazePlayer(SkipCoreCode, damageInfo, this, victim);
+    if (!SkipCoreCode)
     {// If this is a creature and it attacks from behind it has a probability to daze it's victim
         if (damageInfo->damage && ((damageInfo->hitOutCome == MELEE_HIT_CRIT || damageInfo->hitOutCome == MELEE_HIT_CRUSHING || damageInfo->hitOutCome == MELEE_HIT_NORMAL || damageInfo->hitOutCome == MELEE_HIT_GLANCING) &&
             GetTypeId() != TYPEID_PLAYER && !ToCreature()->IsControlledByPlayer() && !victim->HasInArc(M_PI, this)
@@ -1623,9 +1623,9 @@ uint32 Unit::CalcArmorReducedDamage(Unit const* attacker, Unit const* victim, co
 {
     uint32 newdamage = 0;
     float armor = float(victim->GetArmor());
-    bool ScriptUsed = false; float tmpvalue = 0.0f;
-    sScriptMgr->OnArmorLevelPenaltyCalculation(ScriptUsed, attacker, victim, spellInfo, attackerLevel, armor, tmpvalue);
-    if (!ScriptUsed)
+    bool SkipCoreCode = false; float tmpvalue = 0.0f;
+    sScriptMgr->OnArmorLevelPenaltyCalculation(SkipCoreCode, attacker, victim, spellInfo, attackerLevel, armor, tmpvalue);
+    if (!SkipCoreCode)
     {// Ignore enemy armor by SPELL_AURA_MOD_TARGET_RESISTANCE aura
     if (attacker)
     {
@@ -1732,11 +1732,11 @@ float Unit::GetEffectiveResistChance(Unit const* owner, SpellSchoolMask schoolMa
     if (owner)
         victimResistance += std::max((float(victim->getLevel()) - float(owner->getLevel()))*5.0f, 0.0f);
 
-    bool ScriptUsed = false; float resistanceConstant = 0.0f;
+    bool SkipCoreCode = false; float resistanceConstant = 0.0f;
     static uint32 const BOSS_LEVEL = 83;
     static float const BOSS_RESISTANCE_CONSTANT = 510.0f;
-    sScriptMgr->OnResistChanceCalculation(ScriptUsed, victim, resistanceConstant);
-    if (!ScriptUsed)
+    sScriptMgr->OnResistChanceCalculation(SkipCoreCode, victim, resistanceConstant);
+    if (!SkipCoreCode)
     {
         uint32 level = victim->getLevel();
         if (level == BOSS_LEVEL)
@@ -2204,9 +2204,9 @@ MeleeHitOutcome Unit::RollMeleeOutcomeAgainst(const Unit* victim, WeaponAttackTy
 
     // Miss chance based on melee
     //float miss_chance = MeleeMissChanceCalc(victim, attType);
-    bool ScriptUsed = false; float miss_chance = 0.0f;
-    sScriptMgr->OnMeleeMissOutcomeAgainstAboutMiss(ScriptUsed, this,  victim, attType, miss_chance);
-    if(!ScriptUsed) miss_chance = MeleeSpellMissChance(victim, attType, int32(GetWeaponSkillValue(attType, victim)) - int32(victim->GetMaxSkillValueForLevel(this)), 0);
+    bool SkipCoreCode = false; float miss_chance = 0.0f;
+    sScriptMgr->OnMeleeMissOutcomeAgainstAboutMiss(SkipCoreCode, this,  victim, attType, miss_chance);
+    if(!SkipCoreCode) miss_chance = MeleeSpellMissChance(victim, attType, int32(GetWeaponSkillValue(attType, victim)) - int32(victim->GetMaxSkillValueForLevel(this)), 0);
 
     // Critical hit chance
     float crit_chance = GetUnitCriticalChance(attType, victim);
@@ -2355,9 +2355,9 @@ MeleeHitOutcome Unit::RollMeleeOutcomeAgainst(const Unit* victim, WeaponAttackTy
             }
         }
     }
-    bool ScriptUsed = false; MeleeHitOutcome RETURN_CODE = MELEE_HIT_EVADE;
-    sScriptMgr->OnAgainstGLANCINGCalculation(ScriptUsed, this, victim, attType, victimDefenseSkill, attackerWeaponSkill, attackerMaxSkillValueForLevel,roll, tmp , sum, RETURN_CODE);
-    if(!ScriptUsed)
+    bool SkipCoreCode = false; MeleeHitOutcome RETURN_CODE = MELEE_HIT_EVADE;
+    sScriptMgr->OnAgainstGLANCINGCalculation(SkipCoreCode, this, victim, attType, victimDefenseSkill, attackerWeaponSkill, attackerMaxSkillValueForLevel,roll, tmp , sum, RETURN_CODE);
+    if(!SkipCoreCode)
     {
         // Max 40% chance to score a glancing blow against mobs that are higher level (can do only players and pets and not with ranged weapon)
         if (attType != RANGED_ATTACK &&
@@ -2383,9 +2383,9 @@ MeleeHitOutcome Unit::RollMeleeOutcomeAgainst(const Unit* victim, WeaponAttackTy
     }
     if (!RETURN_CODE == MELEE_HIT_EVADE) return RETURN_CODE;
 
-    ScriptUsed = false; RETURN_CODE = MELEE_HIT_EVADE;
-    sScriptMgr->OnCrushingCalculation(ScriptUsed, this, victim, victimDefenseSkill, victimMaxSkillValueForLevel, attackerMaxSkillValueForLevel,roll, tmp , sum, RETURN_CODE);
-    if (!ScriptUsed)
+    SkipCoreCode = false; RETURN_CODE = MELEE_HIT_EVADE;
+    sScriptMgr->OnCrushingCalculation(SkipCoreCode, this, victim, victimDefenseSkill, victimMaxSkillValueForLevel, attackerMaxSkillValueForLevel,roll, tmp , sum, RETURN_CODE);
+    if (!SkipCoreCode)
     {// mobs can score crushing blows if they're 4 or more levels above victim
         if (getLevelForTarget(victim) >= victim->getLevelForTarget(this) + 4 &&
             // can be from by creature (if can) or from controlled player that considered as creature
@@ -2478,10 +2478,10 @@ uint32 Unit::CalculateDamage(WeaponAttackType attType, bool normalized, bool add
 
 float Unit::CalculateLevelPenalty(SpellInfo const* spellProto) const
 {
-    bool ScriptUsed = false;
+    bool SkipCoreCode = false;
     float result = 0.0f;
-    sScriptMgr->OnCalculateLevelPanalty(ScriptUsed, spellProto, this, result);
-    if(!ScriptUsed)
+    sScriptMgr->OnCalculateLevelPanalty(SkipCoreCode, spellProto, this, result);
+    if(!SkipCoreCode)
     {
         if (GetTypeId() != TYPEID_PLAYER)
             result = 1.0f;
@@ -2552,9 +2552,9 @@ bool Unit::isSpellBlocked(Unit* victim, SpellInfo const* spellProto, WeaponAttac
             victim->ToCreature()->GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_NO_BLOCK)
                 return false;
 
-        float blockChance = victim->GetUnitBlockChance(); bool ScriptUsed = false;
-        sScriptMgr->OnSpellBlockCalculation(ScriptUsed, this, victim, attackType, blockChance);
-        if(!ScriptUsed)blockChance += (int32(GetWeaponSkillValue(attackType)) - int32(victim->GetMaxSkillValueForLevel())) * 0.04f;
+        float blockChance = victim->GetUnitBlockChance(); bool SkipCoreCode = false;
+        sScriptMgr->OnSpellBlockCalculation(SkipCoreCode, this, victim, attackType, blockChance);
+        if(!SkipCoreCode)blockChance += (int32(GetWeaponSkillValue(attackType)) - int32(victim->GetMaxSkillValueForLevel())) * 0.04f;
 
         // xinef: cant block while casting or while stunned
         if (blockChance < 0.0f || victim->IsNonMeleeSpellCast(false, false, true) || victim->HasUnitState(UNIT_STATE_CONTROLLED))
@@ -2608,9 +2608,9 @@ SpellMissInfo Unit::MeleeSpellHitResult(Unit* victim, SpellInfo const* spell)
     if (spell->DmgClass == SPELL_DAMAGE_CLASS_RANGED)
         attType = RANGED_ATTACK;
     int32 skillDiff = 0;
-    bool ScriptUsed = false;
-    sScriptMgr->OnMeleeSpellSkillCheck( ScriptUsed,  this,  attType,  victim,  spell,  skillDiff);
-    if (!ScriptUsed)
+    bool SkipCoreCode = false;
+    sScriptMgr->OnMeleeSpellSkillCheck( SkipCoreCode,  this,  attType,  victim,  spell,  skillDiff);
+    if (!SkipCoreCode)
     {
         int32 attackerWeaponSkill;
         // skill value for these spells (for example judgements) is 5* level
@@ -2782,9 +2782,9 @@ SpellMissInfo Unit::MagicSpellHitResult(Unit* victim, SpellInfo const* spell)
 
     SpellSchoolMask schoolMask = spell->GetSchoolMask();
     // PvP - PvE spell misschances per leveldif > 2
-    bool ScriptUsed = false; int32 leveldif = 0; int32 lchance = 0;
-    sScriptMgr->OnMagicSpellHitLevelCalculate(ScriptUsed, this, victim, spell, lchance, leveldif);
-    if(!ScriptUsed)
+    bool SkipCoreCode = false; int32 leveldif = 0; int32 lchance = 0;
+    sScriptMgr->OnMagicSpellHitLevelCalculate(SkipCoreCode, this, victim, spell, lchance, leveldif);
+    if(!SkipCoreCode)
     {
         lchance = victim->GetTypeId() == TYPEID_PLAYER ? 7 : 11;
         int32 thisLevel = getLevelForTarget(victim);
@@ -2961,9 +2961,9 @@ SpellMissInfo Unit::SpellHitResult(Unit* victim, SpellInfo const* spell, bool Ca
 
 uint32 Unit::GetDefenseSkillValue(Unit const* target) const
 {
-    bool ScriptUsed = false; uint32 result = 0;
-    sScriptMgr->OnDefaultUnitDefenseSkill(ScriptUsed, this, target, result);
-    if (!ScriptUsed)
+    bool SkipCoreCode = false; uint32 result = 0;
+    sScriptMgr->OnDefaultUnitDefenseSkill(SkipCoreCode, this, target, result);
+    if (!SkipCoreCode)
     {
         if (GetTypeId() == TYPEID_PLAYER)
         {
@@ -3120,9 +3120,9 @@ float Unit::GetUnitCriticalChance(WeaponAttackType attackType, const Unit* victi
         Unit::ApplyResilience(victim, &crit, NULL, false, CR_CRIT_TAKEN_RANGED);
 
     // Apply crit chance from defence skill
-    bool ScriptUsed = false;
-    sScriptMgr->OnGetUnitCriticalChanceAboutLevel(ScriptUsed, this, victim, crit);
-    if(!ScriptUsed)crit += (int32(GetMaxSkillValueForLevel(victim)) - int32(victim->GetDefenseSkillValue(this))) * 0.04f;
+    bool SkipCoreCode = false;
+    sScriptMgr->OnGetUnitCriticalChanceAboutLevel(SkipCoreCode, this, victim, crit);
+    if(!SkipCoreCode)crit += (int32(GetMaxSkillValueForLevel(victim)) - int32(victim->GetDefenseSkillValue(this))) * 0.04f;
 
     // xinef: SPELL_AURA_MOD_ATTACKER_SPELL_AND_WEAPON_CRIT_CHANCE should be calculated at the end
     crit += victim->GetTotalAuraModifier(SPELL_AURA_MOD_ATTACKER_SPELL_AND_WEAPON_CRIT_CHANCE);
@@ -3134,9 +3134,9 @@ float Unit::GetUnitCriticalChance(WeaponAttackType attackType, const Unit* victi
 
 uint32 Unit::GetWeaponSkillValue (WeaponAttackType attType, Unit const* target) const
 {
-    uint32 value = 0; bool ScriptUsed = false;
-    sScriptMgr->OnGetWeaponSkillValue(ScriptUsed, attType, this, target, value);
-    if(!ScriptUsed)
+    uint32 value = 0; bool SkipCoreCode = false;
+    sScriptMgr->OnGetWeaponSkillValue(SkipCoreCode, attType, this, target, value);
+    if(!SkipCoreCode)
     {
         if (Player const* player = ToPlayer())
         {
@@ -10975,8 +10975,8 @@ int32 Unit::SpellBaseDamageBonusDone(SpellSchoolMask schoolMask)
     {
         // Base value
         DoneAdvertisedBenefit += ToPlayer()->GetBaseSpellPowerBonus();
-        bool ScriptUsed = false;
-        sScriptMgr->OnSpellBaseDamageBonusDone(ScriptUsed,  this->ToPlayer(),  DoneAdvertisedBenefit);
+        bool SkipCoreCode = false;
+        sScriptMgr->OnSpellBaseDamageBonusDone(SkipCoreCode,  this->ToPlayer(),  DoneAdvertisedBenefit);
         // Damage bonus from stats
         AuraEffectList const& mDamageDoneOfStatPercent = GetAuraEffectsByType(SPELL_AURA_MOD_SPELL_DAMAGE_OF_STAT_PERCENT);
         for (AuraEffectList::const_iterator i = mDamageDoneOfStatPercent.begin(); i != mDamageDoneOfStatPercent.end(); ++i)
@@ -11256,9 +11256,9 @@ float Unit::SpellTakenCritChance(Unit const* caster, SpellInfo const* spellProto
             // Apply crit chance from defence skill
             if (caster)
             {
-                bool ScriptUsed = false;
-                sScriptMgr->OnSpellDamageClassRanged(ScriptUsed, this, caster, crit_chance);
-                if(!ScriptUsed)crit_chance += (int32(caster->GetMaxSkillValueForLevel(this)) - int32(GetDefenseSkillValue(caster))) * 0.04f;
+                bool SkipCoreCode = false;
+                sScriptMgr->OnSpellDamageClassRanged(SkipCoreCode, this, caster, crit_chance);
+                if(!SkipCoreCode)crit_chance += (int32(caster->GetMaxSkillValueForLevel(this)) - int32(GetDefenseSkillValue(caster))) * 0.04f;
             }
 
             break;
@@ -11709,8 +11709,8 @@ int32 Unit::SpellBaseHealingBonusDone(SpellSchoolMask schoolMask)
     {
         // Base value
         AdvertisedBenefit += ToPlayer()->GetBaseSpellPowerBonus();
-        bool ScriptUsed = false;
-        sScriptMgr->OnSpellBaseHealingBonusDone(ScriptUsed, this->ToPlayer(), AdvertisedBenefit);
+        bool SkipCoreCode = false;
+        sScriptMgr->OnSpellBaseHealingBonusDone(SkipCoreCode, this->ToPlayer(), AdvertisedBenefit);
         // Healing bonus from stats
         AuraEffectList const& mHealingDoneOfStatPercent = GetAuraEffectsByType(SPELL_AURA_MOD_SPELL_HEALING_OF_STAT_PERCENT);
         for (AuraEffectList::const_iterator i = mHealingDoneOfStatPercent.begin(); i != mHealingDoneOfStatPercent.end(); ++i)
@@ -13946,9 +13946,9 @@ float Unit::GetSpellMinRangeForTarget(Unit const* target, SpellInfo const* spell
 
 uint32 Unit::GetCreatureType() const
 {
-    bool ScriptUsed = false; uint32 result = 0;
-    sScriptMgr->OnGetCreatureType(ScriptUsed, this, result);
-    if(!ScriptUsed)
+    bool SkipCoreCode = false; uint32 result = 0;
+    sScriptMgr->OnGetCreatureType(SkipCoreCode, this, result);
+    if(!SkipCoreCode)
     {
         if (GetTypeId() == TYPEID_PLAYER)
         {
@@ -19545,8 +19545,8 @@ void Unit::Whisper(uint32 textId, Player* target, bool isBossWhisper /*= false*/
 }
 uint32 Unit::GetUnitMeleeSkill(Unit const* target ) const
 {
-    bool ScriptUsed = false; uint32 result = 0;
-    sScriptMgr->OnDefaultUnitMeleeSkill(ScriptUsed, this, target, result);
-    if(!ScriptUsed) result = (target ? getLevelForTarget(target) : getLevel()) * 5;
+    bool SkipCoreCode = false; uint32 result = 0;
+    sScriptMgr->OnDefaultUnitMeleeSkill(SkipCoreCode, this, target, result);
+    if(!SkipCoreCode) result = (target ? getLevelForTarget(target) : getLevel()) * 5;
     return result;
 }

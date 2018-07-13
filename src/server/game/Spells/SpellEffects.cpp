@@ -4423,9 +4423,9 @@ void Spell::EffectApplyGlyph(SpellEffIndex effIndex)
 
     // glyph sockets level requirement
     uint8 minLevel = 0;
-    bool ScriptUsed = false;
-    sScriptMgr->OnEffectApplyGlyph(ScriptUsed, m_glyphIndex, minLevel);
-    if(!ScriptUsed)
+    bool SkipCoreCode = false;
+    sScriptMgr->OnEffectApplyGlyph(SkipCoreCode, m_glyphIndex, minLevel);
+    if(!SkipCoreCode)
     {
         switch (m_glyphIndex)
         {

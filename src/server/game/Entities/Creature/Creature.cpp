@@ -2716,9 +2716,9 @@ float Creature::GetAggroRange(Unit const* target) const
         return 0.0f;
     // The base aggro radius for mob of same level
     float aggroRadius = 20.0f;
-    bool ScriptUsed = false;
-    sScriptMgr->OnAggroRangeLevelCalculation(ScriptUsed, this, target, aggroRadius);
-    if(!ScriptUsed)
+    bool SkipCoreCode = false;
+    sScriptMgr->OnAggroRangeLevelCalculation(SkipCoreCode, this, target, aggroRadius);
+    if(!SkipCoreCode)
     {
         uint32 targetLevel = target->getLevelForTarget(this);
         uint32 myLevel = getLevelForTarget(target);
