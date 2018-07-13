@@ -7,7 +7,7 @@
 /** \file
     \ingroup Trinityd
 */
-
+#pragma execution_character_set("utf-8")
 #include <ace/Sig_Handler.h>
 
 #include "Common.h"

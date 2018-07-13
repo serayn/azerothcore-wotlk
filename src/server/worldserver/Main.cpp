@@ -7,7 +7,7 @@
 /// \addtogroup Trinityd Trinity Daemon
 /// @{
 /// \file
-
+#pragma execution_character_set("utf-8")
 #include <openssl/opensslv.h>
 #include <openssl/crypto.h>
 #include <ace/Version.h>

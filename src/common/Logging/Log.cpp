@@ -3,7 +3,7 @@
  * Copyright (C) 2008-2016 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
  */
-
+#pragma execution_character_set("UTF-8")
 #include "Common.h"
 #include "Log.h"
 #include "WorldPacket.h"

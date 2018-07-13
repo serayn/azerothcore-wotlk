@@ -84,12 +84,10 @@ enum Races
     (1<<(RACE_GNOME-1))   |(1<<(RACE_TROLL-1))        |(1<<(RACE_BLOODELF-1))| \
     (1<<(RACE_DRAENEI-1)))
 
-#define RACEMASK_ALLIANCE \                                                         
-    ((1<<(RACE_HUMAN -1))   |(1<<(RACE_ORC-1))          |(1<<(RACE_DWARF-1))   | \
-    (1<<(RACE_NIGHTELF-1))|(1<<(RACE_UNDEAD_PLAYER-1))|(1<<(RACE_TAUREN-1))  | \
-    (1<<(RACE_GNOME-1))   |(1<<(RACE_TROLL-1))        |(1<<(RACE_BLOODELF-1))   
-        // Serayn's point source: Most races are the same race
-#define RACEMASK_HORDE RACEMASK_ALL_PLAYABLE & ~RACEMASK_ALLIANCE
+// Serayn's point source: Most races are the same side
+#define RACEMASK_HORDE (1<<(RACE_DRAENEI-1))                                                   
+        
+#define RACEMASK_ALLIANCE RACEMASK_ALL_PLAYABLE & ~RACEMASK_HORDE
 
 // Class value is index in ChrClasses.dbc
 enum Classes
