@@ -1420,6 +1420,7 @@ class Player : public Unit, public GridObject<Player>
         bool SatisfyQuestWeek(Quest const* qInfo, bool msg) const;
         bool SatisfyQuestMonth(Quest const* qInfo, bool msg) const;
         bool SatisfyQuestSeasonal(Quest const* qInfo, bool msg) const;
+        bool SatisfyQuestUnlimited(Quest const* qInfo, bool msg) const;
         bool GiveQuestSourceItem(Quest const* quest);
         bool TakeQuestSourceItem(uint32 questId, bool msg);
         bool GetQuestRewardStatus(uint32 quest_id) const;
@@ -1434,10 +1435,12 @@ class Player : public Unit, public GridObject<Player>
         void SetWeeklyQuestStatus(uint32 quest_id);
         void SetMonthlyQuestStatus(uint32 quest_id);
         void SetSeasonalQuestStatus(uint32 quest_id);
+        void SetUnlimitedRepeatQuestStatus(uint32 quest_id);
         void ResetDailyQuestStatus();
         void ResetWeeklyQuestStatus();
         void ResetMonthlyQuestStatus();
         void ResetSeasonalQuestStatus(uint16 event_id);
+        void ResetUnlimitedRepeatQuestStatus();
 
         uint16 FindQuestSlot(uint32 quest_id) const;
         uint32 GetQuestSlotQuestId(uint16 slot) const { return GetUInt32Value(PLAYER_QUEST_LOG_1_1 + slot * MAX_QUEST_OFFSET + QUEST_ID_OFFSET); }
@@ -2644,6 +2647,7 @@ class Player : public Unit, public GridObject<Player>
         QuestSet m_timedquests;
         QuestSet m_weeklyquests;
         QuestSet m_monthlyquests;
+        QuestSet m_unlimitedquests;
         SeasonalEventQuestMap m_seasonalquests;
 
         uint64 m_divider;
@@ -2695,6 +2699,7 @@ class Player : public Unit, public GridObject<Player>
         void _SaveWeeklyQuestStatus(SQLTransaction& trans);
         void _SaveMonthlyQuestStatus(SQLTransaction& trans);
         void _SaveSeasonalQuestStatus(SQLTransaction& trans);
+        void _SaveUnlimitedQuestStatus(SQLTransaction& trans);
         void _SaveSkills(SQLTransaction& trans);
         void _SaveSpells(SQLTransaction& trans);
         void _SaveEquipmentSets(SQLTransaction& trans);
@@ -2809,6 +2814,7 @@ class Player : public Unit, public GridObject<Player>
         bool   m_WeeklyQuestChanged;
         bool   m_MonthlyQuestChanged;
         bool   m_SeasonalQuestChanged;
+        bool   m_UnlimitedQuestChanged;
         time_t m_lastDailyQuestTime;
 
         uint32 m_drunkTimer;

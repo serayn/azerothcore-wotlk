@@ -761,6 +761,8 @@ Player::Player(WorldSession* session): Unit(true), m_mover(this)
     m_DailyQuestChanged = false;
     m_lastDailyQuestTime = 0;
 
+    m_UnlimitedQuestChanged = false;
+
     for (uint8 i=0; i<MAX_TIMERS; i++)
         m_MirrorTimer[i] = DISABLED_MIRROR_TIMER;
 
@@ -1842,6 +1844,7 @@ void Player::Update(uint32 p_time)
                 _SaveWeeklyQuestStatus(trans);
                 _SaveSeasonalQuestStatus(trans);
                 _SaveMonthlyQuestStatus(trans);
+                _SaveUnlimitedQuestStatus(trans);
             }
 
             CharacterDatabase.CommitTransaction(trans);
@@ -7202,7 +7205,7 @@ void Player::RewardReputation(Quest const* quest)
         if (!rep)
             continue;
 
-        if (quest->IsDaily())
+        if (quest->IsDaily()||quest->IsUnlimitedRepeat())
             rep = CalculateReputationGain(REPUTATION_SOURCE_DAILY_QUEST, GetQuestLevel(quest), rep, quest->RewardFactionId[i], noQuestBonus);
         else if (quest->IsWeekly())
             rep = CalculateReputationGain(REPUTATION_SOURCE_WEEKLY_QUEST, GetQuestLevel(quest), rep, quest->RewardFactionId[i], noQuestBonus);
@@ -15404,7 +15407,7 @@ bool Player::CanSeeStartQuest(Quest const* quest)
         SatisfyQuestSkill(quest, false) && SatisfyQuestExclusiveGroup(quest, false) && SatisfyQuestReputation(quest, false) &&
         SatisfyQuestPreviousQuest(quest, false) && SatisfyQuestNextChain(quest, false) &&
         SatisfyQuestPrevChain(quest, false) && SatisfyQuestDay(quest, false) && SatisfyQuestWeek(quest, false) &&
-        SatisfyQuestMonth(quest, false) && SatisfyQuestSeasonal(quest, false))
+        SatisfyQuestMonth(quest, false) && SatisfyQuestSeasonal(quest, false) && SatisfyQuestUnlimited(quest,false))
     {
         return getLevel() + sWorld->getIntConfig(CONFIG_QUEST_HIGH_LEVEL_HIDE_DIFF) >= quest->GetMinLevel();
     }
@@ -15422,7 +15425,7 @@ bool Player::CanTakeQuest(Quest const* quest, bool msg)
         && SatisfyQuestNextChain(quest, msg) && SatisfyQuestPrevChain(quest, msg)
         && SatisfyQuestDay(quest, msg) && SatisfyQuestWeek(quest, msg)
         && SatisfyQuestMonth(quest, msg) && SatisfyQuestSeasonal(quest, msg)
-        && SatisfyQuestConditions(quest, msg);
+        && SatisfyQuestConditions(quest, msg) && SatisfyQuestUnlimited(quest, msg);
 }
 
 bool Player::CanAddQuest(Quest const* quest, bool msg)
@@ -15952,7 +15955,8 @@ void Player::RewardQuest(Quest const* quest, uint32 reward, Object* questGiver, 
         SetMonthlyQuestStatus(quest_id);
     else if (quest->IsSeasonal())
         SetSeasonalQuestStatus(quest_id);
-
+    else if(quest->IsUnlimitedRepeat())
+        SetUnlimitedRepeatQuestStatus(quest_id);
     RemoveActiveQuest(quest_id, false);
     m_RewardedQuests.insert(quest_id);
     m_RewardedQuestsSave[quest_id] = true;
@@ -16309,7 +16313,7 @@ bool Player::SatisfyQuestExclusiveGroup(Quest const* qInfo, bool msg) const
 
         // not allow have daily quest if daily quest from exclusive group already recently completed
         Quest const* Nquest = sObjectMgr->GetQuestTemplate(exclude_Id);
-        if (!SatisfyQuestDay(Nquest, false) || !SatisfyQuestWeek(Nquest, false) || !SatisfyQuestSeasonal(Nquest, false))
+        if (!SatisfyQuestDay(Nquest, false) || !SatisfyQuestWeek(Nquest, false) || !SatisfyQuestSeasonal(Nquest, false) || !SatisfyQuestUnlimited(Nquest,false))
         {
             if (msg)
                 SendCanTakeQuestResponse(INVALIDREASON_DONT_HAVE_REQ);
@@ -16441,6 +16445,16 @@ bool Player::SatisfyQuestMonth(Quest const* qInfo, bool /*msg*/) const
     // if not found in cooldown list
     return m_monthlyquests.find(qInfo->GetQuestId()) == m_monthlyquests.end();
 }
+
+bool Player::SatisfyQuestUnlimited(Quest const* qInfo, bool /*msg*/) const
+{
+    if (!qInfo->IsUnlimitedRepeat() || m_unlimitedquests.empty())
+        return true;
+
+    // if not found in cooldown list
+    return m_unlimitedquests.find(qInfo->GetQuestId()) == m_unlimitedquests.end();
+}
+
 
 bool Player::GiveQuestSourceItem(Quest const* quest)
 { 
@@ -16767,7 +16781,7 @@ QuestGiverStatus Player::GetQuestDialogStatus(Object* questgiver)
                         result2 = DIALOG_STATUS_REWARD_REP;
                     else if (getLevel() <= (GetQuestLevel(quest) + sWorld->getIntConfig(CONFIG_QUEST_LOW_LEVEL_HIDE_DIFF)))
                     {
-                        if (quest->IsDaily())
+                        if (quest->IsDaily()|quest->IsUnlimitedRepeat())
                             result2 = DIALOG_STATUS_AVAILABLE_REP;
                         else
                             result2 = DIALOG_STATUS_AVAILABLE;
@@ -19232,6 +19246,7 @@ void Player::_LoadDailyQuestStatus(PreparedQueryResult result)
     }
 
     m_DailyQuestChanged = false;
+    m_UnlimitedQuestChanged = false;
 }
 
 void Player::_LoadWeeklyQuestStatus(PreparedQueryResult result)
@@ -19642,6 +19657,7 @@ void Player::SaveToDB(bool create, bool logout)
     _SaveWeeklyQuestStatus(trans);
     _SaveSeasonalQuestStatus(trans);
     _SaveMonthlyQuestStatus(trans);
+    _SaveUnlimitedQuestStatus(trans);
     _SaveTalents(trans);
     _SaveSpells(trans);
     _SaveSpellCooldowns(trans, logout);
@@ -20184,6 +20200,31 @@ void Player::_SaveMonthlyQuestStatus(SQLTransaction& trans)
 
     m_MonthlyQuestChanged = false;
 }
+
+void Player::_SaveUnlimitedQuestStatus(SQLTransaction& trans)
+{
+    if (!m_UnlimitedQuestChanged || m_unlimitedquests.empty())
+        return;
+
+    // we don't need transactions here.
+    /*
+    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_QUEST_STATUS_WEEKLY_CHAR);
+    stmt->setUInt32(0, GetGUIDLow());
+    trans->Append(stmt);
+
+    for (QuestSet::const_iterator iter = m_unlimitedquests.begin(); iter != m_unlimitedquests.end(); ++iter)
+    {
+        uint32 quest_id = *iter;
+
+        stmt = CharacterDatabase.GetPreparedStatement(CHAR_INS_CHARACTER_WEEKLYQUESTSTATUS);
+        stmt->setUInt32(0, GetGUIDLow());
+        stmt->setUInt32(1, quest_id);
+        trans->Append(stmt);
+    }
+    */
+    m_UnlimitedQuestChanged = false;
+}
+
 
 void Player::_SaveSkills(SQLTransaction& trans)
 { 
@@ -23492,7 +23533,11 @@ void Player::SetDailyQuestStatus(uint32 quest_id)
         }
     }
 }
-
+void Player::SetUnlimitedRepeatQuestStatus(uint32 quest_id)
+{
+    m_unlimitedquests.insert(quest_id);
+    m_UnlimitedQuestChanged = true;
+}
 void Player::SetWeeklyQuestStatus(uint32 quest_id)
 { 
     m_weeklyquests.insert(quest_id);
@@ -23555,6 +23600,15 @@ void Player::ResetMonthlyQuestStatus()
     m_monthlyquests.clear();
     // DB data deleted in caller
     m_MonthlyQuestChanged = false;
+}
+void Player::ResetUnlimitedRepeatQuestStatus()
+{
+    if (m_unlimitedquests.empty())
+        return;
+
+    m_unlimitedquests.clear();
+    // DB data deleted in caller
+    m_UnlimitedQuestChanged = false;
 }
 
 Battleground* Player::GetBattleground(bool create) const

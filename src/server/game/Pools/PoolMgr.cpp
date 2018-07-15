@@ -857,9 +857,9 @@ void PoolMgr::LoadFromDB()
                 }
 
                 if (poolTypeMap[pool_id] == QUEST_NONE)
-                    poolTypeMap[pool_id] = quest->IsDaily() ? QUEST_DAILY : QUEST_WEEKLY;
+                    poolTypeMap[pool_id] = (quest->IsDaily()||quest->IsUnlimitedRepeat()) ? QUEST_DAILY : QUEST_WEEKLY;
 
-                int32 currType = quest->IsDaily() ? QUEST_DAILY : QUEST_WEEKLY;
+                int32 currType = (quest->IsDaily() || quest->IsUnlimitedRepeat()) ? QUEST_DAILY : QUEST_WEEKLY;
 
                 if (poolTypeMap[pool_id] != currType)
                 {
@@ -964,7 +964,9 @@ void PoolMgr::SaveQuestsToDB(bool daily, bool weekly, bool other)
                 continue;
             if (!weekly && quest->IsWeekly())
                 continue;
-            if (!other && !quest->IsDaily() && !quest->IsWeekly())
+            if (!daily&& quest->IsUnlimitedRepeat())
+                continue;
+            if (!other && !quest->IsDaily() && !quest->IsWeekly() && !quest->IsUnlimitedRepeat())
                 continue;
         }
         PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_QUEST_POOL_SAVE);
@@ -1008,7 +1010,7 @@ void PoolMgr::ChangeWeeklyQuests()
     {
         if (Quest const* quest = sObjectMgr->GetQuestTemplate(itr->GetFirstEqualChancedObjectId()))
         {
-            if (quest->IsDaily())
+            if (quest->IsDaily()||quest->IsUnlimitedRepeat())
                 continue;
 
             UpdatePool<Quest>(itr->GetPoolId(), 1);

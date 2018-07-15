@@ -107,6 +107,7 @@ World::World()
     m_NextDailyQuestReset = 0;
     m_NextWeeklyQuestReset = 0;
     m_NextMonthlyQuestReset = 0;
+    m_NextUnlimitedQuestReset = 0;
     m_NextRandomBGReset = 0;
     m_NextGuildReset = 0;
 
@@ -2037,12 +2038,15 @@ void World::Update(uint32 diff)
     if (m_gameTime > m_NextMonthlyQuestReset)
         ResetMonthlyQuests();
 
+    if (m_gameTime > m_NextUnlimitedQuestReset)
+        ResetUnlimitedQuests();
+
     if (m_gameTime > m_NextRandomBGReset)
         ResetRandomBG();
 
     if (m_gameTime > m_NextGuildReset)
         ResetGuildCap();
-
+        
     // pussywizard:
     // acquire mutex now, this is kind of waiting for listing thread to finish it's work (since it can't process next packet)
     // so we don't have to do it in every packet that modifies auctions
@@ -2951,6 +2955,34 @@ void World::ResetDailyQuests()
     m_NextDailyQuestReset = GetNextTimeWithDayAndHour(-1, 6);
     sWorld->setWorldState(WS_DAILY_QUEST_RESET_TIME, uint64(m_NextDailyQuestReset));
 
+    // change available dailies
+    sPoolMgr->ChangeDailyQuests();
+}
+
+void World::ResetUnlimitedQuests()
+{
+    /*PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_QUEST_STATUS_DAILY);
+    CharacterDatabase.Execute(stmt);*/
+
+    for (SessionMap::const_iterator itr = m_sessions.begin(); itr != m_sessions.end(); ++itr)
+        if (itr->second->GetPlayer())
+            itr->second->GetPlayer()->ResetUnlimitedRepeatQuestStatus();
+
+    ////
+    time_t curr = time(NULL);
+    tm localTm;
+    ACE_OS::localtime_r(&curr, &localTm);
+    localTm.tm_hour = 0;
+    localTm.tm_min = 10;
+    localTm.tm_sec = 0;
+    m_NextUnlimitedQuestReset = mktime(&localTm);
+    ////
+
+
+    /*m_NextUnlimitedQuestReset = GetNextTimeWithDayAndHour(-1, 1);
+    
+    sWorld->setWorldState(WS_DAILY_QUEST_RESET_TIME, uint64(m_NextDailyQuestReset));
+    */
     // change available dailies
     sPoolMgr->ChangeDailyQuests();
 }

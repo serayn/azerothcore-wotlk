@@ -655,7 +655,7 @@ class npc_wg_quest_giver : public CreatureScript
                                 result2 = DIALOG_STATUS_REWARD_REP;
                             else if (player->getLevel() <= (player->GetQuestLevel(quest) + sWorld->getIntConfig(CONFIG_QUEST_LOW_LEVEL_HIDE_DIFF)))
                             {
-                                if (quest->IsDaily())
+                                if (quest->IsDaily()||quest->IsUnlimitedRepeat())
                                     result2 = DIALOG_STATUS_AVAILABLE_REP;
                                 else
                                     result2 = DIALOG_STATUS_AVAILABLE;

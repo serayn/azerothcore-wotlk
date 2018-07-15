@@ -121,7 +121,7 @@ class PoolMgr
 
         void ChangeDailyQuests();
         void ChangeWeeklyQuests();
-
+        
         PooledQuestRelation mQuestCreatureRelation;
         PooledQuestRelation mQuestGORelation;
 
