@@ -12305,27 +12305,31 @@ InventoryResult Player::CanUseItem(Item* pItem, bool not_loading) const
         ItemTemplate const* pProto = pItem->GetTemplate();
         if (pProto)
         {
-            if (pItem->IsBindedNotWith(this))
-                return EQUIP_ERR_DONT_OWN_THAT_ITEM;
-
-            InventoryResult res = CanUseItem(pProto);
-            if (res != EQUIP_ERR_OK)
-                return res;
-
-            if (pItem->GetSkill() != 0)
+            bool SkipCoreCode = false; InventoryResult RETURN_CODE = EQUIP_ERR_OK;
+            sScriptMgr->OnCanUseItem(SkipCoreCode,this, pItem, pProto, not_loading, RETURN_CODE);
+            if (!SkipCoreCode)
             {
-                bool allowEquip = false;
-                uint32 itemSkill = pItem->GetSkill();
-                // Armor that is binded to account can "morph" from plate to mail, etc. if skill is not learned yet.
-                if (pProto->Quality == ITEM_QUALITY_HEIRLOOM && pProto->Class == ITEM_CLASS_ARMOR && !HasSkill(itemSkill))
+                if (pItem->IsBindedNotWith(this))
+                    if(RETURN_CODE== EQUIP_ERR_OK) RETURN_CODE = EQUIP_ERR_DONT_OWN_THAT_ITEM;
+
+                InventoryResult res = CanUseItem(pProto);
+                if (res != EQUIP_ERR_OK)
+                    if (RETURN_CODE == EQUIP_ERR_OK)RETURN_CODE = res;
+
+                if (pItem->GetSkill() != 0)
                 {
-                    // TODO: when you right-click already equipped item it throws EQUIP_ERR_NO_REQUIRED_PROFICIENCY.
-
-                    // In fact it's a visual bug, everything works properly... I need sniffs of operations with
-                    // binded to account items from off server.
-
-                    switch (getClass())
+                    bool allowEquip = false;
+                    uint32 itemSkill = pItem->GetSkill();
+                    // Armor that is binded to account can "morph" from plate to mail, etc. if skill is not learned yet.
+                    if (pProto->Quality == ITEM_QUALITY_HEIRLOOM && pProto->Class == ITEM_CLASS_ARMOR && !HasSkill(itemSkill))
                     {
+                        // TODO: when you right-click already equipped item it throws EQUIP_ERR_NO_REQUIRED_PROFICIENCY.
+
+                        // In fact it's a visual bug, everything works properly... I need sniffs of operations with
+                        // binded to account items from off server.
+
+                        switch (getClass())
+                        {
                         case CLASS_HUNTER:
                         case CLASS_SHAMAN:
                             allowEquip = (itemSkill == SKILL_MAIL);
@@ -12334,16 +12338,18 @@ InventoryResult Player::CanUseItem(Item* pItem, bool not_loading) const
                         case CLASS_WARRIOR:
                             allowEquip = (itemSkill == SKILL_PLATE_MAIL);
                             break;
+                        }
                     }
+                    if (!allowEquip && GetSkillValue(itemSkill) == 0)
+                        if (RETURN_CODE == EQUIP_ERR_OK)RETURN_CODE = EQUIP_ERR_NO_REQUIRED_PROFICIENCY;
                 }
-                if (!allowEquip && GetSkillValue(itemSkill) == 0)
-                    return EQUIP_ERR_NO_REQUIRED_PROFICIENCY;
+
+                if (pProto->RequiredReputationFaction && uint32(GetReputationRank(pProto->RequiredReputationFaction)) < pProto->RequiredReputationRank)
+                    if (RETURN_CODE == EQUIP_ERR_OK)RETURN_CODE = EQUIP_ERR_CANT_EQUIP_REPUTATION;
+
+                
             }
-
-            if (pProto->RequiredReputationFaction && uint32(GetReputationRank(pProto->RequiredReputationFaction)) < pProto->RequiredReputationRank)
-                return EQUIP_ERR_CANT_EQUIP_REPUTATION;
-
-            return EQUIP_ERR_OK;
+            return RETURN_CODE;
         }
     }
     return EQUIP_ERR_ITEM_NOT_FOUND;
