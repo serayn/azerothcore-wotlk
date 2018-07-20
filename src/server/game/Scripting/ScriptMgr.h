@@ -268,6 +268,7 @@ class WorldScript : public ScriptObject
         virtual void OnShutdown() { }
 };
 
+
 class FormulaScript : public ScriptObject
 {
     protected:
@@ -575,15 +576,15 @@ class FormulaScript : public ScriptObject
             //  else
             //     sLog->outError("Module error: There is one OnCrushingCalculation script has been skipped cause of dupicated script of special type.");
         }
-        // Called  OnCalculateLevelPanalty
-        virtual void OnCalculateLevelPanalty(bool& SkipCoreCode, SpellInfo const* /*spellProto*/, Unit const* /*me*/, float& /*result*/)
+        // Called  OnCalculateLevelPenalty
+        virtual void OnCalculateLevelPenalty(bool& SkipCoreCode, SpellInfo const* /*spellProto*/, Unit const* /*me*/, float& /*result*/)
         {
             if (!SkipCoreCode)
             {
 
             }
             //  else
-            //     sLog->outError("Module error: There is one OnCalculateLevelPanalty script has been skipped cause of dupicated script of special type.");
+            //     sLog->outError("Module error: There is one OnCalculateLevelPenalty script has been skipped cause of dupicated script of special type.");
         }
         // Called  OnMeleeSpellSkillCheck
         virtual void OnMeleeSpellSkillCheck(bool& SkipCoreCode, Unit const* /*me*/, WeaponAttackType /*attType*/, Unit* /*victim*/, SpellInfo const* /*spell*/, int32& /*skillDiff*/)
@@ -811,6 +812,46 @@ class FormulaScript : public ScriptObject
         }
         // Called OnHandleModStateImmunityMask
         virtual void OnHandleModStateImmunityMask(AuraEffect const* /*me*/, Unit* /*target*/, std::list <AuraType>& /*aura_immunity_list*/, uint32& /*mechanic_immunity_list*/, int32 /*miscVal*/, bool /*apply*/) {}
+
+        
+         // Called OnCanUseItem
+        virtual void OnCanUseItem(bool& SkipCoreCode, Player const* /*me*/,Item* /*pitem*/, ItemTemplate const* /*pProto*/, bool /*not_loading*/, InventoryResult& /*RETURN_CODE*/)
+        {
+            if (!SkipCoreCode)
+            {
+
+            }
+            //  else
+            //     sLog->outError("Module error: There is one OnCanUseItem script has been skipped cause of dupicated script of special type.");
+        }
+
+        // Called  OnCanStartAttack
+        virtual void OnCanStartAttack(bool& SkipCoreCode, Creature const* /*me*/, Unit const* /*who*/, float /*m_CombatDistance*/, bool& /*RETURN_CODE*/)
+        {
+            if (!SkipCoreCode)
+            {
+
+            }
+            //  else
+            //     sLog->outError("Module error: There is one OnCanStartAttack script has been skipped cause of dupicated script of special type.");
+        }
+        // Called  OnCallAssistance
+        virtual void OnCallAssistance(bool& SkipCoreCode, Creature* /*me*/, bool /*m_AlreadyCallAssistance*/, EventProcessor& /*m_Events*/)
+        {
+            if (!SkipCoreCode)
+            {
+
+            }
+            //  else
+            //     sLog->outError("Module error: There is one OnCallAssistance script has been skipped cause of dupicated script of special type.");
+        }
+
+        virtual void GlobalOnBeforeRollMeleeOutcomeAgainst(const Unit* /*attacker*/, const Unit* /*victim*/, WeaponAttackType /*attType*/, int32 &/*attackerMaxSkillValueForLevel*/, int32 &/*victimMaxSkillValueForLevel*/, int32 &/*attackerWeaponSkill*/, int32 &/*victimDefenseSkill*/, int32& /*crit_chance*/, int32& /*miss_chance*/, int32& /*dodge_chance*/, int32& /*parry_chance*/, int32& /*block_chance*/) {   };
+        virtual uint32 GlobalDealDamage(Unit* /*AttackerUnit*/, Unit* /*pVictim*/, uint32 damage, DamageEffectType /*damagetype*/) { return damage; }
+        // Called when Melee Damage is being Dealt for all unit
+        virtual void GlobalModifyMeleeDamage(Unit* /*target*/, Unit* /*attacker*/, uint32& /*damage*/) { }
+        // Called when a unit deals damage to another unit for all unit
+        virtual void GlobalOnDamage(Unit* /*attacker*/, Unit* /*victim*/, uint32& /*damage*/) { }
 };
 
 template<class TMap> class MapScript : public UpdatableScript<TMap>
@@ -973,7 +1014,7 @@ public:
     //Called when Damage is Dealt
     virtual uint32 DealDamage(Unit* /*AttackerUnit*/, Unit* /*pVictim*/, uint32 damage, DamageEffectType /*damagetype*/) { return damage; }
 
-    virtual void OnBeforeRollMeleeOutcomeAgainst(const Unit* /*attacker*/, const Unit* /*victim*/, WeaponAttackType /*attType*/, int32 &/*attackerMaxSkillValueForLevel*/, int32 &/*victimMaxSkillValueForLevel*/, int32 &/*attackerWeaponSkill*/, int32 &/*victimDefenseSkill*/, int32& /*crit_chance*/, int32& /*miss_chance*/ , int32& /*dodge_chance*/ , int32& /*parry_chance*/ , int32& /*block_chance*/ ) {   };
+    virtual void OnBeforeRollMeleeOutcomeAgainst(const Unit* /*attacker*/, const Unit* /*victim*/, WeaponAttackType /*attType*/, int32 &/*attackerMaxSkillValueForLevel*/, int32 &/*victimMaxSkillValueForLevel*/, int32 &/*attackerWeaponSkill*/, int32 &/*victimDefenseSkill*/, int32& /*crit_chance*/, int32& /*miss_chance*/, int32& /*dodge_chance*/, int32& /*parry_chance*/, int32& /*block_chance*/) {   };
 };
 
 class MovementHandlerScript : public ScriptObject
@@ -1703,7 +1744,7 @@ class ScriptMgr
         void OnArmorLevelPenaltyCalculation(bool& SkipCoreCode, Unit const* attacker, Unit const* victim, SpellInfo const * spellInfo, uint8 attackerLevel, float& armor, float& tmpvalue);
         void OnResistChanceCalculation(bool& SkipCoreCode, Unit const* victim, float& resistanceConstant);
         void OnCrushingCalculation(bool& SkipCoreCode, Unit const* attacker, Unit const* victim, int32 victimDefenseSkill, int32  victimMaxSkillValueForLevel, int32  attackerMaxSkillValueForLevel,int32 roll, int32& tmp, int32& sum, MeleeHitOutcome& RETURN_CODE);
-        void OnCalculateLevelPanalty(bool& SkipCoreCode, SpellInfo const* spellProto, Unit const* me, float& result);
+        void OnCalculateLevelPenalty(bool& SkipCoreCode, SpellInfo const* spellProto, Unit const* me, float& result);
         void OnMeleeSpellSkillCheck(bool& SkipCoreCode, Unit const* me, WeaponAttackType attType, Unit* victim, SpellInfo const* spell, int32& skillDiff);
         void OnDefaultUnitDefenseSkill(bool& SkipCoreCode, Unit const* me, Unit const* target, uint32& result);
         void OnAggroRangeLevelCalculation(bool& SkipCoreCode, Creature const* me, Unit const* target, float& aggroRadius);
@@ -1727,6 +1768,13 @@ class ScriptMgr
         void OnCalculateMinMaxDamage(bool& SkipCoreCode, Player* me, WeaponAttackType attType, bool normalized, bool addTotalPct, float& minDamage, float& maxDamage);
         void OnGetCreatureType(bool& SkipCoreCode, Unit const* me, uint32& result);
         void OnHandleModStateImmunityMask(AuraEffect const* me, Unit* target, std::list <AuraType>& aura_immunity_list, uint32& mechanic_immunity_list, int32 miscVal, bool apply);
+        void OnCanUseItem(bool& SkipCoreCode,Player const* me, Item* pItem, ItemTemplate const* pProto, bool not_loading, InventoryResult& RETURN_CODE);
+        void OnCanStartAttack(bool& SkipCoreCode, Creature const* me, Unit const* who, float m_CombatDistance, bool& RETURN_CODE);
+        void OnCallAssistance(bool& SkipCoreCode, Creature* me, bool m_AlreadyCallAssistance, EventProcessor& m_Events);
+        uint32 GlobalDealDamage(Unit* AttackerUnit, Unit *pVictim, uint32 damage, DamageEffectType damagetype);
+        void GlobalOnBeforeRollMeleeOutcomeAgainst(const Unit* attacker, const Unit* victim, WeaponAttackType attType, int32 &attackerMaxSkillValueForLevel, int32 &victimMaxSkillValueForLevel, int32 &attackerWeaponSkill, int32 &victimDefenseSkill, int32 &crit_chance, int32 &miss_chance, int32 &dodge_chance, int32 &parry_chance, int32 &block_chance);
+        void GlobalModifyMeleeDamage(Unit* target, Unit* attacker, uint32& damage);
+        void GlobalOnDamage(Unit* attacker, Unit* victim, uint32& damage);
     public: /* MapScript */
 
         void OnCreateMap(Map* map);
@@ -1954,8 +2002,7 @@ class ScriptMgr
         void ModifyHealRecieved(Unit* target, Unit* attacker, uint32& addHealth);
         uint32 DealDamage(Unit* AttackerUnit, Unit *pVictim, uint32 damage, DamageEffectType damagetype);
         void OnBeforeRollMeleeOutcomeAgainst(const Unit* attacker, const Unit* victim, WeaponAttackType attType, int32 &attackerMaxSkillValueForLevel, int32 &victimMaxSkillValueForLevel, int32 &attackerWeaponSkill, int32 &victimDefenseSkill, int32 &crit_chance, int32 &miss_chance, int32 &dodge_chance, int32 &parry_chance, int32 &block_chance);
-
-    
+        
     public: /* MovementHandlerScript */
         
         void OnPlayerMove(Player* player, MovementInfo movementInfo, uint32 opcode);

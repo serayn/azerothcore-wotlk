@@ -1486,48 +1486,55 @@ bool Creature::CanAlwaysSee(WorldObject const* obj) const
 }
 
 bool Creature::CanStartAttack(Unit const* who) const
-{ 
-    if (IsCivilian())
-        return false;
+{
+    bool SkipCoreCode = false; bool RETURN_CODE = true;
+    sScriptMgr->OnCanStartAttack(SkipCoreCode, this, who, m_CombatDistance, RETURN_CODE);
+    if(!SkipCoreCode)
+    {
+        if (RETURN_CODE && IsCivilian())
+            RETURN_CODE = false;
 
-    // This set of checks is should be done only for creatures
-    if ((HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_NPC) && who->GetTypeId() != TYPEID_PLAYER) ||      // flag is valid only for non player characters 
-        (HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC) && who->GetTypeId() == TYPEID_PLAYER))         // immune to PC and target is a player, return false
-        return false;
+        // This set of checks is should be done only for creatures
+        if (RETURN_CODE && (HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_NPC) && who->GetTypeId() != TYPEID_PLAYER) ||      // flag is valid only for non player characters 
+            (HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC) && who->GetTypeId() == TYPEID_PLAYER))         // immune to PC and target is a player, return false
+            RETURN_CODE = false;
 
-    if (Unit* owner = who->GetOwner())
-        if (owner->GetTypeId() == TYPEID_PLAYER && HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC))     // immune to PC and target has player owner
-            return false;
-    
-    // Do not attack non-combat pets
-    if (who->GetTypeId() == TYPEID_UNIT && who->GetCreatureType() == CREATURE_TYPE_NON_COMBAT_PET)
-        return false;
+        if (RETURN_CODE)
+            if(Unit* owner = who->GetOwner())
+                if (owner->GetTypeId() == TYPEID_PLAYER && HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC))     // immune to PC and target has player owner
+                    RETURN_CODE = false;
 
-    if (!CanFly() && (GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE + m_CombatDistance))                    // too much Z difference, skip very costy vmap calculations here
-        return false;
+        // Do not attack non-combat pets
+        if (RETURN_CODE && who->GetTypeId() == TYPEID_UNIT && who->GetCreatureType() == CREATURE_TYPE_NON_COMBAT_PET)
+            RETURN_CODE = false;
 
-    if (!_IsTargetAcceptable(who))
-        return false;
+        if (RETURN_CODE && !CanFly() && (GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE + m_CombatDistance))                    // too much Z difference, skip very costy vmap calculations here
+            RETURN_CODE = false;
 
-    // pussywizard: at this point we are either hostile to who or friendly to who->getAttackerForHelper()
-    // pussywizard: if who is in combat and has an attacker, help him if the distance is right (help because who is hostile or help because attacker is friendly)
-    bool assist = false;
-    if (who->IsInCombat() && IsWithinDist(who, ATTACK_DISTANCE))
-        if (Unit* victim = who->getAttackerForHelper())
-            if (IsWithinDistInMap(victim, sWorld->getFloatConfig(CONFIG_CREATURE_FAMILY_ASSISTANCE_RADIUS)))
-                assist = true;
+        if (RETURN_CODE && !_IsTargetAcceptable(who))
+            RETURN_CODE = false;
 
-    if (!assist)
-        if (IsNeutralToAll() || !IsWithinDistInMap(who, GetAggroRange(who) + m_CombatDistance)) // pussywizard: +m_combatDistance for turrets and similar
-            return false;
+        // pussywizard: at this point we are either hostile to who or friendly to who->getAttackerForHelper()
+        // pussywizard: if who is in combat and has an attacker, help him if the distance is right (help because who is hostile or help because attacker is friendly)
+        bool assist = false;
+        if (RETURN_CODE && who->IsInCombat() && IsWithinDist(who, ATTACK_DISTANCE))
+            if (Unit* victim = who->getAttackerForHelper())
+                if (IsWithinDistInMap(victim, sWorld->getFloatConfig(CONFIG_CREATURE_FAMILY_ASSISTANCE_RADIUS)))
+                    assist = true;
 
-    if (!CanCreatureAttack(who))
-        return false;
+        if (RETURN_CODE && !assist)
+            if (IsNeutralToAll() || !IsWithinDistInMap(who, GetAggroRange(who) + m_CombatDistance)) // pussywizard: +m_combatDistance for turrets and similar
+                RETURN_CODE = false;
 
-    if (HasUnitState(UNIT_STATE_STUNNED))
-        return false;
+        if (RETURN_CODE && !CanCreatureAttack(who))
+            RETURN_CODE = false;
 
-    return IsWithinLOSInMap(who);
+        if(RETURN_CODE && HasUnitState(UNIT_STATE_STUNNED))
+            RETURN_CODE = false;
+
+        if(RETURN_CODE==true)RETURN_CODE = IsWithinLOSInMap(who);
+    }
+    return RETURN_CODE;
 }
 
 void Creature::setDeathState(DeathState s, bool despawn)
@@ -1905,40 +1912,45 @@ void Creature::SendAIReaction(AiReaction reactionType)
 }
 
 void Creature::CallAssistance()
-{ 
-    if (!m_AlreadyCallAssistance && GetVictim() && !IsPet() && !IsCharmed())
+{
+    bool SkipCoreCode = false;
+    sScriptMgr->OnCallAssistance(SkipCoreCode, this, m_AlreadyCallAssistance, m_Events);
+    if (!SkipCoreCode)
     {
-        SetNoCallAssistance(true);
-
-        float radius = sWorld->getFloatConfig(CONFIG_CREATURE_FAMILY_ASSISTANCE_RADIUS);
-
-        if (radius > 0)
+        if (!m_AlreadyCallAssistance && GetVictim() && !IsPet() && !IsCharmed())
         {
-            std::list<Creature*> assistList;
+            SetNoCallAssistance(true);
 
+            float radius = sWorld->getFloatConfig(CONFIG_CREATURE_FAMILY_ASSISTANCE_RADIUS);
+
+            if (radius > 0)
             {
-                CellCoord p(Trinity::ComputeCellCoord(GetPositionX(), GetPositionY()));
-                Cell cell(p);
-                cell.SetNoCreate();
+                std::list<Creature*> assistList;
 
-                Trinity::AnyAssistCreatureInRangeCheck u_check(this, GetVictim(), radius);
-                Trinity::CreatureListSearcher<Trinity::AnyAssistCreatureInRangeCheck> searcher(this, assistList, u_check);
-
-                TypeContainerVisitor<Trinity::CreatureListSearcher<Trinity::AnyAssistCreatureInRangeCheck>, GridTypeMapContainer >  grid_creature_searcher(searcher);
-
-                cell.Visit(p, grid_creature_searcher, *GetMap(), *this, radius);
-            }
-
-            if (!assistList.empty())
-            {
-                AssistDelayEvent* e = new AssistDelayEvent(GetVictim()->GetGUID(), *this);
-                while (!assistList.empty())
                 {
-                    // Pushing guids because in delay can happen some creature gets despawned => invalid pointer
-                    e->AddAssistant((*assistList.begin())->GetGUID());
-                    assistList.pop_front();
+                    CellCoord p(Trinity::ComputeCellCoord(GetPositionX(), GetPositionY()));
+                    Cell cell(p);
+                    cell.SetNoCreate();
+
+                    Trinity::AnyAssistCreatureInRangeCheck u_check(this, GetVictim(), radius);
+                    Trinity::CreatureListSearcher<Trinity::AnyAssistCreatureInRangeCheck> searcher(this, assistList, u_check);
+
+                    TypeContainerVisitor<Trinity::CreatureListSearcher<Trinity::AnyAssistCreatureInRangeCheck>, GridTypeMapContainer >  grid_creature_searcher(searcher);
+
+                    cell.Visit(p, grid_creature_searcher, *GetMap(), *this, radius);
                 }
-                m_Events.AddEvent(e, m_Events.CalculateTime(sWorld->getIntConfig(CONFIG_CREATURE_FAMILY_ASSISTANCE_DELAY)));
+
+                if (!assistList.empty())
+                {
+                    AssistDelayEvent* e = new AssistDelayEvent(GetVictim()->GetGUID(), *this);
+                    while (!assistList.empty())
+                    {
+                        // Pushing guids because in delay can happen some creature gets despawned => invalid pointer
+                        e->AddAssistant((*assistList.begin())->GetGUID());
+                        assistList.pop_front();
+                    }
+                    m_Events.AddEvent(e, m_Events.CalculateTime(sWorld->getIntConfig(CONFIG_CREATURE_FAMILY_ASSISTANCE_DELAY)));
+                }
             }
         }
     }

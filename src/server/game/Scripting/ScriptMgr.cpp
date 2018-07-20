@@ -656,9 +656,9 @@ void ScriptMgr::OnCrushingCalculation(bool& SkipCoreCode, Unit const* attacker, 
 {
     FOREACH_SCRIPT(FormulaScript)->OnCrushingCalculation(SkipCoreCode, attacker, victim, victimDefenseSkill, victimMaxSkillValueForLevel, attackerMaxSkillValueForLevel,roll, tmp, sum, RETURN_CODE);
 }
-void ScriptMgr::OnCalculateLevelPanalty(bool& SkipCoreCode, SpellInfo const* spellProto,Unit const* me,float& result)
+void ScriptMgr::OnCalculateLevelPenalty(bool& SkipCoreCode, SpellInfo const* spellProto,Unit const* me,float& result)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnCalculateLevelPanalty(SkipCoreCode, spellProto,me, result);
+    FOREACH_SCRIPT(FormulaScript)->OnCalculateLevelPenalty(SkipCoreCode, spellProto,me, result);
 }
 void ScriptMgr::OnMeleeSpellSkillCheck(bool& SkipCoreCode, Unit const* me, WeaponAttackType attType, Unit* victim, SpellInfo const* spell, int32& skillDiff)
 {
@@ -756,6 +756,37 @@ void ScriptMgr::OnGetCreatureType(bool& SkipCoreCode, Unit const* me, uint32& re
 void ScriptMgr::OnHandleModStateImmunityMask(AuraEffect const* me, Unit* target, std::list <AuraType>& aura_immunity_list, uint32& mechanic_immunity_list,int32 miscVal, bool apply)
 {
     FOREACH_SCRIPT(FormulaScript)->OnHandleModStateImmunityMask(me, target, aura_immunity_list, mechanic_immunity_list, miscVal, apply);
+}
+
+void ScriptMgr::OnCanUseItem(bool& SkipCoreCode, Player const* me, Item* pItem, ItemTemplate const* pProto, bool not_loading, InventoryResult& RETURN_CODE)
+{
+    FOREACH_SCRIPT(FormulaScript)->OnCanUseItem(SkipCoreCode,me, pItem, pProto, not_loading, RETURN_CODE);
+}
+void ScriptMgr::OnCanStartAttack(bool& SkipCoreCode, Creature const* me, Unit const* who, float m_CombatDistance,bool& RETURN_CODE)
+{
+    FOREACH_SCRIPT(FormulaScript)->OnCanStartAttack(SkipCoreCode, me, who, m_CombatDistance, RETURN_CODE);
+}
+void ScriptMgr::OnCallAssistance(bool& SkipCoreCode, Creature* me, bool m_AlreadyCallAssistance, EventProcessor& m_Events)
+{
+    FOREACH_SCRIPT(FormulaScript)->OnCallAssistance(SkipCoreCode, me, m_AlreadyCallAssistance, m_Events);
+}
+void ScriptMgr::GlobalOnBeforeRollMeleeOutcomeAgainst(const Unit* attacker, const Unit* victim, WeaponAttackType attType, int32 &attackerMaxSkillValueForLevel, int32 &victimMaxSkillValueForLevel, int32 &attackerWeaponSkill, int32 &victimDefenseSkill, int32 &crit_chance, int32 &miss_chance, int32 &dodge_chance, int32 &parry_chance, int32 &block_chance)
+{
+    FOREACH_SCRIPT(FormulaScript)->GlobalOnBeforeRollMeleeOutcomeAgainst(attacker, victim, attType, attackerMaxSkillValueForLevel, victimMaxSkillValueForLevel, attackerWeaponSkill, victimDefenseSkill, crit_chance, miss_chance, dodge_chance, parry_chance, block_chance);
+}
+uint32 ScriptMgr::GlobalDealDamage(Unit* AttackerUnit, Unit *pVictim, uint32 damage, DamageEffectType damagetype)
+{
+    FOR_SCRIPTS_RET(FormulaScript, itr, end, damage)
+        damage = itr->second->GlobalDealDamage(AttackerUnit, pVictim, damage, damagetype);
+    return damage;
+}
+void ScriptMgr::GlobalModifyMeleeDamage(Unit* target, Unit* attacker, uint32& damage)
+{
+    FOREACH_SCRIPT(FormulaScript)->GlobalModifyMeleeDamage(target, attacker, damage);
+}
+void ScriptMgr::GlobalOnDamage(Unit* attacker, Unit* victim, uint32& damage)
+{
+    FOREACH_SCRIPT(FormulaScript)->GlobalOnDamage(attacker, victim, damage);
 }
 #define SCR_MAP_BGN(M, V, I, E, C, T) \
     if (V->GetEntry() && V->GetEntry()->T()) \
