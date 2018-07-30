@@ -1400,6 +1400,6 @@ void AddSC_boss_deathbringer_saurfang()
     new spell_deathbringer_blood_power();
     new spell_deathbringer_blood_nova_targeting();
     new spell_deathbringer_boiling_blood();
-    new achievement_ive_gone_and_made_a_mess();
+    //new achievement_ive_gone_and_made_a_mess();
     new npc_icc_blood_beast();
 }

@@ -3459,11 +3459,33 @@ void AuraEffect::HandleModStateImmunityMask(AuraApplication const* aurApp, uint8
             }
             break;
         }
+        case 32767:
+            mechanic_immunity_list = ((1 << MECHANIC_CHARM)
+                | (1 << MECHANIC_FEAR) | (1 << MECHANIC_STUN)
+                | (1 << MECHANIC_SLEEP)
+                | (1 << MECHANIC_SAPPED) | (1 << MECHANIC_HORROR)
+                | (1 << MECHANIC_DISORIENTED)
+                | (1 << MECHANIC_BLEED) | (1 << MECHANIC_DAZE) | (1 << MECHANIC_INFECTED)
+                );
+            target->ApplySpellImmune(GetId(), IMMUNITY_MECHANIC, MECHANIC_CHARM, apply);
+            target->ApplySpellImmune(GetId(), IMMUNITY_MECHANIC, MECHANIC_FEAR, apply);
+            target->ApplySpellImmune(GetId(), IMMUNITY_MECHANIC, MECHANIC_STUN, apply);
+            target->ApplySpellImmune(GetId(), IMMUNITY_MECHANIC, MECHANIC_SLEEP, apply);
+            target->ApplySpellImmune(GetId(), IMMUNITY_MECHANIC, MECHANIC_SAPPED, apply);
+            target->ApplySpellImmune(GetId(), IMMUNITY_MECHANIC, MECHANIC_HORROR, apply);
+            target->ApplySpellImmune(GetId(), IMMUNITY_MECHANIC, MECHANIC_DISORIENTED, apply);
+            target->ApplySpellImmune(GetId(), IMMUNITY_MECHANIC, MECHANIC_BLEED, apply);
+            target->ApplySpellImmune(GetId(), IMMUNITY_MECHANIC, MECHANIC_DAZE, apply);
+            target->ApplySpellImmune(GetId(), IMMUNITY_MECHANIC, MECHANIC_INFECTED, apply);
+            aura_immunity_list.push_back(SPELL_AURA_MOD_CHARM);
+            aura_immunity_list.push_back(SPELL_AURA_MOD_STUN);
+            aura_immunity_list.push_back(SPELL_AURA_MOD_CONFUSE);
+            aura_immunity_list.push_back(SPELL_AURA_MOD_FEAR);
+            aura_immunity_list.push_back(SPELL_AURA_PERIODIC_LEECH);
         default:
             break;
     }
 
-    sScriptMgr->OnHandleModStateImmunityMask(this, target, aura_immunity_list, mechanic_immunity_list, miscVal, apply);
     if (aura_immunity_list.empty())
     {
         // Roots, OK

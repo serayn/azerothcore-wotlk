@@ -2482,9 +2482,8 @@ SpellInfo const* SpellInfo::GetAuraRankForLevel(uint8 level) const
     for (SpellInfo const* nextSpellInfo = this; nextSpellInfo != NULL; nextSpellInfo = nextSpellInfo->GetPrevRankSpell())
     {
         // if found appropriate level
-        uint32 appropriateLevel = 0; bool SkipCoreCode = false;
-        sScriptMgr->OnGetAuraRankForLevel(SkipCoreCode,level, appropriateLevel);
-        if (!SkipCoreCode) appropriateLevel = uint32(level + 10);
+        uint32 appropriateLevel = 0;
+        appropriateLevel = uint32(level + 58);
         if (appropriateLevel >= nextSpellInfo->SpellLevel)
             return nextSpellInfo;
 

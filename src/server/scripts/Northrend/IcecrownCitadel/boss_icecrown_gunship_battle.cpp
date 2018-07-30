@@ -2723,5 +2723,5 @@ void AddSC_boss_icecrown_gunship_battle()
     new spell_igb_rocket_artillery_explosion();
     new spell_igb_below_zero();
     new spell_igb_on_gunship_deck();
-    new achievement_im_on_a_boat();
+    //new achievement_im_on_a_boat();
 }

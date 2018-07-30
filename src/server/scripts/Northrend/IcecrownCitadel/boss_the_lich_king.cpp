@@ -3800,6 +3800,6 @@ void AddSC_boss_the_lich_king()
     new npc_lk_spirit_bomb();
     new spell_the_lich_king_trigger_vile_spirit();
     new npc_lk_wicked_spirit();
-    new achievement_been_waiting_long_time();
-    new achievement_neck_deep_in_vile();
+    //new achievement_been_waiting_long_time();
+    //new achievement_neck_deep_in_vile();
 }

@@ -857,7 +857,7 @@ void AddSC_boss_kologarn()
     new spell_kologarn_stone_shout();
 
     // Achievements
-    new achievement_kologarn_looks_could_kill();
-    new achievement_kologarn_rubble_and_roll();
-    new achievement_kologarn_with_open_arms();
+    //new achievement_kologarn_looks_could_kill();
+    //new achievement_kologarn_rubble_and_roll();
+    //new achievement_kologarn_with_open_arms();
 }

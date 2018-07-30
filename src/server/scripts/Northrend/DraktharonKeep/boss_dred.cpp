@@ -218,5 +218,5 @@ void AddSC_boss_dred()
     new boss_dred();
     new spell_dred_grievious_bite();
     new spell_dred_raptor_call();
-    new achievement_better_off_dred();
+    //new achievement_better_off_dred();
 }

@@ -203,5 +203,5 @@ void AddSC_boss_moorabi()
 {
     new boss_moorabi();
     new spell_moorabi_mojo_frenzy();
-    new achievement_less_rabi();
+    //new achievement_less_rabi();
 }

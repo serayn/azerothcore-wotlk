@@ -235,5 +235,5 @@ class achievement_watch_him_die : public AchievementCriteriaScript
 void AddSC_boss_krik_thir()
 {
     new boss_krik_thir();
-    new achievement_watch_him_die();
+    //new achievement_watch_him_die();
 }

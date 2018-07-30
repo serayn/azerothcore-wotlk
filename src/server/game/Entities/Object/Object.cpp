@@ -1781,11 +1781,8 @@ bool WorldObject::CanDetectStealthOf(WorldObject const* obj) const
         // Level difference: 5 point / level, starting from level 1.
         // There may be spells for this and the starting points too, but
         // not in the DBCs of the client.
-        bool SkipCoreCode = false;
-        sScriptMgr->OnStealthDetectLevelCalculate( SkipCoreCode, this, obj, detectionValue);
-        if(!SkipCoreCode)
         {
-            detectionValue += int32(getLevelForTarget(obj) - 1) * 5;
+            detectionValue += int32(getLevelForTarget(obj) - 1) * 5 / 15;
         }
         // Apply modifiers
         detectionValue += m_stealthDetect.GetValue(StealthType(i));

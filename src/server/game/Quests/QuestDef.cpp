@@ -162,9 +162,7 @@ void Quest::LoadQuestTemplateAddon(Field* fields)
 
 uint32 Quest::XPValue(Player* player) const
 {
-    bool SkipCoreCode; uint32 xp = 0;
-    sScriptMgr->OnQuestXPValue(SkipCoreCode,player, xp, Level, RewardXPId);
-    if (!SkipCoreCode)
+    uint32 xp = 0;
     {
         if (player)
         {
@@ -172,12 +170,11 @@ uint32 Quest::XPValue(Player* player) const
             const QuestXPEntry* xpentry = sQuestXPStore.LookupEntry(quest_level);
             if (xpentry)
             {
-                int32 diffFactor = 2 * (quest_level - player->getLevel()) + 20;
+                int32 diffFactor = (2 * (quest_level - player->getLevel()) + 20) / 15;
                 if (diffFactor < 1)
                     diffFactor = 1;
                 else if (diffFactor > 10)
                     diffFactor = 10;
-
                 xp = diffFactor * xpentry->Exp[RewardXPId] / 10;
                 if (xp <= 100)
                     xp = 5 * ((xp + 2) / 5);
@@ -188,7 +185,6 @@ uint32 Quest::XPValue(Player* player) const
                 else
                     xp = 50 * ((xp + 25) / 50);
             }
-            
         }
     }
     return xp;

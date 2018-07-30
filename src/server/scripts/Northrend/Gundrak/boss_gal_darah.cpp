@@ -279,5 +279,5 @@ void AddSC_boss_gal_darah()
     new boss_gal_darah();
     new spell_galdarah_impaling_charge();
     new spell_galdarah_transform();
-    new achievement_share_the_love();
+    //new achievement_share_the_love();
 }

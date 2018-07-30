@@ -1050,9 +1050,9 @@ void AddSC_boss_assembly_of_iron()
     new spell_assembly_meltdown();
     new spell_assembly_rune_of_summoning();
 
-    new achievement_assembly_of_iron("achievement_but_im_on_your_side", 0);
-    new achievement_assembly_of_iron("achievement_assembly_steelbreaker", NPC_STEELBREAKER);
-    new achievement_assembly_of_iron("achievement_assembly_runemaster", NPC_MOLGEIM);
-    new achievement_assembly_of_iron("achievement_assembly_stormcaller", NPC_BRUNDIR);
-    new achievement_cant_do_that_while_stunned();
+    //new achievement_assembly_of_iron("achievement_but_im_on_your_side", 0);
+    //new achievement_assembly_of_iron("achievement_assembly_steelbreaker", NPC_STEELBREAKER);
+    //new achievement_assembly_of_iron("achievement_assembly_runemaster", NPC_MOLGEIM);
+    //new achievement_assembly_of_iron("achievement_assembly_stormcaller", NPC_BRUNDIR);
+    //new achievement_cant_do_that_while_stunned();
 }

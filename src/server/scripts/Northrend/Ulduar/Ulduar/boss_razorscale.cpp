@@ -1121,6 +1121,6 @@ void AddSC_boss_razorscale()
     new npc_ulduar_dark_rune_guardian();
     new npc_ulduar_dark_rune_watcher();
     new npc_ulduar_dark_rune_sentinel();
-    new achievement_quick_shave();
-    new achievement_iron_dwarf_medium_rare();
+    //new achievement_quick_shave();
+    //new achievement_iron_dwarf_medium_rare();
 }

@@ -499,6 +499,6 @@ void AddSC_boss_auriaya()
 
     new spell_auriaya_sentinel_blast();
 
-    new achievement_auriaya_crazy_cat_lady();
-    new achievement_auriaya_nine_lives();
+    //new achievement_auriaya_crazy_cat_lady();
+    //new achievement_auriaya_nine_lives();
 }

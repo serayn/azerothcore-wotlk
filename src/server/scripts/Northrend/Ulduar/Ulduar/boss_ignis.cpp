@@ -566,5 +566,5 @@ void AddSC_boss_ignis()
     new spell_ignis_scorch();
     new spell_ignis_grab_initial();
     new spell_ignis_slag_pot();
-    new achievement_ignis_shattered();
+    //new achievement_ignis_shattered();
 }

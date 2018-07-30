@@ -332,5 +332,5 @@ void AddSC_boss_magus_telestra()
     new boss_magus_telestra();
     new spell_boss_magus_telestra_summon_telestra_clones();
     new spell_boss_magus_telestra_gravity_well();
-    new achievement_split_personality();
+    //new achievement_split_personality();
 }

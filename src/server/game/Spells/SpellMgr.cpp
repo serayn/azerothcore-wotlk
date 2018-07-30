@@ -6328,8 +6328,8 @@ void SpellMgr::LoadDbcDataCorrections()
 
 
     // Once Bitten, Twice Shy (10 player) - Icecrown Citadel
-    AchievementEntry* achievement = const_cast<AchievementEntry*>(sAchievementStore.LookupEntry(4539));
-    achievement->mapID = 631;    // Correct map requirement (currently has Ulduar)
+    //AchievementEntry* achievement = const_cast<AchievementEntry*>(sAchievementStore.LookupEntry(4539));
+    //achievement->mapID = 631;    // Correct map requirement (currently has Ulduar)
 
 
     // Ring of Valor starting Locations

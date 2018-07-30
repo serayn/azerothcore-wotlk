@@ -209,8 +209,7 @@ void Player::UpdateResistances(uint32 school)
     {
         // cant use GetTotalAuraModValue because of total pct multiplier :P
         float value = 0.0f;
-        bool SkipCoreCode = false;
-        sScriptMgr->OnUpdateResistance(SkipCoreCode,  this,  value);
+        value += this->GetStat(STAT_STAMINA) / 20 * 8;
         UnitMods unitMod = UnitMods(UNIT_MOD_RESISTANCE_START + school);
         
         value  = GetModifierValue(unitMod, BASE_VALUE);
@@ -238,9 +237,7 @@ void Player::UpdateArmor()
 
     float value = GetModifierValue(unitMod, BASE_VALUE);   // base armor (from items)
     value *= GetModifierValue(unitMod, BASE_PCT);           // armor percent from items
-    bool SkipCoreCode = false;
-    sScriptMgr->OnUpdateResistance(SkipCoreCode, this, value);
-    if(!SkipCoreCode)value += GetStat(STAT_AGILITY) * 2.0f;             // armor bonus from stats
+    value += this->GetStat(STAT_AGILITY) + this->GetStat(STAT_AGILITY) > this->GetStat(STAT_STAMINA) ? this->GetStat(STAT_AGILITY) : this->GetStat(STAT_AGILITY);// armor bonus from stats
     value += GetModifierValue(unitMod, TOTAL_VALUE);
     
     //add dynamic flat mods
@@ -325,157 +322,17 @@ void Player::UpdateAttackPowerAndDamage(bool ranged)
     uint16 index_mod = UNIT_FIELD_ATTACK_POWER_MODS;
     uint16 index_mult = UNIT_FIELD_ATTACK_POWER_MULTIPLIER;
 
-    bool SkipCoreCode = false;
-    sScriptMgr->OnStatToAttackPowerCalculation(SkipCoreCode, this, level, val2, ranged);
-    if (ranged)
-    {
-        index = UNIT_FIELD_RANGED_ATTACK_POWER;
-        index_mod = UNIT_FIELD_RANGED_ATTACK_POWER_MODS;
-        index_mult = UNIT_FIELD_RANGED_ATTACK_POWER_MULTIPLIER;
-    }
-    if(!SkipCoreCode)
     {
         if (ranged)
         {
-            switch (getClass())
-            {
-                case CLASS_HUNTER:
-                    val2 = level * 2.0f + GetStat(STAT_AGILITY) - 10.0f;
-                    break;
-                case CLASS_ROGUE:
-                    val2 = level + GetStat(STAT_AGILITY) - 10.0f;
-                    break;
-                case CLASS_WARRIOR:
-                    val2 = level + GetStat(STAT_AGILITY) - 10.0f;
-                    break;
-                case CLASS_DRUID:
-                    switch (GetShapeshiftForm())
-                    {
-                        case FORM_CAT:
-                        case FORM_BEAR:
-                        case FORM_DIREBEAR:
-                            val2 = 0.0f; break;
-                        default:
-                            val2 = GetStat(STAT_AGILITY) - 10.0f; break;
-                    }
-                    break;
-                default: val2 = GetStat(STAT_AGILITY) - 10.0f; break;
-            }
+            index = UNIT_FIELD_RANGED_ATTACK_POWER;
+            index_mod = UNIT_FIELD_RANGED_ATTACK_POWER_MODS;
+            index_mult = UNIT_FIELD_RANGED_ATTACK_POWER_MULTIPLIER;
+            val2 = level * 2.0f + this->GetStat(STAT_AGILITY) + this->GetStat(STAT_AGILITY)>this->GetStat(STAT_STRENGTH) ? this->GetStat(STAT_AGILITY) : this->GetStat(STAT_STRENGTH) - 20.0f;
         }
         else
         {
-            switch (getClass())
-            {
-                case CLASS_WARRIOR:
-                    val2 = level * 3.0f + GetStat(STAT_STRENGTH) * 2.0f - 20.0f;
-                    break;
-                case CLASS_PALADIN:
-                    val2 = level * 3.0f + GetStat(STAT_STRENGTH) * 2.0f - 20.0f;
-                    break;
-                case CLASS_DEATH_KNIGHT:
-                    val2 = level * 3.0f + GetStat(STAT_STRENGTH) * 2.0f - 20.0f;
-                    break;
-                case CLASS_ROGUE:
-                    val2 = level * 2.0f + GetStat(STAT_STRENGTH) + GetStat(STAT_AGILITY) - 20.0f;
-                    break;
-                case CLASS_HUNTER:
-                    val2 = level * 2.0f + GetStat(STAT_STRENGTH) + GetStat(STAT_AGILITY) - 20.0f;
-                    break;
-                case CLASS_SHAMAN:
-                    val2 = level * 2.0f + GetStat(STAT_STRENGTH) + GetStat(STAT_AGILITY) - 20.0f;
-                    break;
-                case CLASS_DRUID:
-                {
-                    // Check if Predatory Strikes is skilled
-                    float mLevelMult = 0.0f;
-                    float weapon_bonus = 0.0f;
-                    if (IsInFeralForm())
-                    {
-                        Unit::AuraEffectList const& mDummy = GetAuraEffectsByType(SPELL_AURA_DUMMY);
-                        for (Unit::AuraEffectList::const_iterator itr = mDummy.begin(); itr != mDummy.end(); ++itr)
-                        {
-                            AuraEffect* aurEff = *itr;
-                            if (aurEff->GetSpellInfo()->SpellIconID == 1563)
-                            {
-                                switch (aurEff->GetEffIndex())
-                                {
-                                    case 0: // Predatory Strikes (effect 0)
-                                        mLevelMult = CalculatePct(1.0f, aurEff->GetAmount());
-                                        break;
-                                    case 1: // Predatory Strikes (effect 1)
-                                        if (Item* mainHand = m_items[EQUIPMENT_SLOT_MAINHAND])
-                                        {
-                                            // also gains % attack power from equipped weapon
-                                            ItemTemplate const* proto = mainHand->GetTemplate();
-                                            if (!proto)
-                                                continue;
-
-                                            uint32 ap = proto->getFeralBonus();
-                                            // Get AP Bonuses from weapon
-                                            for (uint8 i = 0; i < MAX_ITEM_PROTO_STATS; ++i)
-                                            {
-                                                if (i >= proto->StatsCount)
-                                                    break;
-
-                                                if (proto->ItemStat[i].ItemStatType == ITEM_MOD_ATTACK_POWER)
-                                                    ap += proto->ItemStat[i].ItemStatValue;
-                                            }
-
-                                            // Get AP Bonuses from weapon spells
-                                            for (uint8 i = 0; i < MAX_ITEM_PROTO_SPELLS; ++i)
-                                            {
-                                                // no spell
-                                                if (!proto->Spells[i].SpellId || proto->Spells[i].SpellTrigger != ITEM_SPELLTRIGGER_ON_EQUIP)
-                                                    continue;
-
-                                                // check if it is valid spell
-                                                SpellInfo const* spellproto = sSpellMgr->GetSpellInfo(proto->Spells[i].SpellId);
-                                                if (!spellproto)
-                                                    continue;
-
-                                                for (uint8 j = 0; j < MAX_SPELL_EFFECTS; ++j)
-                                                    if (spellproto->Effects[j].ApplyAuraName == SPELL_AURA_MOD_ATTACK_POWER)
-                                                        ap += spellproto->Effects[j].CalcValue();
-                                            }
-
-                                            weapon_bonus = CalculatePct(float(ap), aurEff->GetAmount());
-                                        }
-                                        break;
-                                    default:
-                                        break;
-                                }
-                            }
-                        }
-                    }
-
-                    switch (GetShapeshiftForm())
-                    {
-                        case FORM_CAT:
-                            val2 = (getLevel() * mLevelMult) + GetStat(STAT_STRENGTH) * 2.0f + GetStat(STAT_AGILITY) - 20.0f + weapon_bonus + m_baseFeralAP;
-                            break;
-                        case FORM_BEAR:
-                        case FORM_DIREBEAR:
-                            val2 = (getLevel() * mLevelMult) + GetStat(STAT_STRENGTH) * 2.0f - 20.0f + weapon_bonus + m_baseFeralAP;
-                            break;
-                        case FORM_MOONKIN:
-                            val2 = (getLevel() * mLevelMult) + GetStat(STAT_STRENGTH) * 2.0f - 20.0f + m_baseFeralAP;
-                            break;
-                        default:
-                            val2 = GetStat(STAT_STRENGTH) * 2.0f - 20.0f;
-                            break;
-                    }
-                    break;
-                }
-                case CLASS_MAGE:
-                    val2 = GetStat(STAT_STRENGTH) - 10.0f;
-                    break;
-                case CLASS_PRIEST:
-                    val2 = GetStat(STAT_STRENGTH) - 10.0f;
-                    break;
-                case CLASS_WARLOCK:
-                    val2 = GetStat(STAT_STRENGTH) - 10.0f;
-                    break;
-            }
+            val2 = level * 3.0f + this->GetStat(STAT_STRENGTH) + this->GetStat(STAT_STRENGTH) > this->GetStat(STAT_AGILITY) ? this->GetStat(STAT_STRENGTH) : this->GetStat(STAT_AGILITY) - 20.0f;
         }
     }
     SetModifierValue(unitMod, BASE_VALUE, val2);
@@ -534,14 +391,12 @@ void Player::UpdateShieldBlockValue()
 
 void Player::CalculateMinMaxDamage(WeaponAttackType attType, bool normalized, bool addTotalPct, float& minDamage, float& maxDamage)
 {
-    bool SkipCoreCode = false;
-    sScriptMgr->OnCalculateMinMaxDamage(SkipCoreCode, this, attType, normalized, addTotalPct, minDamage, maxDamage);
-    if(!SkipCoreCode)
     {
-        UnitMods unitMod;
-
-        switch (attType)
         {
+            UnitMods unitMod;
+
+            switch (attType)
+            {
             case BASE_ATTACK:
             default:
                 unitMod = UNIT_MOD_DAMAGE_MAINHAND;
@@ -552,55 +407,57 @@ void Player::CalculateMinMaxDamage(WeaponAttackType attType, bool normalized, bo
             case RANGED_ATTACK:
                 unitMod = UNIT_MOD_DAMAGE_RANGED;
                 break;
-        }
-
-        float attackSpeedMod = GetAPMultiplier(attType, normalized);
-
-        float baseValue  = GetModifierValue(unitMod, BASE_VALUE) + GetTotalAttackPowerValue(attType) / 14.0f * attackSpeedMod;
-        float basePct    = GetModifierValue(unitMod, BASE_PCT);
-        float totalValue = GetModifierValue(unitMod, TOTAL_VALUE);
-        float totalPct   = addTotalPct ? GetModifierValue(unitMod, TOTAL_PCT) : 1.0f;
-
-        float weaponMinDamage = GetWeaponDamageRange(attType, MINDAMAGE);
-        float weaponMaxDamage = GetWeaponDamageRange(attType, MAXDAMAGE);
-
-        if (IsInFeralForm()) // check if player is druid and in cat or bear forms
-        {
-            uint8 lvl = getLevel();
-            if (lvl > 60)
-                lvl = 60;
-
-            weaponMinDamage = lvl * 0.85f * attackSpeedMod;
-            weaponMaxDamage = lvl * 1.25f * attackSpeedMod;
-        }
-        else if (!CanUseAttackType(attType)) // check if player not in form but still can't use (disarm case)
-        {
-            // cannot use ranged/off attack, set values to 0
-            if (attType != BASE_ATTACK)
-            {
-                minDamage = 0.0f;
-                maxDamage = 0.0f;
-                return;
             }
-            weaponMinDamage = BASE_MINDAMAGE;
-            weaponMaxDamage = BASE_MAXDAMAGE;
-        }
-        else if (attType == RANGED_ATTACK) // add ammo DPS to ranged damage
-        {
-            weaponMinDamage += GetAmmoDPS() * attackSpeedMod;
-            weaponMaxDamage += GetAmmoDPS() * attackSpeedMod;
+
+            float attackSpeedMod = GetAPMultiplier(attType, normalized);
+
+            float baseValue = GetModifierValue(unitMod, BASE_VALUE) + GetTotalAttackPowerValue(attType) / 14.0f * attackSpeedMod;
+            float basePct = GetModifierValue(unitMod, BASE_PCT);
+            float totalValue = GetModifierValue(unitMod, TOTAL_VALUE);
+            float totalPct = addTotalPct ? GetModifierValue(unitMod, TOTAL_PCT) : 1.0f;
+
+            float weaponMinDamage = GetWeaponDamageRange(attType, MINDAMAGE);
+            float weaponMaxDamage = GetWeaponDamageRange(attType, MAXDAMAGE);
+
+            if (IsInFeralForm()) // check if player is druid and in cat or bear forms
+            {
+                uint8 lvl = getLevel();
+                if (lvl > 60)
+                    lvl = 60;
+
+                weaponMinDamage = (55 + lvl / 15) * 0.85f * attackSpeedMod;
+                weaponMaxDamage = (55 + lvl / 15) * 1.25f * attackSpeedMod;
+            }
+            else if (!CanUseAttackType(attType)) // check if player not in form but still can't use (disarm case)
+            {
+                // cannot use ranged/off attack, set values to 0
+                if (attType != BASE_ATTACK)
+                {
+                    minDamage = 0.0f;
+                    maxDamage = 0.0f;
+                    return;
+                }
+                weaponMinDamage = BASE_MINDAMAGE;
+                weaponMaxDamage = BASE_MAXDAMAGE;
+            }
+            else if (attType == RANGED_ATTACK) // add ammo DPS to ranged damage
+            {
+                weaponMinDamage += GetAmmoDPS() * attackSpeedMod;
+                weaponMaxDamage += GetAmmoDPS() * attackSpeedMod;
+            }
+
+            minDamage = ((weaponMinDamage + baseValue) * basePct + totalValue) * totalPct;
+            maxDamage = ((weaponMaxDamage + baseValue) * basePct + totalValue) * totalPct;
+
+            // pussywizard: crashfix (casting negative to uint => min > max => assertion in urand)
+            if (minDamage < 0.0f || minDamage > 1000000000.0f)
+                minDamage = 0.0f;
+            if (maxDamage < 0.0f || maxDamage > 1000000000.0f)
+                maxDamage = 0.0f;
+            if (minDamage > maxDamage)
+                minDamage = maxDamage;
         }
 
-        minDamage = ((weaponMinDamage + baseValue) * basePct + totalValue) * totalPct;
-        maxDamage = ((weaponMaxDamage + baseValue) * basePct + totalValue) * totalPct;
-
-        // pussywizard: crashfix (casting negative to uint => min > max => assertion in urand)
-        if (minDamage < 0.0f || minDamage > 1000000000.0f)
-            minDamage = 0.0f;
-        if (maxDamage < 0.0f || maxDamage > 1000000000.0f)
-            maxDamage = 0.0f;
-        if (minDamage > maxDamage)
-            minDamage = maxDamage;
     }
 }
 
@@ -615,16 +472,13 @@ void Player::UpdateBlockPercentage()
 { 
     // No block
     float value = 0.0f;
-    bool SkipCoreCode = false;
-    sScriptMgr->OnUpdateBlockPercentage(SkipCoreCode, this, value);
-    if(!SkipCoreCode)
     {
         if (CanBlock())
         {
             // Base value
             value = 5.0f;
             // Modify value from defense skill
-            value += (int32(GetDefenseSkillValue()) - int32(GetMaxSkillValueForLevel())) * 0.04f;
+            value += (int32(GetDefenseSkillValue()) - int32(getLevel())) * 0.04f;
             // Increase from SPELL_AURA_MOD_BLOCK_PERCENT aura
             value += GetTotalAuraModifier(SPELL_AURA_MOD_BLOCK_PERCENT);
             // Increase from rating
@@ -639,9 +493,6 @@ void Player::UpdateCritPercentage(WeaponAttackType attType)
 { 
 
     float value = 0.0f;
-    bool SkipCoreCode = false;
-    sScriptMgr->OnUpdateCritPercentage(SkipCoreCode, this, attType, value);
-    if(!SkipCoreCode)
     {
         BaseModGroup modGroup;
         uint16 index;
@@ -667,7 +518,7 @@ void Player::UpdateCritPercentage(WeaponAttackType attType)
         }
         value = GetTotalPercentageModValue(modGroup) + GetRatingBonusValue(cr);
         // Modify crit from weapon skill and maximized defense skill of same level victim difference
-        value += (int32(GetWeaponSkillValue(attType)) - int32(GetMaxSkillValueForLevel())) * 0.04f;
+        value += (int32(GetWeaponSkillValue(attType)) - int32(getLevel())) * 0.04f;
         value = value < 0.0f ? 0.0f : value;
         SetStatFloatValue(index, value);
     }
@@ -706,9 +557,6 @@ const float m_diminishing_k[MAX_CLASSES] =
 float Player::GetMissPercentageFromDefence() const
 {
     float  result;
-    bool SkipCoreCode = false;
-    sScriptMgr->OnGetMissPercentageFromDefense(SkipCoreCode, this, result);
-    if(!SkipCoreCode)
     {
         float diminishing = 0.0f, nondiminishing = 0.0f;
         float const miss_cap[MAX_CLASSES] =
@@ -728,7 +576,7 @@ float Player::GetMissPercentageFromDefence() const
 
 
         // Modify value from defense skill (only bonus from defense rating diminishes)
-        nondiminishing += (GetSkillValue(SKILL_DEFENSE) - GetMaxSkillValueForLevel()) * 0.04f;
+        nondiminishing += (GetSkillValue(SKILL_DEFENSE) - getLevel()) * 0.04f;
         diminishing += (int32(GetRatingBonusValue(CR_DEFENSE_SKILL))) * 0.04f;
 
         // apply diminishing formula to diminishing miss chance
@@ -742,23 +590,20 @@ void Player::UpdateParryPercentage()
 {
 
     float value = 0.0f;
-    bool SkipCoreCode = false;
-    sScriptMgr->OnUpdateParryPercentage(SkipCoreCode, this, m_realParry, value);
-    if(!SkipCoreCode)
     {
         const float parry_cap[MAX_CLASSES] =
         {
-            47.003525f,     // Warrior
-            47.003525f,     // Paladin
+            100.000000f,     // Warrior
+            100.000000f,     // Paladin
             145.560408f,    // Hunter
             145.560408f,    // Rogue
-            0.0f,           // Priest
-            47.003525f,     // DK
+            47.003525f,           // Priest
+            100.000000f,     // DK
             145.560408f,    // Shaman
-            0.0f,           // Mage
-            0.0f,           // Warlock
-            0.0f,           // ??
-            0.0f            // Druid
+            47.003525f,           // Mage
+            47.003525f,           // Warlock
+            47.003525f,           // ??
+            47.003525f            // Druid
         };
 
         // No parry
@@ -770,7 +615,7 @@ void Player::UpdateParryPercentage()
             // Parry from rating
             float diminishing = GetRatingBonusValue(CR_PARRY);
             // Modify value from defense skill (only bonus from defense rating diminishes)
-            nondiminishing += (GetSkillValue(SKILL_DEFENSE) - GetMaxSkillValueForLevel()) * 0.04f;
+            nondiminishing += (GetSkillValue(SKILL_DEFENSE) - getLevel()) * 0.04f;
             diminishing += (int32(GetRatingBonusValue(CR_DEFENSE_SKILL))) * 0.04f;
             // Parry from SPELL_AURA_MOD_PARRY_PERCENT aura
             nondiminishing += GetTotalAuraModifier(SPELL_AURA_MOD_PARRY_PERCENT);
@@ -787,9 +632,6 @@ void Player::UpdateParryPercentage()
 void Player::UpdateDodgePercentage()
 {
     float value;
-    bool SkipCoreCode = false;
-    sScriptMgr->OnUpdateDodgePercentage(SkipCoreCode , this ,m_realDodge, value);
-    if(!SkipCoreCode)
     {
         const float dodge_cap[MAX_CLASSES] =
         {
@@ -809,16 +651,16 @@ void Player::UpdateDodgePercentage()
         float diminishing = 0.0f, nondiminishing = 0.0f;
         GetDodgeFromAgility(diminishing, nondiminishing);
         // Modify value from defense skill (only bonus from defense rating diminishes)
-        nondiminishing += (GetSkillValue(SKILL_DEFENSE) - GetMaxSkillValueForLevel()) * 0.04f;
+        nondiminishing += (GetSkillValue(SKILL_DEFENSE) - getLevel()) * 0.04f;
         diminishing += (int32(GetRatingBonusValue(CR_DEFENSE_SKILL))) * 0.04f;
         // Dodge from SPELL_AURA_MOD_DODGE_PERCENT aura
         nondiminishing += GetTotalAuraModifier(SPELL_AURA_MOD_DODGE_PERCENT);
         // Dodge from rating
         diminishing += GetRatingBonusValue(CR_DODGE);
         // apply diminishing formula to diminishing dodge chance
-        uint32 pclass = getClass()-1;
+        uint32 pclass = getClass() - 1;
         m_realDodge = nondiminishing + (diminishing * dodge_cap[pclass] / (diminishing + dodge_cap[pclass] * m_diminishing_k[pclass]));
-    
+
         m_realDodge = m_realDodge < 0.0f ? 0.0f : m_realDodge;
         value = std::max(diminishing + nondiminishing, 0.0f);
     }

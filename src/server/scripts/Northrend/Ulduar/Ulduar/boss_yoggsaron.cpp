@@ -2971,13 +2971,13 @@ void AddSC_boss_yoggsaron()
     new spell_yogg_saron_grim_reprisal();
 
     // ACHIEVEMENTS
-    new achievement_yogg_saron_drive_me_crazy();
-    new achievement_yogg_saron_darkness("achievement_yogg_saron_three_lights_in_the_darkness", 3);
-    new achievement_yogg_saron_darkness("achievement_yogg_saron_two_lights_in_the_darkness", 2);
-    new achievement_yogg_saron_darkness("achievement_yogg_saron_one_light_in_the_darkness", 1);
-    new achievement_yogg_saron_darkness("achievement_yogg_saron_alone_in_the_darkness", 0);
-    new achievement_yogg_saron_he_waits_dreaming("achievement_yogg_saron_he_waits_dreaming_stormwind", ACTION_ILLUSION_STORMWIND);
-    new achievement_yogg_saron_he_waits_dreaming("achievement_yogg_saron_he_waits_dreaming_chamber", ACTION_ILLUSION_DRAGONS);
-    new achievement_yogg_saron_he_waits_dreaming("achievement_yogg_saron_he_waits_dreaming_icecrown", ACTION_ILLUSION_ICECROWN);
-    new achievement_yogg_saron_kiss_and_make_up();
+    //new achievement_yogg_saron_drive_me_crazy();
+    //new achievement_yogg_saron_darkness("achievement_yogg_saron_three_lights_in_the_darkness", 3);
+    //new achievement_yogg_saron_darkness("achievement_yogg_saron_two_lights_in_the_darkness", 2);
+    //new achievement_yogg_saron_darkness("achievement_yogg_saron_one_light_in_the_darkness", 1);
+    //new achievement_yogg_saron_darkness("achievement_yogg_saron_alone_in_the_darkness", 0);
+    //new achievement_yogg_saron_he_waits_dreaming("achievement_yogg_saron_he_waits_dreaming_stormwind", ACTION_ILLUSION_STORMWIND);
+    //new achievement_yogg_saron_he_waits_dreaming("achievement_yogg_saron_he_waits_dreaming_chamber", ACTION_ILLUSION_DRAGONS);
+    //new achievement_yogg_saron_he_waits_dreaming("achievement_yogg_saron_he_waits_dreaming_icecrown", ACTION_ILLUSION_ICECROWN);
+    //new achievement_yogg_saron_kiss_and_make_up();
 }

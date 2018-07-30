@@ -153,47 +153,8 @@ PlayerTaxi::PlayerTaxi() : _taxiSegment(0)
 
 void PlayerTaxi::InitTaxiNodesForLevel(uint32 race, uint32 chrClass, uint8 level)
 {
-    bool SkipCoreCode = false;
-    sScriptMgr->OnInitTaxiNodesForLevel(SkipCoreCode, race, chrClass, level, this);
-    if(!SkipCoreCode)
     {
-        // class specific initial known nodes
-        switch (chrClass)
-        {
-        case CLASS_DEATH_KNIGHT:
-        {
-            for (uint8 i = 0; i < TaxiMaskSize; ++i)
-                m_taximask[i] |= sOldContinentsNodesMask[i];
-            break;
-        }
-        }
-
-        // race specific initial known nodes: capital and taxi hub masks
-        switch (race)
-        {
-        case RACE_HUMAN:    SetTaximaskNode(2);  break;     // Human
-        case RACE_ORC:      SetTaximaskNode(23); break;     // Orc
-        case RACE_DWARF:    SetTaximaskNode(6);  break;     // Dwarf
-        case RACE_NIGHTELF: SetTaximaskNode(26);
-            SetTaximaskNode(27); break;     // Night Elf
-        case RACE_UNDEAD_PLAYER: SetTaximaskNode(11); break;// Undead
-        case RACE_TAUREN:   SetTaximaskNode(22); break;     // Tauren
-        case RACE_GNOME:    SetTaximaskNode(6);  break;     // Gnome
-        case RACE_TROLL:    SetTaximaskNode(23); break;     // Troll
-        case RACE_BLOODELF: SetTaximaskNode(82); break;     // Blood Elf
-        case RACE_DRAENEI:  SetTaximaskNode(94); break;     // Draenei
-        }
-
-        // new continent starting masks (It will be accessible only at new map)
-        switch (Player::TeamIdForRace(race))
-        {
-        case TEAM_ALLIANCE: SetTaximaskNode(100); break;
-        case TEAM_HORDE:    SetTaximaskNode(99);  break;
-        default: break;
-        }
-        // level dependent taxi hubs
-        if (level >= 68)
-            SetTaximaskNode(213);                               //Shattered Sun Staging Area
+        SetTaximaskNode(6);
     }
 }
 
@@ -2686,15 +2647,9 @@ void Player::Regenerate(Powers power)
     {
         case POWER_MANA:
         {
-            bool SkipCoreCode = false;
-            sScriptMgr->OnManaRestore(SkipCoreCode, this, addvalue, m_regenTimer);
-            if(!SkipCoreCode)
             {
                 bool recentCast = IsUnderLastManaUseEffect();
                 float ManaIncreaseRate = sWorld->getRate(RATE_POWER_MANA);
-
-                if (getLevel() < 15)
-                    ManaIncreaseRate = sWorld->getRate(RATE_POWER_MANA) * (2.066f - (getLevel() * 0.066f));
 
                 if (recentCast) // Trinity Updates Mana in intervals of 2s, which is correct
                     addvalue += GetFloatValue(UNIT_FIELD_POWER_REGEN_INTERRUPTED_FLAT_MODIFIER) *  ManaIncreaseRate * 0.001f * m_regenTimer;
@@ -2801,14 +2756,8 @@ void Player::RegenerateHealth()
 
 
     float addvalue = 0.0f;
-    bool SkipCoreCode = false;
-    sScriptMgr->OnHealthRestore(SkipCoreCode, this, addvalue, m_baseHealthRegen);
-    if (!SkipCoreCode)
     {
         float HealthIncreaseRate = sWorld->getRate(RATE_HEALTH);
-
-        if (getLevel() < 15)
-            HealthIncreaseRate = sWorld->getRate(RATE_HEALTH) * (2.066f - (getLevel() * 0.066f));
 
         // polymorphed case
         if (IsPolymorphed())
@@ -6398,18 +6347,16 @@ void Player::UpdateCombatSkills(Unit* victim, WeaponAttackType attType, bool def
     uint8 moblevel = victim->getLevelForTarget(this);
     /*if (moblevel < greylevel)
         return;*/ // Patch 3.0.8 (2009-01-20): You can no longer skill up weapons on mobs that are immune to damage.
-    bool SkipCoreCode = false; uint8 lvldif = 0; uint32 skilldif =0;
-    sScriptMgr->OnUpdateCombatSkillLevelCalculate(SkipCoreCode,this, attType, defence, plevel, greylevel,moblevel,lvldif, skilldif);
-    if (!SkipCoreCode)
+    uint8 lvldif = 0; uint32 skilldif =0;
     {
-        if (moblevel > plevel + 5)
-            moblevel = plevel + 5;
+        if (moblevel > plevel + 58)
+            moblevel = plevel + 58;
 
-        lvldif = moblevel - greylevel;
+        lvldif = (moblevel - greylevel) / 15;
         if (lvldif < 3)
             lvldif = 3;
 
-        skilldif = 5 * plevel - (defence ? GetBaseDefenseSkillValue() : GetBaseWeaponSkillValue(attType));
+        skilldif = plevel - (defence ? GetBaseDefenseSkillValue() : GetBaseWeaponSkillValue(attType));
     }
     if (skilldif <= 0)
         return;
@@ -12305,14 +12252,12 @@ InventoryResult Player::CanUseItem(Item* pItem, bool not_loading) const
         ItemTemplate const* pProto = pItem->GetTemplate();
         if (pProto)
         {
-            bool SkipCoreCode = false; InventoryResult RETURN_CODE = EQUIP_ERR_OK;
-            sScriptMgr->OnCanUseItem(SkipCoreCode,this, pItem, pProto, not_loading, RETURN_CODE);
-            if (!SkipCoreCode)
+            InventoryResult RETURN_CODE = EQUIP_ERR_OK;
             {
                 if (pItem->IsBindedNotWith(this))
-                    if(RETURN_CODE== EQUIP_ERR_OK) RETURN_CODE = EQUIP_ERR_DONT_OWN_THAT_ITEM;
+                    if (RETURN_CODE == EQUIP_ERR_OK) RETURN_CODE = EQUIP_ERR_DONT_OWN_THAT_ITEM;
 
-                InventoryResult res = CanUseItem(pProto);
+                InventoryResult res = this->CanUseItem(pProto);
                 if (res != EQUIP_ERR_OK)
                     if (RETURN_CODE == EQUIP_ERR_OK)RETURN_CODE = res;
 
@@ -12320,34 +12265,13 @@ InventoryResult Player::CanUseItem(Item* pItem, bool not_loading) const
                 {
                     bool allowEquip = false;
                     uint32 itemSkill = pItem->GetSkill();
-                    // Armor that is binded to account can "morph" from plate to mail, etc. if skill is not learned yet.
-                    if (pProto->Quality == ITEM_QUALITY_HEIRLOOM && pProto->Class == ITEM_CLASS_ARMOR && !HasSkill(itemSkill))
-                    {
-                        // TODO: when you right-click already equipped item it throws EQUIP_ERR_NO_REQUIRED_PROFICIENCY.
-
-                        // In fact it's a visual bug, everything works properly... I need sniffs of operations with
-                        // binded to account items from off server.
-
-                        switch (getClass())
-                        {
-                        case CLASS_HUNTER:
-                        case CLASS_SHAMAN:
-                            allowEquip = (itemSkill == SKILL_MAIL);
-                            break;
-                        case CLASS_PALADIN:
-                        case CLASS_WARRIOR:
-                            allowEquip = (itemSkill == SKILL_PLATE_MAIL);
-                            break;
-                        }
-                    }
-                    if (!allowEquip && GetSkillValue(itemSkill) == 0)
+                    if (!allowEquip && this->GetSkillValue(itemSkill) == 0)
                         if (RETURN_CODE == EQUIP_ERR_OK)RETURN_CODE = EQUIP_ERR_NO_REQUIRED_PROFICIENCY;
                 }
 
-                if (pProto->RequiredReputationFaction && uint32(GetReputationRank(pProto->RequiredReputationFaction)) < pProto->RequiredReputationRank)
+                if (pProto->RequiredReputationFaction && uint32(this->GetReputationRank(pProto->RequiredReputationFaction)) < pProto->RequiredReputationRank)
                     if (RETURN_CODE == EQUIP_ERR_OK)RETURN_CODE = EQUIP_ERR_CANT_EQUIP_REPUTATION;
 
-                
             }
             return RETURN_CODE;
         }
@@ -12440,43 +12364,7 @@ InventoryResult Player::CanRollForItemInLFG(ItemTemplate const* proto, WorldObje
     if (proto->Class == ITEM_CLASS_WEAPON && GetSkillValue(item_weapon_skills[proto->SubClass]) == 0)
         return EQUIP_ERR_NO_REQUIRED_PROFICIENCY;
 
-    bool SkipCoreCode = false;
     InventoryResult RETURN_CODE = EQUIP_ERR_OK;
-    sScriptMgr->OnCanRollForItemInLFG(SkipCoreCode, this, RETURN_CODE, proto);
-    if (!SkipCoreCode)
-    {
-        if (proto->Class == ITEM_CLASS_ARMOR && proto->SubClass > ITEM_SUBCLASS_ARMOR_MISC && proto->SubClass < ITEM_SUBCLASS_ARMOR_BUCKLER && proto->InventoryType != INVTYPE_CLOAK)
-        {
-            if (_class == CLASS_WARRIOR || _class == CLASS_PALADIN || _class == CLASS_DEATH_KNIGHT)
-            {
-                if (getLevel() < 40)
-                {
-                    if (proto->SubClass != ITEM_SUBCLASS_ARMOR_MAIL)
-                        if (RETURN_CODE == EQUIP_ERR_OK)RETURN_CODE = EQUIP_ERR_CANT_DO_RIGHT_NOW;
-                }
-                else if (proto->SubClass != ITEM_SUBCLASS_ARMOR_PLATE)
-                    if (RETURN_CODE == EQUIP_ERR_OK)RETURN_CODE = EQUIP_ERR_CANT_DO_RIGHT_NOW;
-            }
-            else if (_class == CLASS_HUNTER || _class == CLASS_SHAMAN)
-            {
-                if (getLevel() < 40)
-                {
-                    if (proto->SubClass != ITEM_SUBCLASS_ARMOR_LEATHER)
-                        if (RETURN_CODE == EQUIP_ERR_OK)RETURN_CODE = EQUIP_ERR_CANT_DO_RIGHT_NOW;
-                }
-                else if (proto->SubClass != ITEM_SUBCLASS_ARMOR_MAIL)
-                    if (RETURN_CODE == EQUIP_ERR_OK)RETURN_CODE = EQUIP_ERR_CANT_DO_RIGHT_NOW;
-            }
-
-            if (_class == CLASS_ROGUE || _class == CLASS_DRUID)
-                if (proto->SubClass != ITEM_SUBCLASS_ARMOR_LEATHER)
-                    if (RETURN_CODE == EQUIP_ERR_OK)RETURN_CODE = EQUIP_ERR_CANT_DO_RIGHT_NOW;
-
-            if (_class == CLASS_MAGE || _class == CLASS_PRIEST || _class == CLASS_WARLOCK)
-                if (proto->SubClass != ITEM_SUBCLASS_ARMOR_CLOTH)
-                    if (RETURN_CODE == EQUIP_ERR_OK)RETURN_CODE = EQUIP_ERR_CANT_DO_RIGHT_NOW;
-        }
-    }
     return RETURN_CODE;
 }
 
@@ -22460,12 +22348,9 @@ void Player::SendCooldownEvent(SpellInfo const* spellInfo, uint32 itemId /*= 0*/
 
 void Player::UpdatePotionCooldown()
 {
-    bool SkipCoreCode = false;
-    sScriptMgr->UpdatePotionCooldown(SkipCoreCode, this);
-    if (!SkipCoreCode)
     {
-        // no potion used i combat or still in combat
-        if (!GetLastPotionId() || IsInCombat())
+        // no potion used i combat 
+        if (!GetLastPotionId())
             return;
 
         // spell/item pair let set proper cooldown (except not existed charged spell cooldown spellmods for potions)
@@ -24791,21 +24676,18 @@ void Player::InitGlyphsForLevel()
 
     uint8 level = getLevel();
     uint32 value = 0;
-    bool SkipCoreCode = false;
-    sScriptMgr->OnGlyphInit(SkipCoreCode, level, value);
-    if(!SkipCoreCode)
     {
         // 0x3F = 0x01 | 0x02 | 0x04 | 0x08 | 0x10 | 0x20 for 80 level
-    if (level >= 15)
-        value |= (0x01 | 0x02);
-    if (level >= 30)
-        value |= 0x08;
-    if (level >= 50)
-        value |= 0x04;
-    if (level >= 70)
-        value |= 0x10;
-    if (level >= 80)
-        value |= 0x20;
+        if (level >= 5)
+            value |= (0x01 | 0x02);
+        if (level >= 10)
+            value |= 0x08;
+        if (level >= 15)
+            value |= 0x04;
+        if (level >= 20)
+            value |= 0x10;
+        if (level >= 25)
+            value |= 0x20;
     }
 
     SetUInt32Value(PLAYER_GLYPHS_ENABLED, value);
@@ -25281,21 +25163,16 @@ void Player::UpdateLootAchievements(LootItem *item, Loot* loot)
 
 uint32 Player::CalculateTalentsPoints() const
 {
-    bool SkipCoreCode = false; uint32 result = 0;
-    sScriptMgr->OnTalentCalculation(SkipCoreCode, this, result, m_questRewardTalentCount);
-    if(!SkipCoreCode)
+     uint32 result = 0;
     {
-        uint32 base_talent = getLevel() < 10 ? 0 : getLevel() - 9;
-
-        if (getClass() != CLASS_DEATH_KNIGHT || GetMapId() != 609)
-            return uint32(base_talent * sWorld->getRate(RATE_TALENT));
-
-        uint32 talentPointsForLevel = getLevel() < 56 ? 0 : getLevel() - 55;
+        uint32 talentPointsForLevel = 0;
+        if (this->getLevel() > 45) talentPointsForLevel = 51;
+        if (this->getLevel() > 25) talentPointsForLevel = 41 + (this->getLevel() - 25) / 2;
+        if (this->getLevel() > 20) talentPointsForLevel = 31 + (this->getLevel() - 20) * 2;
+        if (this->getLevel() > 10) talentPointsForLevel = 1 + (this->getLevel() - 10) * 3;
+        if (this->getLevel() == 10) talentPointsForLevel = 1;
+        if (this->getLevel() < 10) talentPointsForLevel = 0;
         talentPointsForLevel += m_questRewardTalentCount;
-
-        if (talentPointsForLevel > base_talent)
-            talentPointsForLevel = base_talent;
-
         result = uint32(talentPointsForLevel * sWorld->getRate(RATE_TALENT));
     }
      return result;

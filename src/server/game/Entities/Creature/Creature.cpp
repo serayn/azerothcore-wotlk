@@ -1910,12 +1910,55 @@ void Creature::SendAIReaction(AiReaction reactionType)
     sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: Sent SMSG_AI_REACTION, type %u.", reactionType);
 #endif
 }
+////////////////////////////////////////////////////////////////////////
+// Creature Memory of Hostle
+struct HostleMemory
+{
+    uint32 times = 0;
+};
+typedef std::unordered_map<uint32, HostleMemory> HostleMemories;
+typedef std::unordered_map<uint32, HostleMemories> HostleMemoriesMap;
 
+class CreatureAggroMemory
+{
+public:
+    uint32 GetTimes(Creature const* me, Unit const* who)
+    {
+        if (Memories.find(me->GetGUIDLow()) != Memories.end() && Memories[me->GetGUIDLow()].find(who->GetGUIDLow()) != Memories[me->GetGUIDLow()].end())
+            return Memories[me->GetGUIDLow()][who->GetGUIDLow()].times;
+        else
+            return 0;
+    }
+    uint32 GetTotal(Creature const* me)
+    {
+        if (Memories.find(me->GetGUIDLow()) != Memories.end())
+            return Memories[me->GetGUIDLow()].size();
+        else
+            return 0;
+    }
+    void AddTimes(Creature const* me, Unit const* who)
+    {
+        if (GetTimes(me, who) > 0)
+        {
+            uint32 lastTime = Memories[me->GetGUIDLow()][who->GetGUIDLow()].times;
+            Memories[me->GetGUIDLow()].erase(who->GetGUIDLow());
+            Memories[me->GetGUIDLow()][who->GetGUIDLow()].times = lastTime + 1;
+        }
+        else
+            Memories[me->GetGUIDLow()][who->GetGUIDLow()].times = 1;
+    }
+    void Release(Creature const* me)
+    {
+        Memories.erase(me->GetGUIDLow());
+    }
+private:
+    HostleMemoriesMap Memories;
+
+};
+static CreatureAggroMemory CreatureAggroMemories;
+////////////////////////////////////////////////////////////////////////
 void Creature::CallAssistance()
 {
-    bool SkipCoreCode = false;
-    sScriptMgr->OnCallAssistance(SkipCoreCode, this, m_AlreadyCallAssistance, m_Events);
-    if (!SkipCoreCode)
     {
         if (!m_AlreadyCallAssistance && GetVictim() && !IsPet() && !IsCharmed())
         {
@@ -1942,11 +1985,42 @@ void Creature::CallAssistance()
 
                 if (!assistList.empty())
                 {
+                    //sLog->outError("\n creature %u start calling for help", GetGUIDLow());
                     AssistDelayEvent* e = new AssistDelayEvent(GetVictim()->GetGUID(), *this);
+                    Unit* victim = GetVictim();
                     while (!assistList.empty())
                     {
-                        // Pushing guids because in delay can happen some creature gets despawned => invalid pointer
-                        e->AddAssistant((*assistList.begin())->GetGUID());
+                        //sLog->outError("\n nearby creature %u is considering if he should go to help", (*assistList.begin())->GetGUIDLow());
+                        if (victim->GetTypeId() == TYPEID_PLAYER)
+                        {
+                            //sLog->outError("\n nearby creature %u found that the enemy was a player...", (*assistList.begin())->GetGUIDLow());
+                            uint32 times = CreatureAggroMemories.GetTimes((*assistList.begin()), victim);
+                            uint32 quantity = CreatureAggroMemories.GetTotal((*assistList.begin()));
+                            uint32 roll = urand(1, 100);
+                            uint32 chance = times * times * 5 + quantity * 10;
+                            //sLog->outError("\n He was considering: times, quantity, roll, chance = %u, %u, %u, %u",times, quantity, roll, chance);
+                            if (roll < chance)
+                            {
+                                //sLog->outError("\n He decided to help");
+                                // Pushing guids because in delay can happen some creature gets despawned => invalid pointer
+                                e->AddAssistant((*assistList.begin())->GetGUID());
+                                CreatureAggroMemories.Release((*assistList.begin()));
+                            }
+                            else
+                            {
+                                //sLog->outError("\n He decided not to help");
+                                CreatureAggroMemories.AddTimes((*assistList.begin()), victim);
+                            }
+                            uint32 added = CreatureAggroMemories.GetTimes((*assistList.begin()), victim);
+                            //sLog->outError("Module debug: OnCanStartAttack,assist = %u, victim = %u,  roll = %u, times = %u, quantity = %u, chance = %u, added = %u", (*assistList.begin())->GetGUIDLow(), victim->GetGUIDLow(), roll, times, quantity, added );
+                        }
+                        else
+                        {
+                            //sLog->outError("\n nearby creature %u found that the enemy was not a player, so he desided to help", (*assistList.begin())->GetGUIDLow());
+                            // Pushing guids because in delay can happen some creature gets despawned => invalid pointer
+                            e->AddAssistant((*assistList.begin())->GetGUID());
+                            CreatureAggroMemories.Release((*assistList.begin()));
+                        }
                         assistList.pop_front();
                     }
                     m_Events.AddEvent(e, m_Events.CalculateTime(sWorld->getIntConfig(CONFIG_CREATURE_FAMILY_ASSISTANCE_DELAY)));
@@ -2728,20 +2802,17 @@ float Creature::GetAggroRange(Unit const* target) const
         return 0.0f;
     // The base aggro radius for mob of same level
     float aggroRadius = 20.0f;
-    bool SkipCoreCode = false;
-    sScriptMgr->OnAggroRangeLevelCalculation(SkipCoreCode, this, target, aggroRadius);
-    if(!SkipCoreCode)
     {
         uint32 targetLevel = target->getLevelForTarget(this);
         uint32 myLevel = getLevelForTarget(target);
-        int32 levelDiff = int32(targetLevel) - int32(myLevel);
-    
+        int32 levelDiff = (int32(targetLevel) - int32(myLevel)) / 15;
+
         // The maximum Aggro Radius is capped at 45 yards (25 level difference)
         if (levelDiff < -25)
             levelDiff = -25;
 
 
-    
+
         // Aggro Radius varies with level difference at a rate of roughly 1 yard/level
         aggroRadius -= (float)levelDiff;
     }

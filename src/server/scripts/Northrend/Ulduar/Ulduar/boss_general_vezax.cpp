@@ -702,8 +702,8 @@ void AddSC_boss_vezax()
     new spell_saronite_vapors_dummy();
     new spell_saronite_vapors_damage();
 
-    new achievement_smell_saronite();
-    new achievement_shadowdodger();
+    //new achievement_smell_saronite();
+    //new achievement_shadowdodger();
 
     new go_ulduar_pure_saronite_deposit();
 }

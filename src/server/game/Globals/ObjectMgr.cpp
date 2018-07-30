@@ -3729,9 +3729,6 @@ void ObjectMgr::BuildPlayerLevelInfo(uint8 race, uint8 _class, uint8 level, Play
 {
     // base data (last known level)
     *info = _playerInfo[race][_class]->levelInfo[sWorld->getIntConfig(CONFIG_MAX_PLAYER_LEVEL) - 1];
-    bool SkipCoreCode = false;
-    sScriptMgr->OnBuildPlayerLevelInfo(SkipCoreCode, race, _class, level, info);
-    if(!SkipCoreCode)
     {
         // if conversion from uint32 to uint8 causes unexpected behaviour, change lvl to uint32
         for (uint8 lvl = sWorld->getIntConfig(CONFIG_MAX_PLAYER_LEVEL) - 1; lvl < level; ++lvl)

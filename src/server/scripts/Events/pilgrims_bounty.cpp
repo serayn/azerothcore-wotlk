@@ -700,6 +700,6 @@ void AddSC_event_pilgrims_end_scripts()
     new npc_pilgrims_bounty_plate();
 
     // Achievements
-    new achievement_pb_pilgrims_peril();
-    new achievement_pb_terokkar_turkey_time();
+    //new achievement_pb_pilgrims_peril();
+    //new achievement_pb_terokkar_turkey_time();
 }

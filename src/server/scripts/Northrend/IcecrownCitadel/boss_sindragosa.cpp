@@ -2082,7 +2082,7 @@ void AddSC_boss_sindragosa()
     new spell_sindragosa_ice_tomb();
     new spell_sindragosa_mystic_buffet();
     new spell_sindragosa_soul_preservation();
-    new achievement_all_you_can_eat();
+    //new achievement_all_you_can_eat();
 
     new npc_spinestalker();
     new npc_rimefang();
