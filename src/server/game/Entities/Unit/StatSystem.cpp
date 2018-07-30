@@ -239,7 +239,7 @@ void Player::UpdateArmor()
     float value = GetModifierValue(unitMod, BASE_VALUE);   // base armor (from items)
     value *= GetModifierValue(unitMod, BASE_PCT);           // armor percent from items
     bool SkipCoreCode = false;
-    sScriptMgr->OnUpdateResistance(SkipCoreCode, this, value);
+    sScriptMgr->OnUpdateArmor(SkipCoreCode, this, value);
     if(!SkipCoreCode)value += GetStat(STAT_AGILITY) * 2.0f;             // armor bonus from stats
     value += GetModifierValue(unitMod, TOTAL_VALUE);
     
