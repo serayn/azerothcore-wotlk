@@ -788,6 +788,7 @@ class World
         void InitWeeklyQuestResetTime();
         void InitMonthlyQuestResetTime();
         void InitRandomBGResetTime();
+        void InitUnlimitedQuestResetTime();
         void InitGuildResetTime();
         void ResetDailyQuests();
         void ResetWeeklyQuests();

@@ -1863,6 +1863,9 @@ void World::SetInitialWorldSettings()
     sLog->outString("Calculate next monthly quest reset time...");
     InitMonthlyQuestResetTime();
 
+    sLog->outString("Calculate next unlimited quest reset time...");
+    InitUnlimitedQuestResetTime();
+
     sLog->outString("Calculate random battleground reset time..." );
     InitRandomBGResetTime();
 
@@ -2927,6 +2930,21 @@ void World::InitMonthlyQuestResetTime()
         sWorld->setWorldState(WS_MONTHLY_QUEST_RESET_TIME, uint64(m_NextMonthlyQuestReset));
 }
 
+void World::InitUnlimitedQuestResetTime()
+{
+    ////
+    time_t curr = time(NULL);
+    tm localTm;
+    ACE_OS::localtime_r(&curr, &localTm);
+    //localTm.tm_hour = 0;
+    localTm.tm_min = 0;
+    localTm.tm_sec = 0;
+    m_NextUnlimitedQuestReset = mktime(&localTm);
+    ////
+    /*if (!wstime)
+        sWorld->setWorldState(WS_DAILY_QUEST_RESET_TIME, uint64(m_NextDailyQuestReset));*/
+}
+
 void World::InitRandomBGResetTime()
 {
     time_t wstime = time_t(sWorld->getWorldState(WS_BG_DAILY_RESET_TIME));
@@ -2961,9 +2979,6 @@ void World::ResetDailyQuests()
 
 void World::ResetUnlimitedQuests()
 {
-    /*PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_QUEST_STATUS_DAILY);
-    CharacterDatabase.Execute(stmt);*/
-
     for (SessionMap::const_iterator itr = m_sessions.begin(); itr != m_sessions.end(); ++itr)
         if (itr->second->GetPlayer())
             itr->second->GetPlayer()->ResetUnlimitedRepeatQuestStatus();
@@ -2972,19 +2987,14 @@ void World::ResetUnlimitedQuests()
     time_t curr = time(NULL);
     tm localTm;
     ACE_OS::localtime_r(&curr, &localTm);
-    localTm.tm_hour = 0;
-    localTm.tm_min = 10;
+    //localTm.tm_hour = 0;
+    localTm.tm_min = 0;
     localTm.tm_sec = 0;
     m_NextUnlimitedQuestReset = mktime(&localTm);
     ////
 
 
-    /*m_NextUnlimitedQuestReset = GetNextTimeWithDayAndHour(-1, 1);
-    
-    sWorld->setWorldState(WS_DAILY_QUEST_RESET_TIME, uint64(m_NextDailyQuestReset));
-    */
     // change available dailies
-    sPoolMgr->ChangeDailyQuests();
 }
 
 void World::LoadDBAllowedSecurityLevel()
