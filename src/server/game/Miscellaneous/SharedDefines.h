@@ -122,13 +122,13 @@ enum UnitClass
     UNIT_CLASS_PALADIN                  = 2,
     UNIT_CLASS_ROGUE                    = 4,
     UNIT_CLASS_MAGE                     = 8,
-    UNIT_CLASS_BOT_WARRIOR              = 256,  // Serayn's point source: Add mercenary's classes
-    UNIT_CLASS_BOT_MAGE                 = 512,
-    UNIT_CLASS_BOT_PRIEST               = 1024,
-    UNIT_CLASS_BOT_ROGUE                = 2048
+    UNIT_CLASS_BOT_WARRIOR              = 11,  // Serayn's point source: Add mercenary's classes
+    UNIT_CLASS_BOT_MAGE                 = 12,
+    UNIT_CLASS_BOT_PRIEST               = 13,
+    UNIT_CLASS_BOT_ROGUE                = 14
 };
 
-#define CLASSMASK_ALL_CREATURES ((1<<(UNIT_CLASS_WARRIOR-1)) | (1<<(UNIT_CLASS_PALADIN-1)) | (1<<(UNIT_CLASS_ROGUE-1)) | (1<<(UNIT_CLASS_MAGE-1)))
+#define CLASSMASK_ALL_CREATURES ((1<<(UNIT_CLASS_WARRIOR-1)) | (1<<(UNIT_CLASS_PALADIN-1)) | (1<<(UNIT_CLASS_ROGUE-1)) | (1<<(UNIT_CLASS_MAGE-1))| (1<<(UNIT_CLASS_BOT_WARRIOR-1))| (1<<(UNIT_CLASS_BOT_MAGE-1))| (1<<(UNIT_CLASS_BOT_PRIEST-1))| (1<<(UNIT_CLASS_BOT_ROGUE-1)))
 
 #define CLASSMASK_WAND_USERS ((1<<(CLASS_PRIEST-1))|(1<<(CLASS_MAGE-1))|(1<<(CLASS_WARLOCK-1)))
 
