@@ -2433,13 +2433,13 @@ void AddSC_boss_flame_leviathan()
     new spell_demolisher_ride_vehicle();
 
     // Achievements
-    new achievement_flame_leviathan_towers("achievement_flame_leviathan_orbital_bombardment", 1);
-    new achievement_flame_leviathan_towers("achievement_flame_leviathan_orbital_devastation", 2);
-    new achievement_flame_leviathan_towers("achievement_flame_leviathan_nuked_from_orbit", 3);
-    new achievement_flame_leviathan_towers("achievement_flame_leviathan_orbituary", 4);
-    new achievement_flame_leviathan_shutout();
-    new achievement_flame_leviathan_garage("achievement_flame_leviathan_garage_chopper", NPC_VEHICLE_CHOPPER, 0);
-    new achievement_flame_leviathan_garage("achievement_flame_leviathan_garage_siege_engine", NPC_SALVAGED_SIEGE_ENGINE, NPC_SALVAGED_SIEGE_ENGINE_TURRET);
-    new achievement_flame_leviathan_garage("achievement_flame_leviathan_garage_demolisher", NPC_SALVAGED_DEMOLISHER, NPC_SALVAGED_DEMOLISHER_TURRET);
-    new achievement_flame_leviathan_unbroken();
+    //new achievement_flame_leviathan_towers("achievement_flame_leviathan_orbital_bombardment", 1);
+    //new achievement_flame_leviathan_towers("achievement_flame_leviathan_orbital_devastation", 2);
+    //new achievement_flame_leviathan_towers("achievement_flame_leviathan_nuked_from_orbit", 3);
+    //new achievement_flame_leviathan_towers("achievement_flame_leviathan_orbituary", 4);
+    //new achievement_flame_leviathan_shutout();
+    //new achievement_flame_leviathan_garage("achievement_flame_leviathan_garage_chopper", NPC_VEHICLE_CHOPPER, 0);
+    //new achievement_flame_leviathan_garage("achievement_flame_leviathan_garage_siege_engine", NPC_SALVAGED_SIEGE_ENGINE, NPC_SALVAGED_SIEGE_ENGINE_TURRET);
+    //new achievement_flame_leviathan_garage("achievement_flame_leviathan_garage_demolisher", NPC_SALVAGED_DEMOLISHER, NPC_SALVAGED_DEMOLISHER_TURRET);
+    //new achievement_flame_leviathan_unbroken();
 }

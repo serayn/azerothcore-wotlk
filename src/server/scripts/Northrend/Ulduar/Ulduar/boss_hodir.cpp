@@ -1546,12 +1546,12 @@ void AddSC_boss_hodir()
     new spell_hodir_storm_power();
     new spell_hodir_storm_cloud();
 
-    new achievement_cheese_the_freeze();
-    new achievement_getting_cold_in_here();
-    new achievement_i_could_say_that_this_cache_was_rare();
-    new achievement_i_have_the_coolest_friends();
-    new achievement_staying_buffed_all_winter_10();
-    new achievement_staying_buffed_all_winter_25();
+    //new achievement_cheese_the_freeze();
+    //new achievement_getting_cold_in_here();
+    //new achievement_i_could_say_that_this_cache_was_rare();
+    //new achievement_i_have_the_coolest_friends();
+    //new achievement_staying_buffed_all_winter_10();
+    //new achievement_staying_buffed_all_winter_25();
     new spell_hodir_toasty_fire();
     new spell_hodir_starlight();
 }

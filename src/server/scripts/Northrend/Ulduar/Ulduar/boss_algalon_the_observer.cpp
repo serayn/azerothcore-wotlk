@@ -1443,6 +1443,6 @@ void AddSC_boss_algalon_the_observer()
     new spell_algalon_supermassive_fail();
 
     // Achievements
-    new achievement_algalon_he_feeds_on_your_tears();
-    new achievement_algalon_herald_of_the_titans();
+    //new achievement_algalon_he_feeds_on_your_tears();
+    //new achievement_algalon_herald_of_the_titans();
 }

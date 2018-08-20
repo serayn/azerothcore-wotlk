@@ -243,21 +243,21 @@ class achievement_killed_exp_or_honor_target : public AchievementCriteriaScript
 
 void AddSC_achievement_scripts()
 {
-    new achievement_resilient_victory();
-    new achievement_bg_control_all_nodes();
-    new achievement_save_the_day();
-    new achievement_bg_ic_resource_glut();
-    new achievement_bg_ic_glaive_grave();
-    new achievement_bg_ic_mowed_down();
-    new achievement_bg_sa_artillery();
-    new achievement_sickly_gazelle();
-    new achievement_everything_counts();
-    new achievement_bg_av_perfection();
-    new achievement_arena_by_type("achievement_arena_2v2_check", ARENA_TYPE_2v2);
-    new achievement_arena_by_type("achievement_arena_3v3_check", ARENA_TYPE_3v3);
-    new achievement_arena_by_type("achievement_arena_5v5_check", ARENA_TYPE_5v5);
-    new achievement_sa_defense_of_the_ancients();
-    new achievement_tilted();
-    new achievement_not_even_a_scratch();
-    new achievement_killed_exp_or_honor_target();
+    //new achievement_resilient_victory();
+    //new achievement_bg_control_all_nodes();
+    //new achievement_save_the_day();
+    //new achievement_bg_ic_resource_glut();
+    //new achievement_bg_ic_glaive_grave();
+    //new achievement_bg_ic_mowed_down();
+    //new achievement_bg_sa_artillery();
+    //new achievement_sickly_gazelle();
+    //new achievement_everything_counts();
+    //new achievement_bg_av_perfection();
+    //new achievement_arena_by_type("achievement_arena_2v2_check", ARENA_TYPE_2v2);
+    //new achievement_arena_by_type("achievement_arena_3v3_check", ARENA_TYPE_3v3);
+    //new achievement_arena_by_type("achievement_arena_5v5_check", ARENA_TYPE_5v5);
+    //new achievement_sa_defense_of_the_ancients();
+    //new achievement_tilted();
+    //new achievement_not_even_a_scratch();
+    //new achievement_killed_exp_or_honor_target();
 }

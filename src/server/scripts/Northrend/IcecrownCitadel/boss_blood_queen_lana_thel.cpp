@@ -1010,8 +1010,8 @@ void AddSC_boss_blood_queen_lana_thel()
     new spell_blood_queen_vampiric_bite();
     new spell_blood_queen_swarming_shadows_floor_dmg();
     new spell_blood_queen_presence_of_the_darkfallen();
-    new achievement_once_bitten_twice_shy("achievement_once_bitten_twice_shy_n_10", 0, false);
-    new achievement_once_bitten_twice_shy("achievement_once_bitten_twice_shy_v_10", 0, true);
-    new achievement_once_bitten_twice_shy("achievement_once_bitten_twice_shy_n_25", 1, false);
-    new achievement_once_bitten_twice_shy("achievement_once_bitten_twice_shy_v_25", 1, true);
+    //new achievement_once_bitten_twice_shy("achievement_once_bitten_twice_shy_n_10", 0, false);
+    //new achievement_once_bitten_twice_shy("achievement_once_bitten_twice_shy_v_10", 0, true);
+    //new achievement_once_bitten_twice_shy("achievement_once_bitten_twice_shy_n_25", 1, false);
+    //new achievement_once_bitten_twice_shy("achievement_once_bitten_twice_shy_v_25", 1, true);
 }

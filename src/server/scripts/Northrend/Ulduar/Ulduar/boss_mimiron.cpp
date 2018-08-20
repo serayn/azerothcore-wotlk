@@ -2617,8 +2617,8 @@ void AddSC_boss_mimiron()
     new npc_ulduar_emergency_fire_bot();
     new npc_ulduar_rocket_strike_trigger();
 
-    new achievement_mimiron_firefighter();
-    new achievement_mimiron_set_up_us_the_bomb_11();
-    new achievement_mimiron_set_up_us_the_bomb_12();
-    new achievement_mimiron_set_up_us_the_bomb_13();
+    //new achievement_mimiron_firefighter();
+    //new achievement_mimiron_set_up_us_the_bomb_11();
+    //new achievement_mimiron_set_up_us_the_bomb_12();
+    //new achievement_mimiron_set_up_us_the_bomb_13();
 }

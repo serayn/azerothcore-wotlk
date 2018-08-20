@@ -1871,6 +1871,6 @@ void AddSC_boss_thorim()
     new spell_thorim_trash_impale();
 
     // Achievements
-    new achievement_thorim_stand_in_the_lightning();
-    new achievement_thorim_lose_your_illusion();
+    //new achievement_thorim_stand_in_the_lightning();
+    //new achievement_thorim_lose_your_illusion();
 }

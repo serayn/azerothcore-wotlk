@@ -184,5 +184,5 @@ class achievement_chaos_theory : public AchievementCriteriaScript
 void AddSC_boss_anomalus()
 {
     new boss_anomalus();
-    new achievement_chaos_theory();
+    //new achievement_chaos_theory();
 }

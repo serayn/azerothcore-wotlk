@@ -210,10 +210,10 @@ void Player::UpdateResistances(uint32 school)
         // cant use GetTotalAuraModValue because of total pct multiplier :P
         float value = 0.0f;
         bool SkipCoreCode = false;
-        sScriptMgr->OnUpdateResistance(SkipCoreCode,  this,  value);
+        sScriptMgr->OnUpdateResistance(SkipCoreCode,  this, school, value);
         UnitMods unitMod = UnitMods(UNIT_MOD_RESISTANCE_START + school);
         
-        value  = GetModifierValue(unitMod, BASE_VALUE);
+        value += GetModifierValue(unitMod, BASE_VALUE);
         value *= GetModifierValue(unitMod, BASE_PCT);
         value += GetModifierValue(unitMod, TOTAL_VALUE);
 

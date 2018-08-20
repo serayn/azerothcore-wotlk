@@ -107,7 +107,6 @@ World::World()
     m_NextDailyQuestReset = 0;
     m_NextWeeklyQuestReset = 0;
     m_NextMonthlyQuestReset = 0;
-    m_NextUnlimitedQuestReset = 0;
     m_NextRandomBGReset = 0;
     m_NextGuildReset = 0;
 
@@ -1863,9 +1862,6 @@ void World::SetInitialWorldSettings()
     sLog->outString("Calculate next monthly quest reset time...");
     InitMonthlyQuestResetTime();
 
-    sLog->outString("Calculate next unlimited quest reset time...");
-    InitUnlimitedQuestResetTime();
-
     sLog->outString("Calculate random battleground reset time..." );
     InitRandomBGResetTime();
 
@@ -2040,9 +2036,6 @@ void World::Update(uint32 diff)
     /// Handle monthly quests reset time
     if (m_gameTime > m_NextMonthlyQuestReset)
         ResetMonthlyQuests();
-
-    if (m_gameTime > m_NextUnlimitedQuestReset)
-        ResetUnlimitedQuests();
 
     if (m_gameTime > m_NextRandomBGReset)
         ResetRandomBG();
@@ -2930,20 +2923,6 @@ void World::InitMonthlyQuestResetTime()
         sWorld->setWorldState(WS_MONTHLY_QUEST_RESET_TIME, uint64(m_NextMonthlyQuestReset));
 }
 
-void World::InitUnlimitedQuestResetTime()
-{
-    ////
-    time_t curr = time(NULL);
-    tm localTm;
-    ACE_OS::localtime_r(&curr, &localTm);
-    //localTm.tm_hour = 0;
-    localTm.tm_min = 0;
-    localTm.tm_sec = 0;
-    m_NextUnlimitedQuestReset = mktime(&localTm);
-    ////
-    /*if (!wstime)
-        sWorld->setWorldState(WS_DAILY_QUEST_RESET_TIME, uint64(m_NextDailyQuestReset));*/
-}
 
 void World::InitRandomBGResetTime()
 {
@@ -2975,26 +2954,6 @@ void World::ResetDailyQuests()
 
     // change available dailies
     sPoolMgr->ChangeDailyQuests();
-}
-
-void World::ResetUnlimitedQuests()
-{
-    for (SessionMap::const_iterator itr = m_sessions.begin(); itr != m_sessions.end(); ++itr)
-        if (itr->second->GetPlayer())
-            itr->second->GetPlayer()->ResetUnlimitedRepeatQuestStatus();
-
-    ////
-    time_t curr = time(NULL);
-    tm localTm;
-    ACE_OS::localtime_r(&curr, &localTm);
-    //localTm.tm_hour = 0;
-    localTm.tm_min = 0;
-    localTm.tm_sec = 0;
-    m_NextUnlimitedQuestReset = mktime(&localTm);
-    ////
-
-
-    // change available dailies
 }
 
 void World::LoadDBAllowedSecurityLevel()

@@ -398,5 +398,5 @@ void AddSC_boss_hadronox()
     new spell_hadronox_summon_periodic("spell_hadronox_summon_periodic_necromancer", 10000, SPELL_SUMMON_ANUBAR_NECROMANCER);
     new spell_hadronox_summon_periodic("spell_hadronox_summon_periodic_crypt_fiend", 5000, SPELL_SUMMON_ANUBAR_CRYPT_FIEND);
     new spell_hadronox_leech_poison();
-    new achievement_hadronox_denied();
+    //new achievement_hadronox_denied();
 }

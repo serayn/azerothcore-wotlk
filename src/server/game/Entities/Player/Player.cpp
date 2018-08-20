@@ -1844,7 +1844,6 @@ void Player::Update(uint32 p_time)
                 _SaveWeeklyQuestStatus(trans);
                 _SaveSeasonalQuestStatus(trans);
                 _SaveMonthlyQuestStatus(trans);
-                _SaveUnlimitedQuestStatus(trans);
             }
 
             CharacterDatabase.CommitTransaction(trans);
@@ -5435,17 +5434,20 @@ void Player::DurabilityLoss(Item* item, double percent)
 { 
     if(!item)
         return;
+    uint32 pDurabilityLoss = 0;
+    bool SkipCoreCode = false;
+    sScriptMgr->OnDurabilityLoss(SkipCoreCode,this, item, percent, pDurabilityLoss);
+    if (!SkipCoreCode) {
+        uint32 pMaxDurability = item->GetUInt32Value(ITEM_FIELD_MAXDURABILITY);
 
-    uint32 pMaxDurability = item ->GetUInt32Value(ITEM_FIELD_MAXDURABILITY);
+        if (!pMaxDurability)
+            return;
 
-    if (!pMaxDurability)
-        return;
+        pDurabilityLoss = uint32(pMaxDurability*percent);
 
-    uint32 pDurabilityLoss = uint32(pMaxDurability*percent);
-
-    if (pDurabilityLoss < 1)
-        pDurabilityLoss = 1;
-
+        if (pDurabilityLoss < 1)
+            pDurabilityLoss = 1;
+    }
     DurabilityPointsLoss(item, pDurabilityLoss);
 }
 
@@ -6215,6 +6217,65 @@ inline int SkillGainChance(uint32 SkillValue, uint32 GrayLevel, uint32 GreenLeve
     return sWorld->getIntConfig(CONFIG_SKILL_CHANCE_ORANGE)*10;
 }
 
+ bool SkillImprove(Player* me, uint32 spelllevel, uint32 SkillValue, uint32 craft_skill_gain, bool& result)
+{
+    int SkillChance = 0;
+    uint8 skilllevel = me->GetSkillValue(SkillValue)>255 ? 255 : me->GetSkillValue(SkillValue);
+    uint32 xp = Trinity::XP::BaseGain(skilllevel, spelllevel, CONTENT_1_60);
+    if (me->GetItemCount(600001) > 0 && !me->HasAura(690001))
+    {
+        result = me->UpdateSkillPro(SkillValue, 1000, craft_skill_gain);
+        me->DestroyItemCount(600001, 1, true);
+    }
+    if (me->GetItemCount(600002) > 0 && !me->HasAura(690001))
+    {
+        uint32 bonus = 15000;
+        uint32 maxXP = sObjectMgr->GetXPForLevel(uint8(me->GetSkillValue(SkillValue) > 255 ? 255 : me->GetSkillValue(SkillValue)));
+        if (me->m_timeXP.find(SkillValue) != me->m_timeXP.end())
+        {
+            uint32 left = me->m_timeXP[SkillValue];
+            me->m_timeXP.erase(SkillValue);
+            if (left < bonus)
+            {
+                me->m_timeXP[SkillValue] = left - bonus;
+                if (me->getRace() == RACE_NIGHTELF || me->getRace() == RACE_DWARF) bonus /= 5;
+                xp += bonus;
+            }
+            else
+            {
+                if (me->getRace() == RACE_NIGHTELF || me->getRace() == RACE_DWARF) left /= 5;
+                xp += left;
+                me->m_timeXP[SkillValue] = maxXP / 2;
+                me->DestroyItemCount(600002, 1, true);
+            }
+        }
+        else
+        {
+            me->m_timeXP[SkillValue] = maxXP / 2;
+        }
+
+    }
+    if (me->m_skillxp.find(SkillValue) != me->m_skillxp.end())
+    {
+        uint32 curXP = me->m_skillxp[SkillValue];
+        me->m_skillxp.erase(SkillValue);
+        curXP += xp;
+
+        while (result && (curXP > sObjectMgr->GetXPForLevel(uint8(me->GetSkillValue(SkillValue)>255 ? 255 : me->GetSkillValue(SkillValue)))))
+        {
+            result = me->UpdateSkillPro(SkillValue, 1000, craft_skill_gain);
+            if (result)curXP -= sObjectMgr->GetXPForLevel(uint8(me->GetSkillValue(SkillValue)>255 ? 255 : me->GetSkillValue(SkillValue)) - 1);
+
+        }
+        me->m_skillxp[SkillValue] = curXP;
+    }
+    else
+    {
+        me->m_skillxp[SkillValue] = xp;
+    }
+    me->SendLogXPGain(me->m_skillxp[SkillValue], nullptr, 0, false, 0.0f);
+}
+
 bool Player::UpdateCraftSkill(uint32 spellid)
 { 
 #if defined(ENABLE_EXTRAS) && defined(ENABLE_EXTRA_LOGS)
@@ -6238,12 +6299,20 @@ bool Player::UpdateCraftSkill(uint32 spellid)
             }
 
             uint32 craft_skill_gain = sWorld->getIntConfig(CONFIG_SKILL_GAIN_CRAFTING);
-
+            
+            // Serayn's point: 20180809
+            bool result = false;
+            SkillImprove(this, _spell_idx->second->req_skill_value, SkillValue, craft_skill_gain, result);
+            return result;
+                /*
             return UpdateSkillPro(_spell_idx->second->skillId, SkillGainChance(SkillValue,
                 _spell_idx->second->max_value,
-                (_spell_idx->second->max_value + _spell_idx->second->min_value)/2,
+                (_spell_idx->second->max_value + _spell_idx->second->min_value) / 2,
                 _spell_idx->second->min_value),
                 craft_skill_gain);
+                */
+            
+            // Serayn's point: 20180809 
         }
     }
     return false;
@@ -6256,9 +6325,12 @@ bool Player::UpdateGatherSkill(uint32 SkillId, uint32 SkillValue, uint32 RedLeve
 #endif
 
     uint32 gathering_skill_gain = sWorld->getIntConfig(CONFIG_SKILL_GAIN_GATHERING);
-
+    // Serayn's point: 20180809
+    bool result = false;
+    SkillImprove(this, RedLevel, SkillId, gathering_skill_gain, result);
+    return result;
     // For skinning and Mining chance decrease with level. 1-74 - no decrease, 75-149 - 2 times, 225-299 - 8 times
-    switch (SkillId)
+    /*switch (SkillId)
     {
         case SKILL_HERBALISM:
         case SKILL_LOCKPICKING:
@@ -6275,7 +6347,8 @@ bool Player::UpdateGatherSkill(uint32 SkillId, uint32 SkillValue, uint32 RedLeve
                 return UpdateSkillPro(SkillId, SkillGainChance(SkillValue, RedLevel+100, RedLevel+50, RedLevel+25)*Multiplicator, gathering_skill_gain);
             else
                 return UpdateSkillPro(SkillId, (SkillGainChance(SkillValue, RedLevel+100, RedLevel+50, RedLevel+25)*Multiplicator) >> (SkillValue/sWorld->getIntConfig(CONFIG_SKILL_CHANCE_MINING_STEPS)), gathering_skill_gain);
-    }
+    }*/
+    // Serayn's point: 20180809
     return false;
 }
 
@@ -6390,7 +6463,73 @@ void Player::UpdateWeaponSkill(WeaponAttackType attType)
 
     UpdateAllCritPercentages();
 }
+bool CombatSkillImprove(Player* me, uint32 spelllevel,  bool defence, WeaponAttackType attType, uint32 chance, bool& result)
+{
+    int SkillChance = 0;
+    uint32 SkillValue = defence ? me->GetDefenseSkillValue() : me->GetWeaponSkillValue(attType);
+    uint8 skilllevel = me->GetSkillValue(SkillValue)>255 ? 255 : me->GetSkillValue(SkillValue);
+    uint32 xp = Trinity::XP::BaseGain(skilllevel, spelllevel, CONTENT_1_60);
+    if (me->GetItemCount(600001) > 0 && !me->HasAura(690001) && me->getLevel() > me->GetSkillValue(SkillValue))
+    {
+        //result = me->UpdateSkillPro(SkillValue, 1000, craft_skill_gain);
+        if (defence)
+            me->UpdateDefense();
+        else
+            me->UpdateWeaponSkill(attType);
+        me->DestroyItemCount(600001, 1, true);
+    }
+    if (me->GetItemCount(600002) > 0 && !me->HasAura(690002) && (me->getLevel() + 15) > me->GetSkillValue(SkillValue))
+    {
+        uint32 bonus = 15000;
+        uint32 maxXP = sObjectMgr->GetXPForLevel(uint8(me->GetSkillValue(SkillValue) > 255 ? 255 : me->GetSkillValue(SkillValue)));
+        if (me->m_timeXP.find(SkillValue) != me->m_timeXP.end())
+        {
+            uint32 left = me->m_timeXP[SkillValue];
+            me->m_timeXP.erase(SkillValue);
+            if (left < bonus)
+            {
+                me->m_timeXP[SkillValue] = left - bonus;
+                if (me->getRace() == RACE_NIGHTELF || me->getRace() == RACE_DWARF) bonus /= 5;
+                xp += bonus;
+            }
+            else
+            {
+                me->m_timeXP[SkillValue] = maxXP / 2;
+                me->DestroyItemCount(600002, 1, true);
+                if (me->getRace() == RACE_NIGHTELF || me->getRace() == RACE_DWARF) left /= 5;
+                xp += left;
+            }
+        }
+        else
+        {
+            me->m_timeXP[SkillValue] = maxXP / 2;
+        }
 
+    }
+    xp *= 1 + chance;
+    if (me->m_skillxp.find(SkillValue) != me->m_skillxp.end())
+    {
+        uint32 curXP = me->m_skillxp[SkillValue];
+        me->m_skillxp.erase(SkillValue);
+        curXP += xp;
+
+        while (result && (curXP > sObjectMgr->GetXPForLevel(uint8(me->GetSkillValue(SkillValue)>255 ? 255 : me->GetSkillValue(SkillValue)))))
+        {
+            if (defence)
+                me->UpdateDefense();
+            else
+                me->UpdateWeaponSkill(attType);
+            if (result)curXP -= sObjectMgr->GetXPForLevel(uint8(me->GetSkillValue(SkillValue)>255 ? 255 : me->GetSkillValue(SkillValue)) - 1);
+
+        }
+        me->m_skillxp[SkillValue] = curXP;
+    }
+    else
+    {
+        me->m_skillxp[SkillValue] = xp;
+    }
+    me->SendLogXPGain(me->m_skillxp[SkillValue], nullptr, 0, false, 0.0f);
+}
 void Player::UpdateCombatSkills(Unit* victim, WeaponAttackType attType, bool defence)
 {
     uint8 plevel = getLevel();                              // if defense than victim == attacker
@@ -6420,7 +6559,11 @@ void Player::UpdateCombatSkills(Unit* victim, WeaponAttackType attType, bool def
             chance += chance * 0.02f * GetStat(STAT_INTELLECT);
 
     chance = chance < 1.0f ? 1.0f : chance;                 //minimum chance to increase skill is 1%
-
+    // Serayn's point: 20180809
+    bool result = false;
+    CombatSkillImprove(this, victim->getLevel(), defence, attType, chance, result);
+    // Serayn's point: 20180809
+    /*
     if (roll_chance_f(chance))
     {
         if (defence)
@@ -6429,7 +6572,7 @@ void Player::UpdateCombatSkills(Unit* victim, WeaponAttackType attType, bool def
             UpdateWeaponSkill(attType);
     }
     else
-        return;
+        return;*/
 }
 
 void Player::ModifySkillBonus(uint32 skillid, int32 val, bool talent)
@@ -15781,6 +15924,10 @@ void Player::CompleteQuest(uint32 quest_id)
         UpdateZoneDependentAuras(GetZoneId());
         UpdateAreaDependentAuras(GetAreaId());
         AdditionalSavingAddMask(ADDITIONAL_SAVING_INVENTORY_AND_GOLD | ADDITIONAL_SAVING_QUEST_STATUS);
+        if (sObjectMgr->GetQuestTemplate(quest_id))
+        {
+            ResetUnlimitedRepeatQuestStatus(quest_id);
+        }
     }
 }
 
@@ -19663,7 +19810,6 @@ void Player::SaveToDB(bool create, bool logout)
     _SaveWeeklyQuestStatus(trans);
     _SaveSeasonalQuestStatus(trans);
     _SaveMonthlyQuestStatus(trans);
-    _SaveUnlimitedQuestStatus(trans);
     _SaveTalents(trans);
     _SaveSpells(trans);
     _SaveSpellCooldowns(trans, logout);
@@ -20205,30 +20351,6 @@ void Player::_SaveMonthlyQuestStatus(SQLTransaction& trans)
     }
 
     m_MonthlyQuestChanged = false;
-}
-
-void Player::_SaveUnlimitedQuestStatus(SQLTransaction& trans)
-{
-    if (!m_UnlimitedQuestChanged || m_unlimitedquests.empty())
-        return;
-
-    // we don't need transactions here.
-    /*
-    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_QUEST_STATUS_WEEKLY_CHAR);
-    stmt->setUInt32(0, GetGUIDLow());
-    trans->Append(stmt);
-
-    for (QuestSet::const_iterator iter = m_unlimitedquests.begin(); iter != m_unlimitedquests.end(); ++iter)
-    {
-        uint32 quest_id = *iter;
-
-        stmt = CharacterDatabase.GetPreparedStatement(CHAR_INS_CHARACTER_WEEKLYQUESTSTATUS);
-        stmt->setUInt32(0, GetGUIDLow());
-        stmt->setUInt32(1, quest_id);
-        trans->Append(stmt);
-    }
-    */
-    m_UnlimitedQuestChanged = false;
 }
 
 
@@ -23607,13 +23729,13 @@ void Player::ResetMonthlyQuestStatus()
     // DB data deleted in caller
     m_MonthlyQuestChanged = false;
 }
-void Player::ResetUnlimitedRepeatQuestStatus()
+void Player::ResetUnlimitedRepeatQuestStatus(uint32 quest_id)
 {
     if (m_unlimitedquests.empty())
         return;
 
-    m_unlimitedquests.clear();
-    // DB data deleted in caller
+    m_unlimitedquests.find(quest_id);
+    //m_unlimitedquests.clear();
     m_UnlimitedQuestChanged = false;
 }
 

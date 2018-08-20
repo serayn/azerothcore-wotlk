@@ -788,12 +788,10 @@ class World
         void InitWeeklyQuestResetTime();
         void InitMonthlyQuestResetTime();
         void InitRandomBGResetTime();
-        void InitUnlimitedQuestResetTime();
         void InitGuildResetTime();
         void ResetDailyQuests();
         void ResetWeeklyQuests();
         void ResetMonthlyQuests();
-        void ResetUnlimitedQuests();
         void ResetRandomBG();
         void ResetGuildCap();
     private:
@@ -857,7 +855,6 @@ class World
         time_t m_NextDailyQuestReset;
         time_t m_NextWeeklyQuestReset;
         time_t m_NextMonthlyQuestReset;
-        time_t m_NextUnlimitedQuestReset;
         time_t m_NextRandomBGReset;
         time_t m_NextGuildReset;
 

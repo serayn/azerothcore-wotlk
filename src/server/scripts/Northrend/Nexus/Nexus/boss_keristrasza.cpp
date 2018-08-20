@@ -198,5 +198,5 @@ class achievement_intense_cold : public AchievementCriteriaScript
 void AddSC_boss_keristrasza()
 {
     new boss_keristrasza();
-    new achievement_intense_cold();
+    //new achievement_intense_cold();
 }

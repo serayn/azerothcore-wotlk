@@ -236,5 +236,5 @@ void AddSC_boss_slad_ran()
 {
     new boss_slad_ran();
     new spell_sladran_grip_of_sladran();
-    new achievement_snakes_whyd_it_have_to_be_snakes();
+    //new achievement_snakes_whyd_it_have_to_be_snakes();
 }

@@ -1075,7 +1075,7 @@ private:
     bool _isBattleGround;
     bool _isPvP;
 };
-
+typedef std::unordered_map<uint32, uint32> SkillXPMap;
 class Player : public Unit, public GridObject<Player>
 {
     friend class WorldSession;
@@ -1174,6 +1174,10 @@ class Player : public Unit, public GridObject<Player>
 
         void GiveXP(uint32 xp, Unit* victim, float group_rate=1.0f);
         void GiveLevel(uint8 level);
+
+        //SkillXP
+        SkillXPMap m_skillxp;
+        SkillXPMap m_timeXP;
 
         void InitStatsForLevel(bool reapplyMods = false);
 
@@ -1440,7 +1444,7 @@ class Player : public Unit, public GridObject<Player>
         void ResetWeeklyQuestStatus();
         void ResetMonthlyQuestStatus();
         void ResetSeasonalQuestStatus(uint16 event_id);
-        void ResetUnlimitedRepeatQuestStatus();
+        void ResetUnlimitedRepeatQuestStatus(uint32 quest_id);
 
         uint16 FindQuestSlot(uint32 quest_id) const;
         uint32 GetQuestSlotQuestId(uint16 slot) const { return GetUInt32Value(PLAYER_QUEST_LOG_1_1 + slot * MAX_QUEST_OFFSET + QUEST_ID_OFFSET); }
@@ -2699,7 +2703,6 @@ class Player : public Unit, public GridObject<Player>
         void _SaveWeeklyQuestStatus(SQLTransaction& trans);
         void _SaveMonthlyQuestStatus(SQLTransaction& trans);
         void _SaveSeasonalQuestStatus(SQLTransaction& trans);
-        void _SaveUnlimitedQuestStatus(SQLTransaction& trans);
         void _SaveSkills(SQLTransaction& trans);
         void _SaveSpells(SQLTransaction& trans);
         void _SaveEquipmentSets(SQLTransaction& trans);
@@ -2947,6 +2950,8 @@ class Player : public Unit, public GridObject<Player>
         // duel health and mana reset attributes
         uint32 healthBeforeDuel;
         uint32 manaBeforeDuel;
+
+
 };
 
 void AddItemsSetItem(Player*player, Item* item);

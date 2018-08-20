@@ -688,8 +688,8 @@ uint32 Unit::DealDamage(Unit* attacker, Unit* victim, uint32 damage, CleanDamage
     }
 
     // Hook for OnDamage Event
-    sScriptMgr->OnDamage(attacker, victim, damage); // This stuff for unit script only 
-    sScriptMgr->GlobalOnDamage(attacker, victim, damage); // This stuff for formulas script
+    sScriptMgr->OnDamage(attacker, victim, damage);
+    
     if (victim->GetTypeId() == TYPEID_PLAYER && attacker != victim)
     {
         // Signal to pets that their owner was attacked
@@ -1303,8 +1303,8 @@ void Unit::CalculateMeleeDamage(Unit* victim, uint32 damage, CalcDamageInfo* dam
     damage = damageInfo->target->MeleeDamageBonusTaken(this, damage, damageInfo->attackType);
 
     // Script Hook For CalculateMeleeDamage -- Allow scripts to change the Damage pre class mitigation calculations
-    sScriptMgr->ModifyMeleeDamage(damageInfo->target, damageInfo->attacker, damage); // This stuff for unit scripts only
-    sScriptMgr->GlobalModifyMeleeDamage(damageInfo->target, damageInfo->attacker, damage);
+    sScriptMgr->ModifyMeleeDamage(damageInfo->target, damageInfo->attacker, damage);
+
     // Calculate armor reduction
     if (IsDamageReducedByArmor((SpellSchoolMask)(damageInfo->damageSchoolMask)))
     {
@@ -2235,7 +2235,6 @@ MeleeHitOutcome Unit::RollMeleeOutcomeAgainst(const Unit* victim, WeaponAttackTy
     int32 attackerWeaponSkill = GetWeaponSkillValue(attType, victim);
     int32 victimDefenseSkill = victim->GetDefenseSkillValue(this);
 
-    sScriptMgr->GlobalOnBeforeRollMeleeOutcomeAgainst(this, victim, attType, attackerMaxSkillValueForLevel, victimMaxSkillValueForLevel, attackerWeaponSkill, victimDefenseSkill, crit_chance, miss_chance, dodge_chance, parry_chance, block_chance);
     sScriptMgr->OnBeforeRollMeleeOutcomeAgainst(this, victim, attType, attackerMaxSkillValueForLevel, victimMaxSkillValueForLevel, attackerWeaponSkill, victimDefenseSkill, crit_chance, miss_chance, dodge_chance, parry_chance, block_chance);
 
     // bonus from skills is 0.04%

@@ -488,7 +488,7 @@ void AddSC_boss_festergut()
     new spell_festergut_pungent_blight();
     new spell_festergut_blighted_spores();
     new spell_festergut_gastric_bloat();
-    new achievement_flu_shot_shortage();
+    //new achievement_flu_shot_shortage();
 
     new npc_stinky_icc();
 }

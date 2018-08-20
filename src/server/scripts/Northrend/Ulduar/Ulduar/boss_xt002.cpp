@@ -1098,6 +1098,6 @@ void AddSC_boss_xt002()
     new spell_xt002_searing_light_spawn_life_spark();
 
     // Achievements
-    new achievement_xt002_nerf_engineering();
-    new achievement_xt002_nerf_gravity_bombs();
+    //new achievement_xt002_nerf_engineering();
+    //new achievement_xt002_nerf_gravity_bombs();
 }

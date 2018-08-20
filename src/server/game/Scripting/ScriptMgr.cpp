@@ -587,9 +587,9 @@ void ScriptMgr::OnSpellBaseHealingBonusDone(bool &SkipCoreCode, Player const * p
     FOREACH_SCRIPT(FormulaScript)->OnSpellBaseHealingBonusDone(SkipCoreCode, player, DoneAdvertisedBenefit);
 }
 
-void ScriptMgr::OnUpdateResistance(bool &SkipCoreCode, Player const * player, float & value)
+void ScriptMgr::OnUpdateResistance(bool &SkipCoreCode, Player const * player, uint32 school,float & value)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnUpdateResistance(SkipCoreCode, player, value);
+    FOREACH_SCRIPT(FormulaScript)->OnUpdateResistance(SkipCoreCode, player, school, value);
 }
 
 void ScriptMgr::OnUpdateArmor(bool &SkipCoreCode, Player const * player, float & value)
@@ -770,23 +770,9 @@ void ScriptMgr::OnCallAssistance(bool& SkipCoreCode, Creature* me, bool m_Alread
 {
     FOREACH_SCRIPT(FormulaScript)->OnCallAssistance(SkipCoreCode, me, m_AlreadyCallAssistance, m_Events);
 }
-void ScriptMgr::GlobalOnBeforeRollMeleeOutcomeAgainst(const Unit* attacker, const Unit* victim, WeaponAttackType attType, int32 &attackerMaxSkillValueForLevel, int32 &victimMaxSkillValueForLevel, int32 &attackerWeaponSkill, int32 &victimDefenseSkill, int32 &crit_chance, int32 &miss_chance, int32 &dodge_chance, int32 &parry_chance, int32 &block_chance)
+void ScriptMgr::OnDurabilityLoss(bool& SkipCoreCode, Player* me, Item* item, double percent, uint32& pDurabilityLoss)
 {
-    FOREACH_SCRIPT(FormulaScript)->GlobalOnBeforeRollMeleeOutcomeAgainst(attacker, victim, attType, attackerMaxSkillValueForLevel, victimMaxSkillValueForLevel, attackerWeaponSkill, victimDefenseSkill, crit_chance, miss_chance, dodge_chance, parry_chance, block_chance);
-}
-uint32 ScriptMgr::GlobalDealDamage(Unit* AttackerUnit, Unit *pVictim, uint32 damage, DamageEffectType damagetype)
-{
-    FOR_SCRIPTS_RET(FormulaScript, itr, end, damage)
-        damage = itr->second->GlobalDealDamage(AttackerUnit, pVictim, damage, damagetype);
-    return damage;
-}
-void ScriptMgr::GlobalModifyMeleeDamage(Unit* target, Unit* attacker, uint32& damage)
-{
-    FOREACH_SCRIPT(FormulaScript)->GlobalModifyMeleeDamage(target, attacker, damage);
-}
-void ScriptMgr::GlobalOnDamage(Unit* attacker, Unit* victim, uint32& damage)
-{
-    FOREACH_SCRIPT(FormulaScript)->GlobalOnDamage(attacker, victim, damage);
+    FOREACH_SCRIPT(FormulaScript)->OnDurabilityLoss(SkipCoreCode, me, item, percent, pDurabilityLoss);
 }
 #define SCR_MAP_BGN(M, V, I, E, C, T) \
     if (V->GetEntry() && V->GetEntry()->T()) \

@@ -419,7 +419,7 @@ class FormulaScript : public ScriptObject
         }
 
         // Called on Stat to Resistance calculation
-        virtual void OnUpdateResistance(bool &SkipCoreCode, Player const * /*player*/, float & /*value*/)
+        virtual void OnUpdateResistance(bool &SkipCoreCode, Player const * /*player*/, uint32 /*school*/, float & /*value*/)
         {
             if (!SkipCoreCode)
             {
@@ -846,12 +846,15 @@ class FormulaScript : public ScriptObject
             //     sLog->outError("Module error: There is one OnCallAssistance script has been skipped cause of dupicated script of special type.");
         }
 
-        virtual void GlobalOnBeforeRollMeleeOutcomeAgainst(const Unit* /*attacker*/, const Unit* /*victim*/, WeaponAttackType /*attType*/, int32 &/*attackerMaxSkillValueForLevel*/, int32 &/*victimMaxSkillValueForLevel*/, int32 &/*attackerWeaponSkill*/, int32 &/*victimDefenseSkill*/, int32& /*crit_chance*/, int32& /*miss_chance*/, int32& /*dodge_chance*/, int32& /*parry_chance*/, int32& /*block_chance*/) {   };
-        virtual uint32 GlobalDealDamage(Unit* /*AttackerUnit*/, Unit* /*pVictim*/, uint32 damage, DamageEffectType /*damagetype*/) { return damage; }
-        // Called when Melee Damage is being Dealt for all unit
-        virtual void GlobalModifyMeleeDamage(Unit* /*target*/, Unit* /*attacker*/, uint32& /*damage*/) { }
-        // Called when a unit deals damage to another unit for all unit
-        virtual void GlobalOnDamage(Unit* /*attacker*/, Unit* /*victim*/, uint32& /*damage*/) { }
+        virtual void OnDurabilityLoss(bool& SkipCoreCode, Player* /*me*/, Item* /*item*/, double /*percent*/, uint32& /*pDurabilityLoss*/)
+        {
+            if (!SkipCoreCode)
+            {
+
+            }
+            //  else
+            //     sLog->outError("Module error: There is one OnDurabilityLoss script has been skipped cause of dupicated script of special type.");
+        }
 };
 
 template<class TMap> class MapScript : public UpdatableScript<TMap>
@@ -1729,7 +1732,7 @@ class ScriptMgr
         void OnStatToAttackPowerCalculation(bool &SkipCoreCode, Player const * player, float level, float & val2, bool ranged);
         void OnSpellBaseDamageBonusDone(bool &SkipCoreCode, Player const * player, int32 & DoneAdvertisedBenefit);
         void OnSpellBaseHealingBonusDone(bool &SkipCoreCode, Player const * player, int32 & DoneAdvertisedBenefit);
-        void OnUpdateResistance(bool &SkipCoreCode, Player const * player, float & value);
+        void OnUpdateResistance(bool &SkipCoreCode, Player const * player, uint32 school, float & value);
         void OnUpdateArmor(bool &SkipCoreCode, Player const * player, float & value);
         void OnDefaultUnitMeleeSkill(bool &SkipCoreCode, Unit const * me, Unit const * target, uint32 & result);
         void OnManaRestore(bool &SkipCoreCode, Player const * player, float& addvalue, int32& m_regenTimer);
@@ -1771,10 +1774,8 @@ class ScriptMgr
         void OnCanUseItem(bool& SkipCoreCode,Player const* me, Item* pItem, ItemTemplate const* pProto, bool not_loading, InventoryResult& RETURN_CODE);
         void OnCanStartAttack(bool& SkipCoreCode, Creature const* me, Unit const* who, float m_CombatDistance, bool& RETURN_CODE);
         void OnCallAssistance(bool& SkipCoreCode, Creature* me, bool m_AlreadyCallAssistance, EventProcessor& m_Events);
-        uint32 GlobalDealDamage(Unit* AttackerUnit, Unit *pVictim, uint32 damage, DamageEffectType damagetype);
-        void GlobalOnBeforeRollMeleeOutcomeAgainst(const Unit* attacker, const Unit* victim, WeaponAttackType attType, int32 &attackerMaxSkillValueForLevel, int32 &victimMaxSkillValueForLevel, int32 &attackerWeaponSkill, int32 &victimDefenseSkill, int32 &crit_chance, int32 &miss_chance, int32 &dodge_chance, int32 &parry_chance, int32 &block_chance);
-        void GlobalModifyMeleeDamage(Unit* target, Unit* attacker, uint32& damage);
-        void GlobalOnDamage(Unit* attacker, Unit* victim, uint32& damage);
+        void OnDurabilityLoss(bool& SkipCoreCode, Player* me, Item* item, double percent, uint32& pDurabilityLoss);
+
     public: /* MapScript */
 
         void OnCreateMap(Map* map);

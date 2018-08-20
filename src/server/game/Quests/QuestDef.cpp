@@ -162,7 +162,7 @@ void Quest::LoadQuestTemplateAddon(Field* fields)
 
 uint32 Quest::XPValue(Player* player) const
 {
-    bool SkipCoreCode; uint32 xp = 0;
+    bool SkipCoreCode = false; uint32 xp = 0;
     sScriptMgr->OnQuestXPValue(SkipCoreCode,player, xp, Level, RewardXPId);
     if (!SkipCoreCode)
     {

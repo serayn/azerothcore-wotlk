@@ -318,5 +318,5 @@ void AddSC_boss_novos()
     new spell_novos_despawn_crystal_handler();
     new spell_novos_crystal_handler_death();
     new spell_novos_summon_minions();
-    new achievement_oh_novos();
+    //new achievement_oh_novos();
 }

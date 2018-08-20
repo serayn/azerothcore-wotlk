@@ -1518,5 +1518,5 @@ void AddSC_boss_valithria_dreamwalker()
     new spell_dreamwalker_summon_suppresser_effect();
     new spell_valithria_suppression();
 
-    new achievement_portal_jockey();
+    //new achievement_portal_jockey();
 }

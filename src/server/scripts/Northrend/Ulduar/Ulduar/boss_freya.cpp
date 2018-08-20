@@ -1329,8 +1329,8 @@ void AddSC_boss_freya()
     new boss_freya_summons();
     new boss_freya_nature_bomb();
 
-    new achievement_freya_getting_back_to_nature();
-    new achievement_freya_knock_on_wood("achievement_freya_knock_on_wood", 1);
-    new achievement_freya_knock_on_wood("achievement_freya_knock_knock_on_wood", 2);
-    new achievement_freya_knock_on_wood("achievement_freya_knock_knock_knock_on_wood", 3);
+    //new achievement_freya_getting_back_to_nature();
+    //new achievement_freya_knock_on_wood("achievement_freya_knock_on_wood", 1);
+    //new achievement_freya_knock_on_wood("achievement_freya_knock_knock_on_wood", 2);
+    //new achievement_freya_knock_on_wood("achievement_freya_knock_knock_knock_on_wood", 3);
 }

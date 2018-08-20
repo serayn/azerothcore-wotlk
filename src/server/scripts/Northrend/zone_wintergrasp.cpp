@@ -1114,7 +1114,7 @@ void AddSC_wintergrasp()
     new spell_wg_reduce_damage_by_distance();
 
     // ACHIEVEMENTs
-    new achievement_wg_didnt_stand_a_chance();
-    new achievement_wg_vehicular_gnomeslaughter();
-    new achievement_wg_within_our_grasp();
+    //new achievement_wg_didnt_stand_a_chance();
+    //new achievement_wg_vehicular_gnomeslaughter();
+    //new achievement_wg_within_our_grasp();
 }

@@ -268,5 +268,5 @@ void AddSC_boss_trollgore()
     new spell_trollgore_consume();
     new spell_trollgore_corpse_explode();
     new spell_trollgore_invader_taunt();
-    new achievement_consumption_junction();
+    //new achievement_consumption_junction();
 }
