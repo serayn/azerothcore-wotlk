@@ -3245,20 +3245,21 @@ void Player::GiveXP(uint32 xp, Unit* victim, float group_rate)
 // Update player to next level
 // Current player experience not update (must be update by caller)
 void Player::GiveLevel(uint8 level)
-{ 
+{
+    
     uint8 oldLevel = getLevel();
     if (level == oldLevel)
         return;
 
     if (Guild* guild = GetGuild())
         guild->UpdateMemberData(this, GUILD_MEMBER_DATA_LEVEL, level);
-
+    
     PlayerLevelInfo info;
     sObjectMgr->GetPlayerLevelInfo(getRace(true), getClass(), level, &info);
-
+    
     PlayerClassLevelInfo classInfo;
     sObjectMgr->GetPlayerClassLevelInfo(getClass(), level, &classInfo);
-
+    
     // send levelup info to client
     WorldPacket data(SMSG_LEVELUP_INFO, (4+4+MAX_POWERS*4+MAX_STATS*4));
     data << uint32(level);
@@ -3274,20 +3275,20 @@ void Player::GiveLevel(uint8 level)
     // end for
     for (uint8 i = STAT_STRENGTH; i < MAX_STATS; ++i)          // Stats loop (0-4)
         data << uint32(int32(info.stats[i]) - GetCreateStat(Stats(i)));
-
+    
     GetSession()->SendPacket(&data);
-
+    
     SetUInt32Value(PLAYER_NEXT_LEVEL_XP, sObjectMgr->GetXPForLevel(level));
-
+    
     //update level, max level of skills
     m_Played_time[PLAYED_TIME_LEVEL] = 0;                   // Level Played Time reset
 
     _ApplyAllLevelScaleItemMods(false);
-
+    
     SetLevel(level);
-
+    
     UpdateSkillsForLevel();
-
+    
     // save base values (bonuses already included in stored stats
     for (uint8 i = STAT_STRENGTH; i < MAX_STATS; ++i)
         SetCreateStat(Stats(i), info.stats[i]);
@@ -3300,12 +3301,12 @@ void Player::GiveLevel(uint8 level)
     InitGlyphsForLevel();
 
     UpdateAllStats();
-
+    
     if (sWorld->getBoolConfig(CONFIG_ALWAYS_MAXSKILL)) // Max weapon skill when leveling up
         UpdateSkillsToMaxSkillsForLevel();
 
     _ApplyAllLevelScaleItemMods(true);
-
+    
     // set current level health and mana/energy to maximum after applying all mods.
     SetFullHealth();
     SetPower(POWER_MANA, GetMaxPower(POWER_MANA));
@@ -3314,11 +3315,11 @@ void Player::GiveLevel(uint8 level)
         SetPower(POWER_RAGE, GetMaxPower(POWER_RAGE));
     SetPower(POWER_FOCUS, 0);
     SetPower(POWER_HAPPINESS, 0);
-
+    
     // update level to hunter/summon pet
     if (Pet* pet = GetPet())
         pet->SynchronizeLevelWithOwner();
-
+    
     if (MailLevelReward const* mailReward = sObjectMgr->GetMailLevelReward(level, getRaceMask()))
     {
         //- TODO: Poor design of mail system
@@ -3326,9 +3327,9 @@ void Player::GiveLevel(uint8 level)
         MailDraft(mailReward->mailTemplateId).SendMailTo(trans, this, MailSender(MAIL_CREATURE, mailReward->senderEntry));
         CharacterDatabase.CommitTransaction(trans);
     }
-
+    
     UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_REACH_LEVEL);
-
+    
     // Refer-A-Friend
     if (GetSession()->GetRecruiterId())
         if (level < sWorld->getIntConfig(CONFIG_MAX_RECRUIT_A_FRIEND_BONUS_PLAYER_LEVEL))
@@ -3339,7 +3340,7 @@ void Player::GiveLevel(uint8 level)
                 if (!HasByteFlag(PLAYER_FIELD_BYTES, 1, 0x01))
                     SetByteFlag(PLAYER_FIELD_BYTES, 1, 0x01);
             }
-
+    
     sScriptMgr->OnPlayerLevelChanged(this, oldLevel);
 }
 
@@ -6274,6 +6275,7 @@ inline int SkillGainChance(uint32 SkillValue, uint32 GrayLevel, uint32 GreenLeve
         me->m_skillxp[SkillValue] = xp;
     }
     me->SendLogXPGain(me->m_skillxp[SkillValue], nullptr, 0, false, 0.0f);
+    return true;
 }
 
 bool Player::UpdateCraftSkill(uint32 spellid)
@@ -6529,6 +6531,7 @@ bool CombatSkillImprove(Player* me, uint32 spelllevel,  bool defence, WeaponAtta
         me->m_skillxp[SkillValue] = xp;
     }
     me->SendLogXPGain(me->m_skillxp[SkillValue], nullptr, 0, false, 0.0f);
+    return true;
 }
 void Player::UpdateCombatSkills(Unit* victim, WeaponAttackType attType, bool defence)
 {
@@ -8118,7 +8121,7 @@ void Player::_ApplyItemBonuses(ItemTemplate const* proto, uint8 slot, bool apply
     ScalingStatValuesEntry const* ssv = proto->ScalingStatValue ? sScalingStatValuesStore.LookupEntry(ssd_level) : NULL;
     if (only_level_scale && !ssv)
         return;
-
+    uint32 statsCount = proto->StatsCount;
     for (uint8 i = 0; i < MAX_ITEM_PROTO_STATS; ++i)
     {
         uint32 statType = 0;
@@ -8133,15 +8136,16 @@ void Player::_ApplyItemBonuses(ItemTemplate const* proto, uint8 slot, bool apply
         }
         else
         {
-            uint32 statsCount = proto->StatsCount;
             if (i < statsCount)
             {
                 statType = proto->ItemStat[i].ItemStatType;
                 val = proto->ItemStat[i].ItemStatValue;
             }
             bool SkipCoreCode = false;
-            sScriptMgr->OnApplyingNonSSDItemStatsBonus(SkipCoreCode, this , proto, slot, i, statType, val, statType);
-            if (i >= statsCount) continue;
+            sScriptMgr->OnApplyingNonSSDItemStatsBonus(SkipCoreCode, this , proto, slot, i, statType, val, statsCount);
+
+            if (i > statsCount) continue;
+
         }
 
         if (val == 0)
@@ -8307,15 +8311,6 @@ void Player::_ApplyItemBonuses(ItemTemplate const* proto, uint8 slot, bool apply
 
     // If set ScalingStatValue armor get it or use item armor
     uint32 armor = proto->Armor;
-	int32 holy_res = proto->HolyRes;
-	int32 fire_res = proto->FireRes;
-	int32 nature_res = proto->NatureRes;
-	int32 frost_res = proto->FrostRes;
-	int32 shadow_res = proto->ShadowRes;
-	int32 arcane_res = proto->ArcaneRes;
-    bool SkipCoreCode = false;
-    sScriptMgr->OnApplyingItemBeforeArmorAndResistance(SkipCoreCode, this, proto, slot, armor, holy_res, fire_res, nature_res, frost_res, shadow_res, arcane_res);
-
     if (ssv)
     {
         if (uint32 ssvarmor = ssv->getArmorMod(proto->ScalingStatValue))
@@ -8323,6 +8318,15 @@ void Player::_ApplyItemBonuses(ItemTemplate const* proto, uint8 slot, bool apply
     }
     else if (armor && proto->ArmorDamageModifier)
         armor -= uint32(proto->ArmorDamageModifier);
+    
+    int32 holy_res = proto->HolyRes;
+    int32 fire_res = proto->FireRes;
+    int32 nature_res = proto->NatureRes;
+    int32 frost_res = proto->FrostRes;
+    int32 shadow_res = proto->ShadowRes;
+    int32 arcane_res = proto->ArcaneRes;
+    bool SkipCoreCode = false;
+    sScriptMgr->OnApplyingItemBeforeArmorAndResistance(SkipCoreCode, this, proto, slot, armor, holy_res, fire_res, nature_res, frost_res, shadow_res, arcane_res);
 
     if (armor)
     {
@@ -8350,22 +8354,22 @@ void Player::_ApplyItemBonuses(ItemTemplate const* proto, uint8 slot, bool apply
     if (proto->Block)
         HandleBaseModValue(SHIELD_BLOCK_VALUE, FLAT_MOD, float(proto->Block), apply);
 
-    if (proto->HolyRes)
+    if (holy_res)
         HandleStatModifier(UNIT_MOD_RESISTANCE_HOLY, BASE_VALUE, float(holy_res), apply);
 
-    if (proto->FireRes)
+    if (fire_res)
         HandleStatModifier(UNIT_MOD_RESISTANCE_FIRE, BASE_VALUE, float(fire_res), apply);
 
-    if (proto->NatureRes)
+    if (nature_res)
         HandleStatModifier(UNIT_MOD_RESISTANCE_NATURE, BASE_VALUE, float(nature_res), apply);
 
-    if (proto->FrostRes)
+    if (frost_res)
         HandleStatModifier(UNIT_MOD_RESISTANCE_FROST, BASE_VALUE, float(frost_res), apply);
 
-    if (proto->ShadowRes)
+    if (shadow_res)
         HandleStatModifier(UNIT_MOD_RESISTANCE_SHADOW, BASE_VALUE, float(shadow_res), apply);
 
-    if (proto->ArcaneRes)
+    if (arcane_res)
         HandleStatModifier(UNIT_MOD_RESISTANCE_ARCANE, BASE_VALUE, float(arcane_res), apply);
 
     WeaponAttackType attType = BASE_ATTACK;

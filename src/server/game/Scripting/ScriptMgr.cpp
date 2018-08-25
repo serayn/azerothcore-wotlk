@@ -2196,7 +2196,7 @@ void ScriptMgr::OnBattlegroundAddPlayer(Battleground* bg, Player* player)
     FOREACH_SCRIPT(BGScript)->OnBattlegroundAddPlayer(bg, player);
 }
 
-void ScriptMgr::OnApplyingNonSSDItemStatsBonus(bool &SkipCoreCode, Player* player, ItemTemplate const* proto, uint8 slot, uint8 i, uint32 statType, int32 &value, uint32 &statsCount)
+void ScriptMgr::OnApplyingNonSSDItemStatsBonus(bool &SkipCoreCode, Player* player, ItemTemplate const* proto, uint8 slot, uint8 i, uint32& statType, int32 &value, uint32 &statsCount)
 {
     FOREACH_SCRIPT(PlayerScript)->OnApplyingNonSSDItemStatsBonus(SkipCoreCode, player , proto, slot ,i, statType, value, statsCount);
 }

@@ -1498,7 +1498,7 @@ class PlayerScript : public ScriptObject
         virtual void OnFirstLogin(Player* /*player*/) { }
 
         //  Called on _ApplyItemBonuses of class player, SkipCoreCode is a way to optimize the efficiency.
-        virtual void OnApplyingNonSSDItemStatsBonus(bool& SkipCoreCode, Player* /*player*/, ItemTemplate const* /*proto*/, uint8 /*slot*/, uint8 /*i*/, uint32 /*statType*/, int32& /*value*/, uint32& /*statsCount*/)
+        virtual void OnApplyingNonSSDItemStatsBonus(bool& SkipCoreCode, Player* /*player*/, ItemTemplate const* /*proto*/, uint8 /*slot*/, uint8 /*i*/, uint32& /*statType*/, int32& /*value*/, uint32& /*statsCount*/)
         {
             if (!SkipCoreCode)
             {
@@ -1947,7 +1947,7 @@ class ScriptMgr
         void OnAfterUpdateAttackPowerAndDamage(Player* player, float& level, float& base_attPower, float& attPowerMod, float& attPowerMultiplier, bool ranged);
         void OnBeforeInitTalentForLevel(Player* player, uint8& level, uint32& talentPointsForLevel);
         void OnFirstLogin(Player* player);
-        void OnApplyingNonSSDItemStatsBonus(bool &SkipCoreCode, Player* player, ItemTemplate const* proto, uint8 slot, uint8 i, uint32 statType, int32 & value, uint32 & statsCount);
+        void OnApplyingNonSSDItemStatsBonus(bool &SkipCoreCode, Player* player, ItemTemplate const* proto, uint8 slot, uint8 i, uint32& statType, int32 & value, uint32 & statsCount);
         void OnApplyingItemBeforeArmorAndResistance(bool &SkipCoreCode, Player* player, ItemTemplate const* proto, uint8 slot, uint32 &armor, int32 &holy_res, int32 &fire_res, int32 &nature_res, int32 &frost_res, int32 &shadow_res, int32 &arcane_res);
         void OnBeforeApplyingWeaponDamage(bool &SkipCoreCode, Player* player, ItemTemplate const* proto, uint8 slot, float &damage);
 
