@@ -15,7 +15,7 @@
 #include "Item.h"
 #include "AuctionHouseMgr.h"
 #include "CalendarMgr.h"
-
+#include "ScriptMgr.h"
 MailSender::MailSender(Object* sender, MailStationery stationery) : m_stationery(stationery)
 {
     switch (sender->GetTypeId())
@@ -167,99 +167,108 @@ void MailDraft::SendMailTo(SQLTransaction& trans, MailReceiver const& receiver, 
         prepareItems(pReceiver, trans);                            // generate mail template items
 
     uint32 mailId = sObjectMgr->GenerateMailID();
-
-    time_t deliver_time = time(NULL) + deliver_delay;
-
-    //expire time if COD 3 days, if no COD 30 days, if auction sale pending 1 hour
-    uint32 expire_delay;
-
-    // auction mail without any items and money
-    if (sender.GetMailMessageType() == MAIL_AUCTION && m_items.empty() && !m_money)
-        expire_delay = sWorld->getIntConfig(CONFIG_MAIL_DELIVERY_DELAY);
-    // mail from battlemaster (rewardmarks) should last only one day
-    else if (sender.GetMailMessageType() == MAIL_CREATURE && sBattlegroundMgr->GetBattleMasterBG(sender.GetSenderId()) != BATTLEGROUND_TYPE_NONE)
-        expire_delay = DAY;
-     // default case: expire time if COD 3 days, if no COD 30 days (or 90 days if sender is a game master)
-    else
+    bool SkipCoreCode = false;
+    sScriptMgr->OnSendMailTo(SkipCoreCode, this, trans, receiver, sender, checked, deliver_delay, custom_expiration, pReceiver, pSender, mailId, m_items, m_money, m_COD);
+    if(!SkipCoreCode)
     {
-        if (m_COD)
-            expire_delay = 3 * DAY;
-        else if (custom_expiration > 0 )
-            expire_delay = custom_expiration * DAY;
+        time_t deliver_time = time(NULL) + deliver_delay;
+
+        //expire time if COD 3 days, if no COD 30 days, if auction sale pending 1 hour
+        uint32 expire_delay;
+
+        // auction mail without any items and money
+        if (sender.GetMailMessageType() == MAIL_AUCTION && m_items.empty() && !m_money)
+            expire_delay = sWorld->getIntConfig(CONFIG_MAIL_DELIVERY_DELAY);
+        // mail from battlemaster (rewardmarks) should last only one day
+        else if (sender.GetMailMessageType() == MAIL_CREATURE && sBattlegroundMgr->GetBattleMasterBG(sender.GetSenderId()) != BATTLEGROUND_TYPE_NONE)
+            expire_delay = DAY;
+        // default case: expire time if COD 3 days, if no COD 30 days (or 90 days if sender is a game master)
         else
-            expire_delay = pSender && pSender->GetSession()->GetSecurity() ? 90 * DAY : 30 * DAY;
-    }
-
-    time_t expire_time = deliver_time + expire_delay;
-
-    // Add to DB
-    uint8 index = 0;
-    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_INS_MAIL);
-    stmt->setUInt32(  index, mailId);
-    stmt->setUInt8 (++index, uint8(sender.GetMailMessageType()));
-    stmt->setInt8  (++index, int8(sender.GetStationery()));
-    stmt->setUInt16(++index, GetMailTemplateId());
-    stmt->setUInt32(++index, sender.GetSenderId());
-    stmt->setUInt32(++index, receiver.GetPlayerGUIDLow());
-    stmt->setString(++index, GetSubject());
-    stmt->setString(++index, GetBody());
-    stmt->setBool  (++index, !m_items.empty());
-    stmt->setUInt64(++index, uint64(expire_time));
-    stmt->setUInt64(++index, uint64(deliver_time));
-    stmt->setUInt32(++index, m_money);
-    stmt->setUInt32(++index, m_COD);
-    stmt->setUInt8 (++index, uint8(checked));
-    trans->Append(stmt);
-
-    for (MailItemMap::const_iterator mailItemIter = m_items.begin(); mailItemIter != m_items.end(); ++mailItemIter)
-    {
-        Item* pItem = mailItemIter->second;
-        stmt = CharacterDatabase.GetPreparedStatement(CHAR_INS_MAIL_ITEM);
-        stmt->setUInt32(0, mailId);
-        stmt->setUInt32(1, pItem->GetGUIDLow());
-        stmt->setUInt32(2, receiver.GetPlayerGUIDLow());
-        trans->Append(stmt);
-    }
-
-    // xinef: update global data
-    sWorld->UpdateGlobalPlayerMails(receiver.GetPlayerGUIDLow(), 1);
-
-    // For online receiver update in game mail status and data
-    if (pReceiver)
-    {
-        pReceiver->AddNewMailDeliverTime(deliver_time);
-
-        if (pReceiver->IsMailsLoaded())
         {
-            Mail* m = new Mail;
-            m->messageID = mailId;
-            m->mailTemplateId = GetMailTemplateId();
-            m->subject = GetSubject();
-            m->body = GetBody();
-            m->money = GetMoney();
-            m->COD = GetCOD();
+            if (m_COD)
+                expire_delay = 3 * DAY;
+            else if (custom_expiration > 0)
+                expire_delay = custom_expiration * DAY;
+            else
+                expire_delay = pSender && pSender->GetSession()->GetSecurity() ? 90 * DAY : 30 * DAY;
+        }
 
-            for (MailItemMap::const_iterator mailItemIter = m_items.begin(); mailItemIter != m_items.end(); ++mailItemIter)
+        time_t expire_time = deliver_time + expire_delay;
+
+        // Add to DB
+        uint8 index = 0;
+        PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_INS_MAIL);
+        stmt->setUInt32(index, mailId);
+        stmt->setUInt8(++index, uint8(sender.GetMailMessageType()));
+        stmt->setInt8(++index, int8(sender.GetStationery()));
+        stmt->setUInt16(++index, GetMailTemplateId());
+        stmt->setUInt32(++index, sender.GetSenderId());
+        stmt->setUInt32(++index, receiver.GetPlayerGUIDLow());
+        stmt->setString(++index, GetSubject());
+        stmt->setString(++index, GetBody());
+        stmt->setBool(++index, !m_items.empty());
+        stmt->setUInt64(++index, uint64(expire_time));
+        stmt->setUInt64(++index, uint64(deliver_time));
+        stmt->setUInt32(++index, m_money);
+        stmt->setUInt32(++index, m_COD);
+        stmt->setUInt8(++index, uint8(checked));
+        trans->Append(stmt);
+
+        for (MailItemMap::const_iterator mailItemIter = m_items.begin(); mailItemIter != m_items.end(); ++mailItemIter)
+        {
+            Item* pItem = mailItemIter->second;
+            stmt = CharacterDatabase.GetPreparedStatement(CHAR_INS_MAIL_ITEM);
+            stmt->setUInt32(0, mailId);
+            stmt->setUInt32(1, pItem->GetGUIDLow());
+            stmt->setUInt32(2, receiver.GetPlayerGUIDLow());
+            trans->Append(stmt);
+        }
+
+        // xinef: update global data
+        sWorld->UpdateGlobalPlayerMails(receiver.GetPlayerGUIDLow(), 1);
+
+        // For online receiver update in game mail status and data
+        if (pReceiver)
+        {
+            pReceiver->AddNewMailDeliverTime(deliver_time);
+
+            if (pReceiver->IsMailsLoaded())
             {
-                Item* item = mailItemIter->second;
-                m->AddItem(item->GetGUIDLow(), item->GetEntry());
+                Mail* m = new Mail;
+                m->messageID = mailId;
+                m->mailTemplateId = GetMailTemplateId();
+                m->subject = GetSubject();
+                m->body = GetBody();
+                m->money = GetMoney();
+                m->COD = GetCOD();
+
+                for (MailItemMap::const_iterator mailItemIter = m_items.begin(); mailItemIter != m_items.end(); ++mailItemIter)
+                {
+                    Item* item = mailItemIter->second;
+                    m->AddItem(item->GetGUIDLow(), item->GetEntry());
+                }
+
+                m->messageType = sender.GetMailMessageType();
+                m->stationery = sender.GetStationery();
+                m->sender = sender.GetSenderId();
+                m->receiver = receiver.GetPlayerGUIDLow();
+                m->expire_time = expire_time;
+                m->deliver_time = deliver_time;
+                m->checked = checked;
+                m->state = MAIL_STATE_UNCHANGED;
+
+                pReceiver->AddMail(m);                           // to insert new mail to beginning of maillist
+
+                if (!m_items.empty())
+                {
+                    for (MailItemMap::iterator mailItemIter = m_items.begin(); mailItemIter != m_items.end(); ++mailItemIter)
+                        pReceiver->AddMItem(mailItemIter->second);
+                }
             }
-
-            m->messageType = sender.GetMailMessageType();
-            m->stationery = sender.GetStationery();
-            m->sender = sender.GetSenderId();
-            m->receiver = receiver.GetPlayerGUIDLow();
-            m->expire_time = expire_time;
-            m->deliver_time = deliver_time;
-            m->checked = checked;
-            m->state = MAIL_STATE_UNCHANGED;
-
-            pReceiver->AddMail(m);                           // to insert new mail to beginning of maillist
-
-            if (!m_items.empty())
+            else if (!m_items.empty())
             {
-                for (MailItemMap::iterator mailItemIter = m_items.begin(); mailItemIter != m_items.end(); ++mailItemIter)
-                    pReceiver->AddMItem(mailItemIter->second);
+                SQLTransaction temp = SQLTransaction(NULL);
+                deleteIncludedItems(temp);
             }
         }
         else if (!m_items.empty())
@@ -267,10 +276,5 @@ void MailDraft::SendMailTo(SQLTransaction& trans, MailReceiver const& receiver, 
             SQLTransaction temp = SQLTransaction(NULL);
             deleteIncludedItems(temp);
         }
-    }
-    else if (!m_items.empty())
-    {
-        SQLTransaction temp = SQLTransaction(NULL);
-        deleteIncludedItems(temp);
     }
 }

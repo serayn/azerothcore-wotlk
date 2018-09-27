@@ -1075,7 +1075,7 @@ private:
     bool _isBattleGround;
     bool _isPvP;
 };
-typedef std::unordered_map<uint32, uint32> SkillXPMap;
+
 class Player : public Unit, public GridObject<Player>
 {
     friend class WorldSession;
@@ -1174,10 +1174,6 @@ class Player : public Unit, public GridObject<Player>
 
         void GiveXP(uint32 xp, Unit* victim, float group_rate=1.0f);
         void GiveLevel(uint8 level);
-
-        //SkillXP
-        SkillXPMap m_skillxp;
-        SkillXPMap m_timeXP;
 
         void InitStatsForLevel(bool reapplyMods = false);
 

@@ -21,6 +21,8 @@
 #include "DynamicObject.h"
 #include "ArenaTeam.h"
 #include "Player.h"
+#include "AuctionHouseMgr.h"
+#include "Mail.h"
 
 class AuctionHouseObject;
 class AuraScript;
@@ -185,6 +187,26 @@ template<class TObject> class UpdatableScript
         virtual void OnUpdate(TObject* /*obj*/, uint32 /*diff*/) { }
 };
 
+class MailScript : public ScriptObject
+{
+    /*uint32 _someId;
+private:
+    void RegisterSelf();*/
+
+protected:
+    MailScript(const char* name);
+public:
+
+    virtual void OnSendMailTo(bool& SkipCoreCode, MailDraft* /*me*/, SQLTransaction& /*trans*/, MailReceiver const& /*receiver*/, MailSender const& /*sender*/, MailCheckMask /*checked*/, uint32 /*deliver_delay*/, uint32 /*custom_expiration*/, Player* /*pReceiver*/, Player* /*pSender*/, uint32 /*mailId*/, MailItemMap& /*m_items*/, uint32& /*m_money*/, uint32& /*m_COD*/)
+    {
+        if(!SkipCoreCode)
+        {
+        }
+    }
+
+};
+
+
 class SpellScriptLoader : public ScriptObject
 {
     protected:
@@ -267,7 +289,6 @@ class WorldScript : public ScriptObject
         // Called when the world is actually shut down.
         virtual void OnShutdown() { }
 };
-
 
 class FormulaScript : public ScriptObject
 {
@@ -855,6 +876,25 @@ class FormulaScript : public ScriptObject
             //  else
             //     sLog->outError("Module error: There is one OnDurabilityLoss script has been skipped cause of dupicated script of special type.");
         }
+
+        virtual void OnUpdateCraftSkill(bool& SkipCoreCode, Player* /*me*/, uint32 /*spelllevel*/, uint32 /*SkillId*/, uint32 /*craft_skill_gain*/, bool& /*result*/)
+        {
+            if (!SkipCoreCode)
+            {
+
+            }
+            //  else
+            //     sLog->outError("Module error: There is one OnUpdateCraftSkill script has been skipped cause of dupicated script of special type.");
+        }
+        virtual void OnUpdateCombatSkills(bool& SkipCoreCode, Player* /*me*/, uint32 /*spelllevel*/, bool /*defence*/, WeaponAttackType /*attType*/, uint32 /*chance*/, bool& /*result*/)
+        {
+            if (!SkipCoreCode)
+            {
+
+            }
+            //  else
+            //     sLog->outError("Module error: There is one OnUpdateCombatSkills script has been skipped cause of dupicated script of special type.");
+        }
 };
 
 template<class TMap> class MapScript : public UpdatableScript<TMap>
@@ -1232,6 +1272,31 @@ class AuctionHouseScript : public ScriptObject
 
         // Called when an auction expires.
         virtual void OnAuctionExpire(AuctionHouseObject* /*ah*/, AuctionEntry* /*entry*/) { }
+
+        // Called when OnSendAuctionSuccessfulMail.
+        virtual void OnSendAuctionSuccessfulMail(bool& SkipCoreCode, AuctionHouseMgr* /*me*/, AuctionEntry* /*auction*/, SQLTransaction& /*trans*/, Player* /*owner*/, uint64 /*owner_guid*/, uint32 /*owner_accId*/)
+        {
+            if (!SkipCoreCode)
+            {
+            }
+        }
+        // Called when OnSendAuctionExpiredMail.
+        virtual void OnSendAuctionExpiredMail(bool& SkipCoreCode, AuctionHouseMgr* /*me*/, AuctionEntry* /*auction*/, SQLTransaction& /*trans*/, Player* /*owner*/, uint64 /*owner_guid*/, uint32 /*owner_accId*/, Item* /*pItem*/)
+        {
+            if (!SkipCoreCode)
+            {
+            }
+        }
+        virtual void OnSendAuctionOutbiddedMail(bool& SkipCoreCode, AuctionHouseMgr* /*me*/, AuctionEntry* /*auction*/, SQLTransaction& /*trans*/, uint32 /*newPrice*/, Player* /*newBidder*/, uint64 /*oldBidder_guid*/, Player* /*oldBidder*/)
+        {
+            if (!SkipCoreCode)
+            {
+            }
+        }
+        virtual void OnAuctionHouseUpdate(AuctionHouseMgr* /*me*/)
+        {
+
+        }
 };
 
 class ConditionScript : public ScriptObject
@@ -1775,6 +1840,8 @@ class ScriptMgr
         void OnCanStartAttack(bool& SkipCoreCode, Creature const* me, Unit const* who, float m_CombatDistance, bool& RETURN_CODE);
         void OnCallAssistance(bool& SkipCoreCode, Creature* me, bool m_AlreadyCallAssistance, EventProcessor& m_Events);
         void OnDurabilityLoss(bool& SkipCoreCode, Player* me, Item* item, double percent, uint32& pDurabilityLoss);
+        void OnUpdateCraftSkill(bool& SkipCoreCode, Player* me, uint32 spelllevel, uint32 SkillId, uint32 craft_skill_gain, bool& result);
+        void OnUpdateCombatSkills(bool& SkipCoreCode, Player* me, uint32 spelllevel, bool defence, WeaponAttackType attType, uint32 chance, bool& result);
 
     public: /* MapScript */
 
@@ -1855,6 +1922,10 @@ class ScriptMgr
         void OnAuctionRemove(AuctionHouseObject* ah, AuctionEntry* entry);
         void OnAuctionSuccessful(AuctionHouseObject* ah, AuctionEntry* entry);
         void OnAuctionExpire(AuctionHouseObject* ah, AuctionEntry* entry);
+        void OnSendAuctionSuccessfulMail(bool& SkipCoreCode, AuctionHouseMgr* me, AuctionEntry* auction, SQLTransaction& trans, Player* owner, uint64 owner_guid, uint32 owner_accId);
+        void OnSendAuctionExpiredMail(bool& SkipCoreCode, AuctionHouseMgr* me, AuctionEntry* auction, SQLTransaction& trans, Player* owner, uint64 owner_guid, uint32 owner_accId, Item* pItem);
+        void OnSendAuctionOutbiddedMail(bool& SkipCoreCode, AuctionHouseMgr* me, AuctionEntry* auction, SQLTransaction& trans, uint32 newPrice, Player* newBidder, uint64 oldBidder_guid, Player* oldBidder);
+        void OnAuctionHouseUpdate(AuctionHouseMgr* me);
 
     public: /* ConditionScript */
 
@@ -2025,7 +2096,10 @@ class ScriptMgr
         void OnBattlegroundStart(Battleground* bg);
         void OnBattlegroundEndReward(Battleground* bg, Player* player, TeamId winnerTeamId);
         void OnBattlegroundUpdate(Battleground* bg, uint32 diff);
-        void OnBattlegroundAddPlayer(Battleground* bg, Player* player);                
+        void OnBattlegroundAddPlayer(Battleground* bg, Player* player);
+
+    public: /* MailScript */
+            void OnSendMailTo(bool& SkipCoreCode, MailDraft* me, SQLTransaction& trans, MailReceiver const& receiver, MailSender const& sender, MailCheckMask checked, uint32 deliver_delay, uint32 custom_expiration, Player* pReceiver, Player* pSender, uint32 mailId, MailItemMap& m_items, uint32& m_money, uint32& m_COD);
     private:
 
         uint32 _scriptCount;

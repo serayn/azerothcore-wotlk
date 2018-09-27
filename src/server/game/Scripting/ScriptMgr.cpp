@@ -21,7 +21,8 @@
 #include "Player.h"
 #include "WorldPacket.h"
 #include "Chat.h"
-
+#include "AuctionHouseMgr.h"
+#include "Mail.h"
 #ifdef ELUNA
 #include "LuaEngine.h"
 #include "ElunaUtility.h"
@@ -209,6 +210,7 @@ void ScriptMgr::Unload()
     SCR_CLEAR(GlobalScript);
     SCR_CLEAR(ModuleScript);
     SCR_CLEAR(BGScript);
+    SCR_CLEAR(MailScript);
 
     #undef SCR_CLEAR
 }
@@ -773,6 +775,16 @@ void ScriptMgr::OnCallAssistance(bool& SkipCoreCode, Creature* me, bool m_Alread
 void ScriptMgr::OnDurabilityLoss(bool& SkipCoreCode, Player* me, Item* item, double percent, uint32& pDurabilityLoss)
 {
     FOREACH_SCRIPT(FormulaScript)->OnDurabilityLoss(SkipCoreCode, me, item, percent, pDurabilityLoss);
+}
+
+void ScriptMgr::OnUpdateCraftSkill(bool& SkipCoreCode, Player* me, uint32 spelllevel, uint32 SkillId, uint32 craft_skill_gain, bool& result)
+{
+    FOREACH_SCRIPT(FormulaScript)->OnUpdateCraftSkill(SkipCoreCode, me, spelllevel, SkillId, craft_skill_gain, result);
+}
+
+void ScriptMgr::OnUpdateCombatSkills(bool& SkipCoreCode,Player* me, uint32 spelllevel, bool defence, WeaponAttackType attType, uint32 chance, bool& result)
+{
+    FOREACH_SCRIPT(FormulaScript)->OnUpdateCombatSkills(SkipCoreCode, me, spelllevel, defence, attType, chance, result);
 }
 #define SCR_MAP_BGN(M, V, I, E, C, T) \
     if (V->GetEntry() && V->GetEntry()->T()) \
@@ -1417,6 +1429,24 @@ void ScriptMgr::OnAuctionExpire(AuctionHouseObject* ah, AuctionEntry* entry)
     FOREACH_SCRIPT(AuctionHouseScript)->OnAuctionExpire(ah, entry);
 }
 
+void ScriptMgr::OnSendAuctionSuccessfulMail(bool& SkipCoreCode, AuctionHouseMgr* me, AuctionEntry* auction, SQLTransaction& trans, Player* owner, uint64 owner_guid, uint32 owner_accId)
+{
+    FOREACH_SCRIPT(AuctionHouseScript)->OnSendAuctionSuccessfulMail(SkipCoreCode, me, auction, trans, owner, owner_guid, owner_accId);
+}
+
+void ScriptMgr::OnSendAuctionExpiredMail(bool& SkipCoreCode, AuctionHouseMgr* me, AuctionEntry* auction, SQLTransaction& trans, Player* owner, uint64 owner_guid, uint32 owner_accId, Item* pItem)
+{
+    FOREACH_SCRIPT(AuctionHouseScript)->OnSendAuctionExpiredMail(SkipCoreCode, me, auction, trans, owner, owner_guid, owner_accId, pItem);
+}
+void ScriptMgr::OnSendAuctionOutbiddedMail(bool& SkipCoreCode, AuctionHouseMgr* me, AuctionEntry* auction, SQLTransaction& trans, uint32 newPrice, Player* newBidder, uint64 oldBidder_guid, Player* oldBidder)
+{
+    FOREACH_SCRIPT(AuctionHouseScript)->OnSendAuctionOutbiddedMail(SkipCoreCode, me, auction, trans, newPrice, newBidder, oldBidder_guid, oldBidder);
+}
+
+void ScriptMgr::OnAuctionHouseUpdate(AuctionHouseMgr* me)
+{
+    FOREACH_SCRIPT(AuctionHouseScript)->OnAuctionHouseUpdate(me);
+}
 bool ScriptMgr::OnConditionCheck(Condition* condition, ConditionSourceInfo& sourceInfo)
 {
     ASSERT(condition);
@@ -2210,6 +2240,10 @@ void ScriptMgr::OnBeforeApplyingWeaponDamage(bool &SkipCoreCode, Player* player,
 {
     FOREACH_SCRIPT(PlayerScript)->OnBeforeApplyingWeaponDamage(SkipCoreCode, player, proto, slot, damage);
 }
+void ScriptMgr::OnSendMailTo(bool& SkipCoreCode, MailDraft* me, SQLTransaction& trans, MailReceiver const& receiver, MailSender const& sender, MailCheckMask checked, uint32 deliver_delay, uint32 custom_expiration, Player* pReceiver, Player* pSender, uint32 mailId, MailItemMap& m_items, uint32& m_money, uint32& m_COD)
+{
+    FOREACH_SCRIPT(MailScript)->OnSendMailTo(SkipCoreCode, me, trans, receiver, sender, checked, deliver_delay, custom_expiration, pReceiver, pSender, mailId, m_items, m_money, m_COD);
+}
 AllMapScript::AllMapScript(const char* name)
     : ScriptObject(name)
 {
@@ -2397,3 +2431,8 @@ ModuleScript::ModuleScript(const char* name)
     ScriptRegistry<ModuleScript>::AddScript(this);
 }
 
+MailScript::MailScript(const char* name)
+    : ScriptObject(name)
+{
+    ScriptRegistry<MailScript>::AddScript(this);
+}

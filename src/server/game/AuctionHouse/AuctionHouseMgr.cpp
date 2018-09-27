@@ -135,8 +135,10 @@ void AuctionHouseMgr::SendAuctionSuccessfulMail(AuctionEntry* auction, SQLTransa
     uint64 owner_guid = MAKE_NEW_GUID(auction->owner, 0, HIGHGUID_PLAYER);
     Player* owner = ObjectAccessor::FindPlayerInOrOutOfWorld(owner_guid);
     uint32 owner_accId = sObjectMgr->GetPlayerAccountIdByGUID(owner_guid);
+    bool SkipCoreCode = false;
+    sScriptMgr->OnSendAuctionSuccessfulMail(SkipCoreCode, this, auction, trans, owner, owner_guid, owner_accId);
     // owner exist
-    if (owner || owner_accId)
+    if(!SkipCoreCode)if (owner || owner_accId)
     {
         uint32 profit = auction->bid + auction->deposit - auction->GetAuctionCut();
 
@@ -179,9 +181,10 @@ void AuctionHouseMgr::SendAuctionExpiredMail(AuctionEntry* auction, SQLTransacti
     uint64 owner_guid = MAKE_NEW_GUID(auction->owner, 0, HIGHGUID_PLAYER);
     Player* owner = ObjectAccessor::FindPlayerInOrOutOfWorld(owner_guid);
     uint32 owner_accId = sObjectMgr->GetPlayerAccountIdByGUID(owner_guid);
-
+    bool SkipCoreCode = false;
+    sScriptMgr->OnSendAuctionExpiredMail(SkipCoreCode, this, auction, trans, owner, owner_guid, owner_accId, pItem);
     // owner exist
-    if (owner || owner_accId)
+    if (!SkipCoreCode)if (owner || owner_accId)
     {
         if (owner)
             owner->GetSession()->SendAuctionOwnerNotification(auction);
@@ -199,21 +202,27 @@ void AuctionHouseMgr::SendAuctionOutbiddedMail(AuctionEntry* auction, uint32 new
 {
     uint64 oldBidder_guid = MAKE_NEW_GUID(auction->bidder, 0, HIGHGUID_PLAYER);
     Player* oldBidder = ObjectAccessor::FindPlayerInOrOutOfWorld(oldBidder_guid);
-
-    uint32 oldBidder_accId = 0;
-    if (!oldBidder)
-        oldBidder_accId = sObjectMgr->GetPlayerAccountIdByGUID(oldBidder_guid);
-
-    // old bidder exist
-    if (oldBidder || oldBidder_accId)
+        
+    bool SkipCoreCode = false;
+    sScriptMgr->OnSendAuctionOutbiddedMail(SkipCoreCode, this, auction, trans, newPrice, newBidder, oldBidder_guid, oldBidder);
+    if(!SkipCoreCode)
     {
-        if (oldBidder && newBidder)
-            oldBidder->GetSession()->SendAuctionBidderNotification(auction->GetHouseId(), auction->Id, newBidder->GetGUID(), newPrice, auction->GetAuctionOutBid(), auction->item_template);
+        uint32 oldBidder_accId = 0;
+        if (!oldBidder)
+            oldBidder_accId = sObjectMgr->GetPlayerAccountIdByGUID(oldBidder_guid);
 
-        MailDraft(auction->BuildAuctionMailSubject(AUCTION_OUTBIDDED), AuctionEntry::BuildAuctionMailBody(auction->owner, auction->bid, auction->buyout, auction->deposit, auction->GetAuctionCut()))
-            .AddMoney(auction->bid)
-            .SendMailTo(trans, MailReceiver(oldBidder, auction->bidder), auction, MAIL_CHECK_MASK_COPIED);
+        // old bidder exist
+        if (oldBidder || oldBidder_accId)
+        {
+            if (oldBidder && newBidder)
+                oldBidder->GetSession()->SendAuctionBidderNotification(auction->GetHouseId(), auction->Id, newBidder->GetGUID(), newPrice, auction->GetAuctionOutBid(), auction->item_template);
+
+            MailDraft(auction->BuildAuctionMailSubject(AUCTION_OUTBIDDED), AuctionEntry::BuildAuctionMailBody(auction->owner, auction->bid, auction->buyout, auction->deposit, auction->GetAuctionCut()))
+                .AddMoney(auction->bid)
+                .SendMailTo(trans, MailReceiver(oldBidder, auction->bidder), auction, MAIL_CHECK_MASK_COPIED);
+        }
     }
+    
 }
 
 //this function sends mail, when auction is cancelled to old bidder
@@ -356,6 +365,7 @@ bool AuctionHouseMgr::RemoveAItem(uint32 id, bool deleteFromDB)
 
 void AuctionHouseMgr::Update()
 {
+    sScriptMgr->OnAuctionHouseUpdate(this);
     mHordeAuctions.Update();
     mAllianceAuctions.Update();
     mNeutralAuctions.Update();
@@ -411,9 +421,8 @@ void AuctionHouseObject::AddAuction(AuctionEntry* auction)
 
 bool AuctionHouseObject::RemoveAuction(AuctionEntry* auction)
 {
+    sScriptMgr->OnAuctionRemove(this, auction); // Serayn's point: observe it
     bool wasInMap = AuctionsMap.erase(auction->Id) ? true : false;
-
-    sScriptMgr->OnAuctionRemove(this, auction);
 
     // we need to delete the entry, it is not referenced any more
     delete auction;

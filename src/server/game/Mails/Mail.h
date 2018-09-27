@@ -101,10 +101,9 @@ class MailReceiver
         uint32  m_receiver_lowguid;
 };
 
+typedef std::map<uint32, Item*> MailItemMap;
 class MailDraft
 {
-    typedef std::map<uint32, Item*> MailItemMap;
-
     public:                                                 // Constructors
         explicit MailDraft(uint16 mailTemplateId, bool need_items = true)
             : m_mailTemplateId(mailTemplateId), m_mailTemplateItemsNeed(need_items), m_money(0), m_COD(0)
@@ -127,16 +126,17 @@ class MailDraft
         void SendReturnToSender(uint32 sender_acc, uint32 sender_guid, uint32 receiver_guid, SQLTransaction& trans);
         void SendMailTo(SQLTransaction& trans, MailReceiver const& receiver, MailSender const& sender, MailCheckMask checked = MAIL_CHECK_MASK_NONE, uint32 deliver_delay = 0, uint32 custom_expiration = 0);
 
-    private:
+    public:
         void deleteIncludedItems(SQLTransaction& trans, bool inDB = false);
+                                      // Keep the items in a map to avoid duplicate guids (which can happen), store only low part of guid
+    private:
         void prepareItems(Player* receiver, SQLTransaction& trans);                // called from SendMailTo for generate mailTemplateBase items
 
+        MailItemMap m_items;
         uint16      m_mailTemplateId;
         bool        m_mailTemplateItemsNeed;
         std::string m_subject;
         std::string m_body;
-
-        MailItemMap m_items;                                // Keep the items in a map to avoid duplicate guids (which can happen), store only low part of guid
 
         uint32 m_money;
         uint32 m_COD;
