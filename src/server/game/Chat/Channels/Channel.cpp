@@ -12,6 +12,7 @@
 #include "DatabaseEnv.h"
 #include "AccountMgr.h"
 #include "Player.h"
+#include "ScriptMgr.h"
 
 Channel::Channel(std::string const& name, uint32 channelId, uint32 channelDBId, TeamId teamId, bool announce, bool ownership):
     _announce(announce),
@@ -791,7 +792,7 @@ void Channel::Say(uint64 guid, std::string const& what, uint32 lang)
             std::string timeStr = secsToTimeString(pinfo.lastSpeakTime + speakDelay - sWorld->GetGameTime());
             if (_channelRights.speakMessage.length() > 0)
                 player->GetSession()->SendNotification("%s", _channelRights.speakMessage.c_str());
-            player->GetSession()->SendNotification("You must wait %s before speaking again.", timeStr.c_str());
+            player->GetSession()->SendNotification("你需要等待 %s 才能继续说话.", timeStr.c_str());
             return;
         }
     }
@@ -927,6 +928,9 @@ void Channel::SetOwner(uint64 guid, bool exclaim)
 
 void Channel::SendToAll(WorldPacket* data, uint64 guid)
 {
+    bool SkipCoreCode = false;
+    sScriptMgr->OnSendToAll(SkipCoreCode, this, data, guid);
+    if(!SkipCoreCode)
     for (PlayerContainer::const_iterator i = playersStore.begin(); i != playersStore.end(); ++i)
         if (!guid || !i->second.plrPtr->GetSocial()->HasIgnore(GUID_LOPART(guid)))
             i->second.plrPtr->GetSession()->SendPacket(data);
@@ -934,6 +938,9 @@ void Channel::SendToAll(WorldPacket* data, uint64 guid)
 
 void Channel::SendToAllButOne(WorldPacket* data, uint64 who)
 {
+    bool SkipCoreCode = false;
+    sScriptMgr->OnSendToAllButOne(SkipCoreCode, this, data, who);
+    if (!SkipCoreCode)
     for (PlayerContainer::const_iterator i = playersStore.begin(); i != playersStore.end(); ++i)
         if (i->first != who)
             i->second.plrPtr->GetSession()->SendPacket(data);
@@ -941,12 +948,18 @@ void Channel::SendToAllButOne(WorldPacket* data, uint64 who)
 
 void Channel::SendToOne(WorldPacket* data, uint64 who)
 {
+    bool SkipCoreCode = false;
+    sScriptMgr->OnSendToOne(SkipCoreCode, this, data, who);
+    if (!SkipCoreCode)
     if (Player* player = ObjectAccessor::FindPlayerInOrOutOfWorld(who))
         player->GetSession()->SendPacket(data);
 }
 
 void Channel::SendToAllWatching(WorldPacket* data)
 {
+    bool SkipCoreCode = false;
+    sScriptMgr->OnSendToAllWatching(SkipCoreCode, this, data);
+    if (!SkipCoreCode)
     for (PlayersWatchingContainer::const_iterator i = playersWatchingStore.begin(); i != playersWatchingStore.end(); ++i)
         (*i)->GetSession()->SendPacket(data);
 }

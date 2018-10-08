@@ -1543,6 +1543,7 @@ void Group::SendUpdate()
 
 void Group::SendUpdateToPlayer(uint64 playerGUID, MemberSlot* slot)
 {
+    
     Player* player = ObjectAccessor::FindPlayerInOrOutOfWorld(playerGUID);
 
     if (!player || player->GetGroup() != this)
@@ -1630,39 +1631,54 @@ void Group::UpdatePlayerOutOfRange(Player* player)
 
 void Group::BroadcastPacket(WorldPacket* packet, bool ignorePlayersInBGRaid, int group, uint64 ignore)
 {
-    for (GroupReference* itr = GetFirstMember(); itr != NULL; itr = itr->next())
+    bool SkipCoreCode = false;
+    sScriptMgr->OnGroupBroadcastPacket(SkipCoreCode, this, packet, ignorePlayersInBGRaid, group, ignore);
+    if (!SkipCoreCode)
     {
-        Player* player = itr->GetSource();
-        if (!player || (ignore != 0 && player->GetGUID() == ignore) || (ignorePlayersInBGRaid && player->GetGroup() != this))
-            continue;
+        for (GroupReference* itr = GetFirstMember(); itr != NULL; itr = itr->next())
+        {
+            Player* player = itr->GetSource();
+            if (!player || (ignore != 0 && player->GetGUID() == ignore) || (ignorePlayersInBGRaid && player->GetGroup() != this))
+                continue;
 
-        if (group == -1 || itr->getSubGroup() == group)
-            player->GetSession()->SendPacket(packet);
+            if (group == -1 || itr->getSubGroup() == group)
+                player->GetSession()->SendPacket(packet);
+        }
     }
 }
 
 void Group::BroadcastReadyCheck(WorldPacket* packet)
 {
-    for (GroupReference* itr = GetFirstMember(); itr != NULL; itr = itr->next())
+    bool SkipCoreCode = false;
+    sScriptMgr->OnBroadcastReadyCheck(SkipCoreCode, this, packet);
+    if (!SkipCoreCode)
     {
-        Player* player = itr->GetSource();
-        if (player)
-            if (IsLeader(player->GetGUID()) || IsAssistant(player->GetGUID()))
-                player->GetSession()->SendPacket(packet);
+        for (GroupReference* itr = GetFirstMember(); itr != NULL; itr = itr->next())
+        {
+            Player* player = itr->GetSource();
+            if (player)
+                if (IsLeader(player->GetGUID()) || IsAssistant(player->GetGUID()))
+                    player->GetSession()->SendPacket(packet);
+        }
     }
 }
 
 void Group::OfflineReadyCheck()
 {
-    for (member_citerator citr = m_memberSlots.begin(); citr != m_memberSlots.end(); ++citr)
+    bool SkipCoreCode = false;
+    sScriptMgr->OnOfflineReadyCheck(SkipCoreCode, this, m_memberSlots);
+    if (!SkipCoreCode)
     {
-        Player* player = ObjectAccessor::FindPlayerInOrOutOfWorld(citr->guid);
-        if (!player)
+        for (member_citerator citr = m_memberSlots.begin(); citr != m_memberSlots.end(); ++citr)
         {
-            WorldPacket data(MSG_RAID_READY_CHECK_CONFIRM, 9);
-            data << uint64(citr->guid);
-            data << uint8(0);
-            BroadcastReadyCheck(&data);
+            Player* player = ObjectAccessor::FindPlayerInOrOutOfWorld(citr->guid);
+            if (!player)
+            {
+                WorldPacket data(MSG_RAID_READY_CHECK_CONFIRM, 9);
+                data << uint64(citr->guid);
+                data << uint8(0);
+                BroadcastReadyCheck(&data);
+            }
         }
     }
 }

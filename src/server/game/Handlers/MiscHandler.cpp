@@ -43,6 +43,7 @@
 #include "AccountMgr.h"
 #include "Spell.h"
 #include "WhoListCache.h"
+#include "ScriptMgr.h"
 #ifdef ELUNA
 #include "LuaEngine.h"
 #endif
@@ -216,6 +217,9 @@ void WorldSession::HandleGossipSelectOptionOpcode(WorldPacket & recv_data)
 
 void WorldSession::HandleWhoOpcode(WorldPacket& recvData)
 {
+    bool SkipCoreCode = false;
+    sScriptMgr->OnHandleWhoOpcode(SkipCoreCode, this, recvData, timeWhoCommandAllowed, _player);
+    if (SkipCoreCode) return;
     sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: Recvd CMSG_WHO Message");
 
     time_t now = time(NULL);
@@ -555,12 +559,17 @@ void WorldSession::HandleStandStateChangeOpcode(WorldPacket & recv_data)
 
 void WorldSession::HandleContactListOpcode(WorldPacket & recv_data)
 {
+    bool SkipCoreCode = false;
+    sScriptMgr->OnHandleContactListOpcode(SkipCoreCode, this, recv_data, _player);
+    if(!SkipCoreCode)
+    {
     uint32 unk;
     recv_data >> unk;
 #if defined(ENABLE_EXTRAS) && defined(ENABLE_EXTRA_LOGS)
     sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: Received CMSG_CONTACT_LIST - Unk: %d", unk);
 #endif
     _player->GetSocial()->SendSocialList(_player);
+    }
 }
 
 void WorldSession::HandleAddFriendOpcode(WorldPacket & recv_data)

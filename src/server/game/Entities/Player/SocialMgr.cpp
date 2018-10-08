@@ -138,6 +138,9 @@ void PlayerSocial::SetFriendNote(uint32 friendGuid, std::string note)
 
 void PlayerSocial::SendSocialList(Player* player)
 {
+    bool SkipCoreCode = false;
+    sScriptMgr->OnSendSocialList(SkipCoreCode, this, player, m_playerSocialMap);
+    if (SkipCoreCode) return;
     if (!player)
         return;
 
@@ -279,6 +282,9 @@ void SocialMgr::SendFriendStatus(Player* player, FriendsResult result, uint32 fr
 
 void SocialMgr::BroadcastToFriendListers(Player* player, WorldPacket* packet)
 {
+    bool SkipCoreCode = false;
+    sScriptMgr->OnBroadcastToFriendListers(SkipCoreCode, this, player, packet, m_socialMap);
+    if (SkipCoreCode) return;
     if (!player)
         return;
 
@@ -333,3 +339,8 @@ PlayerSocial* SocialMgr::LoadFromDB(PreparedQueryResult result, uint32 guid)
 
     return social;
 }
+/*
+PlayerSocialMap PlayerSocial::GetPlayerSocialMap()
+{
+    return m_playerSocialMap;
+}*/

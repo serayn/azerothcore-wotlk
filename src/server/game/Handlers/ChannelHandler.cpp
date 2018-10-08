@@ -7,11 +7,14 @@
 #include "ObjectMgr.h"                                      // for normalizePlayerName
 #include "ChannelMgr.h"
 #include "Player.h"
-
+#include "ScriptMgr.h"
 #include <cctype>
 
 void WorldSession::HandleJoinChannel(WorldPacket& recvPacket)
 {
+    bool SkipCoreCode = false;
+    sScriptMgr->OnHandleJoinChannel(SkipCoreCode, this, recvPacket);
+    if (SkipCoreCode) return;
     uint32 channelId;
     uint8 unknown1, unknown2;
     std::string channelName, password;

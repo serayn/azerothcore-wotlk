@@ -105,8 +105,9 @@ class PlayerSocial
         uint32 GetPlayerGUID() const { return m_playerGUID; }
         void SetPlayerGUID(uint32 guid) { m_playerGUID = guid; }
         uint32 GetNumberOfSocialsWithFlag(SocialFlag flag) const;
-    private:
         PlayerSocialMap m_playerSocialMap;
+    private:
+
         uint32 m_playerGUID;
 };
 

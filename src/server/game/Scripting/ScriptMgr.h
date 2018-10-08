@@ -23,7 +23,9 @@
 #include "Player.h"
 #include "AuctionHouseMgr.h"
 #include "Mail.h"
-
+#include "Group.h"
+#include "SocialMgr.h"
+#include "WorldSession.h"
 class AuctionHouseObject;
 class AuraScript;
 class Battleground;
@@ -189,10 +191,6 @@ template<class TObject> class UpdatableScript
 
 class MailScript : public ScriptObject
 {
-    /*uint32 _someId;
-private:
-    void RegisterSelf();*/
-
 protected:
     MailScript(const char* name);
 public:
@@ -206,6 +204,44 @@ public:
 
 };
 
+class ChannelScript : public ScriptObject
+{
+
+protected:
+    ChannelScript(const char* name);
+public:
+
+    virtual void OnSendToAll(bool& SkipCoreCode, Channel* /*me*/, WorldPacket* /*data*/, uint64& /*guid*/) {}
+    virtual void OnSendToAllButOne(bool& SkipCoreCode, Channel* /*me*/, WorldPacket* /*data*/, uint64& /*who*/) {}
+    virtual void OnSendToOne(bool& SkipCoreCode, Channel* /*me*/, WorldPacket* /*data*/, uint64& /*who*/) {}
+    virtual void OnSendToAllWatching(bool& SkipCoreCode, Channel* /*me*/, WorldPacket* /*data*/) {}
+    virtual void OnHandleJoinChannel(bool& SkipCoreCode, WorldSession* /*me*/, WorldPacket& /*recvPacket*/) {}
+};
+
+
+class SocialScript : public ScriptObject
+{
+
+protected:
+    SocialScript(const char* name);
+public:
+
+    virtual void OnHandleContactListOpcode(bool& SkipCoreCode, WorldSession* /*me*/, WorldPacket& /*recv_data*/, Player* /*player*/)
+    {
+
+    }
+    virtual void OnHandleWhoOpcode(bool& SkipCoreCode, WorldSession* /*me*/, WorldPacket& /*recvData*/, time_t /*timeWhoCommandAllowed*/, Player* /*player*/)
+    {
+
+    }
+    virtual void OnBroadcastToFriendListers(bool& SkipCoreCode, SocialMgr* /*me*/, Player* /*player*/, WorldPacket* /*packet*/, SocialMap& /*m_socialMap*/)
+    {
+    }
+    virtual void OnSendSocialList(bool& SkipCoreCode, PlayerSocial* /*me*/, Player* /*player*/, PlayerSocialMap& /*m_playerSocialMap*/)
+    {
+
+    }
+};
 
 class SpellScriptLoader : public ScriptObject
 {
@@ -1444,9 +1480,9 @@ class PlayerScript : public ScriptObject
 
         virtual void OnChat(Player* /*player*/, uint32 /*type*/, uint32 /*lang*/, std::string& /*msg*/, Player* /*receiver*/) { }
 
-        virtual void OnChat(Player* /*player*/, uint32 /*type*/, uint32 /*lang*/, std::string& /*msg*/, Group* /*group*/) { }
+        virtual void OnChat(Player* /*player*/, uint32 /*type*/, uint32 /*lang*/, std::string& /*msg*/, Group* /*group*/, bool& /*sendit*/) { }
 
-        virtual void OnChat(Player* /*player*/, uint32 /*type*/, uint32 /*lang*/, std::string& /*msg*/, Guild* /*guild*/) { }
+        virtual void OnChat(Player* /*player*/, uint32 /*type*/, uint32 /*lang*/, std::string& /*msg*/, Guild* /*guild*/, bool& /*sendit*/) { }
 
         virtual void OnChat(Player* /*player*/, uint32 /*type*/, uint32 /*lang*/, std::string& /*msg*/, Channel* /*channel*/) { }
 
@@ -1637,6 +1673,10 @@ class GuildScript : public ScriptObject
         virtual void OnEvent(Guild* /*guild*/, uint8 /*eventType*/, uint32 /*playerGuid1*/, uint32 /*playerGuid2*/, uint8 /*newRank*/) { }
 
         virtual void OnBankEvent(Guild* /*guild*/, uint8 /*eventType*/, uint8 /*tabId*/, uint32 /*playerGuid*/, uint32 /*itemOrMoney*/, uint16 /*itemStackCount*/, uint8 /*destTabId*/) { }
+
+        virtual void OnBoradcastToGuild(bool& SkipCoreCode, const  Guild* /*me*/, WorldSession* /*session*/, bool /*officerOnly*/, std::string const&  /*msg*/, uint32 /*language*/) {}
+        virtual void OnBroadcastPacketToRank(bool& SkipCoreCode, const Guild* /*me*/, WorldPacket* /*packet*/, uint8 /*rankId*/) {}
+        virtual void OnBroadcastPacket(bool& SkipCoreCode, const Guild* /*me*/, WorldPacket* /*packet*/) {}
 };
 
 class GroupScript : public ScriptObject
@@ -1663,6 +1703,30 @@ class GroupScript : public ScriptObject
 
         // Called when a group is disbanded.
         virtual void OnDisband(Group* /*group*/) { }
+
+        virtual void OnGroupBroadcastPacket(bool& SkipCoreCode, Group* /*me*/, WorldPacket* /*packet*/, bool& /*ignorePlayersInBGRaid*/, int& /*group*/, uint64& /*ignore*/)
+        {
+            if (!SkipCoreCode)
+            {
+
+            }
+        }
+        virtual void OnBroadcastReadyCheck(bool& SkipCoreCode, Group* /*me*/, WorldPacket* /*packet*/)
+        {
+            if (!SkipCoreCode)
+            {
+
+            }
+        }
+
+        virtual void OnOfflineReadyCheck(bool& SkipCoreCode, Group* /*me*/, Group::MemberSlotList& /*m_memberSlots*/)
+        {
+            if (!SkipCoreCode)
+            {
+
+            }
+        }
+        
 };
 
 // following hooks can be used anywhere and are not db bounded
@@ -1976,8 +2040,8 @@ class ScriptMgr
         void OnPlayerDuelEnd(Player* winner, Player* loser, DuelCompleteType type);
         void OnPlayerChat(Player* player, uint32 type, uint32 lang, std::string& msg);
         void OnPlayerChat(Player* player, uint32 type, uint32 lang, std::string& msg, Player* receiver);
-        void OnPlayerChat(Player* player, uint32 type, uint32 lang, std::string& msg, Group* group);
-        void OnPlayerChat(Player* player, uint32 type, uint32 lang, std::string& msg, Guild* guild);
+        void OnPlayerChat(Player* player, uint32 type, uint32 lang, std::string& msg, Group* group, bool& sendit);
+        void OnPlayerChat(Player* player, uint32 type, uint32 lang, std::string& msg, Guild* guild, bool& sendit);
         void OnPlayerChat(Player* player, uint32 type, uint32 lang, std::string& msg, Channel* channel);
         void OnPlayerEmote(Player* player, uint32 emote);
         void OnPlayerTextEmote(Player* player, uint32 textEmote, uint32 emoteNum, uint64 guid);
@@ -2036,6 +2100,9 @@ class ScriptMgr
             bool isDestBank, uint8 destContainer, uint8 destSlotId);
         void OnGuildEvent(Guild* guild, uint8 eventType, uint32 playerGuid1, uint32 playerGuid2, uint8 newRank);
         void OnGuildBankEvent(Guild* guild, uint8 eventType, uint8 tabId, uint32 playerGuid, uint32 itemOrMoney, uint16 itemStackCount, uint8 destTabId);
+        void OnBoradcastToGuild(bool& SkipCoreCode, const Guild* me, WorldSession* session, bool officerOnly, std::string const&  msg, uint32 language);
+        void OnBroadcastPacketToRank(bool& SkipCoreCode, const Guild* me, WorldPacket* packet, uint8 rankId);
+        void OnBroadcastPacket(bool& SkipCoreCode, const Guild* me, WorldPacket* packet);
 
     public: /* GroupScript */
 
@@ -2044,6 +2111,9 @@ class ScriptMgr
         void OnGroupRemoveMember(Group* group, uint64 guid, RemoveMethod method, uint64 kicker, const char* reason);
         void OnGroupChangeLeader(Group* group, uint64 newLeaderGuid, uint64 oldLeaderGuid);
         void OnGroupDisband(Group* group);
+        void OnGroupBroadcastPacket(bool& SkipCoreCode, Group* me, WorldPacket* packet, bool& ignorePlayersInBGRaid, int& group, uint64& ignore);
+        void OnBroadcastReadyCheck(bool& SkipCoreCode, Group* me, WorldPacket* packet);
+        void OnOfflineReadyCheck(bool& SkipCoreCode, Group* me, Group::MemberSlotList& m_memberSlots);
 
     public: /* GlobalScript */
         void OnGlobalItemDelFromDB(SQLTransaction& trans, uint32 itemGuid);
@@ -2100,6 +2170,20 @@ class ScriptMgr
 
     public: /* MailScript */
             void OnSendMailTo(bool& SkipCoreCode, MailDraft* me, SQLTransaction& trans, MailReceiver const& receiver, MailSender const& sender, MailCheckMask checked, uint32 deliver_delay, uint32 custom_expiration, Player* pReceiver, Player* pSender, uint32 mailId, MailItemMap& m_items, uint32& m_money, uint32& m_COD);
+
+    public: /*ChannelScript*/
+        void OnSendToAll(bool& SkipCoreCode, Channel* me, WorldPacket* data, uint64& guid);
+        void OnSendToAllButOne(bool& SkipCoreCode, Channel* me, WorldPacket* data, uint64& who);
+        void OnSendToOne(bool& SkipCoreCode, Channel* me, WorldPacket* data, uint64& who);
+        void OnSendToAllWatching(bool& SkipCoreCode, Channel* me, WorldPacket* data);
+        void OnHandleJoinChannel(bool& SkipCoreCode, WorldSession* me, WorldPacket& recvPacket);
+
+    public: /*SocialScript*/
+        void OnHandleContactListOpcode(bool& SkipCoreCode, WorldSession* me, WorldPacket& recv_data, Player* player);
+        void OnHandleWhoOpcode(bool& SkipCoreCode, WorldSession* me, WorldPacket& recvData, time_t timeWhoCommandAllowed, Player* player);
+        void OnBroadcastToFriendListers(bool& SkipCoreCode, SocialMgr* me, Player* player, WorldPacket* packet, SocialMap& m_socialMap);
+        void OnSendSocialList(bool& SkipCoreCode, PlayerSocial* me, Player* player, PlayerSocialMap& m_playerSocialMap);
+
     private:
 
         uint32 _scriptCount;

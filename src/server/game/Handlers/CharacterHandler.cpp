@@ -939,7 +939,8 @@ void WorldSession::HandlePlayerLoginFromDB(LoginQueryHolder* holder)
         sLog->outStaticDebug("WORLD: Sent server info");
 #endif
     }
-
+    // Serayn's remove 
+    /*
     if (uint32 guildId = Player::GetGuildIdFromStorage(pCurrChar->GetGUIDLow()))
     {
         Guild* guild = sGuildMgr->GetGuildById(guildId);
@@ -962,8 +963,8 @@ void WorldSession::HandlePlayerLoginFromDB(LoginQueryHolder* holder)
         pCurrChar->SetInGuild(0);
         pCurrChar->SetRank(0);
     }
-
-
+    */
+    // Serayn's remove end
     data.Initialize(SMSG_LEARNED_DANCE_MOVES, 4+4);
     data << uint32(0);
     data << uint32(0);
@@ -1047,11 +1048,13 @@ void WorldSession::HandlePlayerLoginFromDB(LoginQueryHolder* holder)
             pCurrChar->m_movementInfo.transport.Reset();
             pCurrChar->m_movementInfo.RemoveMovementFlag(MOVEMENTFLAG_ONTRANSPORT);
         }
-
+    // Serayn's remove
+    /*
     // friend status
     if (AccountMgr::IsGMAccount(GetSecurity())) // pussywizard: only for non-gms
         sSocialMgr->SendFriendStatus(pCurrChar, FRIEND_ONLINE, pCurrChar->GetGUIDLow(), true);
-
+    */
+    // Serayn's remove end
     // Place character in world (and load zone) before some object loading
     pCurrChar->LoadCorpse();
 

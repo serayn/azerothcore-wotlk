@@ -211,7 +211,8 @@ void ScriptMgr::Unload()
     SCR_CLEAR(ModuleScript);
     SCR_CLEAR(BGScript);
     SCR_CLEAR(MailScript);
-
+    SCR_CLEAR(ChannelScript);
+    SCR_CLEAR(SocialScript);
     #undef SCR_CLEAR
 }
 
@@ -1723,14 +1724,14 @@ void ScriptMgr::OnPlayerChat(Player* player, uint32 type, uint32 lang, std::stri
     FOREACH_SCRIPT(PlayerScript)->OnChat(player, type, lang, msg, receiver);
 }
 
-void ScriptMgr::OnPlayerChat(Player* player, uint32 type, uint32 lang, std::string& msg, Group* group)
+void ScriptMgr::OnPlayerChat(Player* player, uint32 type, uint32 lang, std::string& msg, Group* group, bool& sendit)
 {
-    FOREACH_SCRIPT(PlayerScript)->OnChat(player, type, lang, msg, group);
+    FOREACH_SCRIPT(PlayerScript)->OnChat(player, type, lang, msg, group, sendit);
 }
 
-void ScriptMgr::OnPlayerChat(Player* player, uint32 type, uint32 lang, std::string& msg, Guild* guild)
+void ScriptMgr::OnPlayerChat(Player* player, uint32 type, uint32 lang, std::string& msg, Guild* guild, bool& sendit)
 {
-    FOREACH_SCRIPT(PlayerScript)->OnChat(player, type, lang, msg, guild);
+    FOREACH_SCRIPT(PlayerScript)->OnChat(player, type, lang, msg, guild, sendit);
 }
 
 void ScriptMgr::OnPlayerChat(Player* player, uint32 type, uint32 lang, std::string& msg, Channel* channel)
@@ -2021,6 +2022,20 @@ void ScriptMgr::OnGuildBankEvent(Guild* guild, uint8 eventType, uint8 tabId, uin
     FOREACH_SCRIPT(GuildScript)->OnBankEvent(guild, eventType, tabId, playerGuid, itemOrMoney, itemStackCount, destTabId);
 }
 
+void ScriptMgr::OnBoradcastToGuild(bool& SkipCoreCode, const Guild* me, WorldSession* session, bool officerOnly, std::string const&  msg, uint32 language)
+{
+FOREACH_SCRIPT(GuildScript)->OnBoradcastToGuild(SkipCoreCode, me, session, officerOnly, msg, language);
+}
+
+void ScriptMgr::OnBroadcastPacketToRank(bool& SkipCoreCode, const Guild* me, WorldPacket* packet, uint8 rankId)
+{
+    FOREACH_SCRIPT(GuildScript)->OnBroadcastPacketToRank(SkipCoreCode, me, packet, rankId);
+}
+
+void ScriptMgr::OnBroadcastPacket(bool& SkipCoreCode, const Guild* me, WorldPacket* packet)
+{
+    FOREACH_SCRIPT(GuildScript)->OnBroadcastPacket(SkipCoreCode, me, packet);
+}
 // Group
 void ScriptMgr::OnGroupAddMember(Group* group, uint64 guid)
 {
@@ -2067,6 +2082,19 @@ void ScriptMgr::OnGroupDisband(Group* group)
     FOREACH_SCRIPT(GroupScript)->OnDisband(group);
 }
 
+void ScriptMgr::OnGroupBroadcastPacket(bool& SkipCoreCode, Group* me, WorldPacket* packet,bool& ignorePlayersInBGRaid, int& group, uint64& ignore)
+{
+    FOREACH_SCRIPT(GroupScript)->OnGroupBroadcastPacket(SkipCoreCode, me, packet, ignorePlayersInBGRaid, group, ignore);
+}
+
+void ScriptMgr::OnBroadcastReadyCheck(bool& SkipCoreCode, Group* me, WorldPacket* packet)
+{
+    FOREACH_SCRIPT(GroupScript)->OnBroadcastReadyCheck(SkipCoreCode, me, packet);
+}
+void ScriptMgr::OnOfflineReadyCheck(bool& SkipCoreCode,Group* me, Group::MemberSlotList& m_memberSlots)
+{
+    FOREACH_SCRIPT(GroupScript)->OnOfflineReadyCheck(SkipCoreCode, me, m_memberSlots);
+}
 void ScriptMgr::OnGlobalItemDelFromDB(SQLTransaction& trans, uint32 itemGuid)
 {
     ASSERT(trans);
@@ -2243,6 +2271,50 @@ void ScriptMgr::OnBeforeApplyingWeaponDamage(bool &SkipCoreCode, Player* player,
 void ScriptMgr::OnSendMailTo(bool& SkipCoreCode, MailDraft* me, SQLTransaction& trans, MailReceiver const& receiver, MailSender const& sender, MailCheckMask checked, uint32 deliver_delay, uint32 custom_expiration, Player* pReceiver, Player* pSender, uint32 mailId, MailItemMap& m_items, uint32& m_money, uint32& m_COD)
 {
     FOREACH_SCRIPT(MailScript)->OnSendMailTo(SkipCoreCode, me, trans, receiver, sender, checked, deliver_delay, custom_expiration, pReceiver, pSender, mailId, m_items, m_money, m_COD);
+}
+void ScriptMgr::OnSendToAll(bool& SkipCoreCode, Channel* me, WorldPacket* data, uint64& guid)
+{
+    FOREACH_SCRIPT(ChannelScript)->OnSendToAll(SkipCoreCode, me, data, guid);
+}
+
+void ScriptMgr::OnSendToAllButOne(bool& SkipCoreCode, Channel* me, WorldPacket* data, uint64& who)
+{
+    FOREACH_SCRIPT(ChannelScript)->OnSendToAllButOne(SkipCoreCode, me, data, who);
+}
+
+void ScriptMgr::OnSendToOne(bool& SkipCoreCode, Channel* me, WorldPacket* data, uint64& who)
+{
+    FOREACH_SCRIPT(ChannelScript)->OnSendToOne(SkipCoreCode, me, data, who);
+}
+
+void ScriptMgr::OnSendToAllWatching(bool& SkipCoreCode, Channel* me, WorldPacket* data)
+{
+    FOREACH_SCRIPT(ChannelScript)->OnSendToAllWatching(SkipCoreCode, me, data);
+}
+
+void ScriptMgr::OnHandleJoinChannel(bool& SkipCoreCode, WorldSession* me, WorldPacket& recvPacket)
+{
+    FOREACH_SCRIPT(ChannelScript)->OnHandleJoinChannel(SkipCoreCode, me, recvPacket);
+}
+
+void ScriptMgr::OnHandleContactListOpcode(bool& SkipCoreCode, WorldSession* me, WorldPacket& recv_data, Player* player)
+{
+    FOREACH_SCRIPT(SocialScript)->OnHandleContactListOpcode(SkipCoreCode, me, recv_data, player);
+}
+
+void ScriptMgr::OnHandleWhoOpcode(bool& SkipCoreCode, WorldSession* me, WorldPacket& recvData, time_t timeWhoCommandAllowed, Player* player)
+{
+    FOREACH_SCRIPT(SocialScript)->OnHandleWhoOpcode(SkipCoreCode, me, recvData, timeWhoCommandAllowed, player);
+}
+
+void ScriptMgr::OnBroadcastToFriendListers(bool& SkipCoreCode, SocialMgr* me, Player* player, WorldPacket* packet, SocialMap& m_socialMap)
+{
+    FOREACH_SCRIPT(SocialScript)->OnBroadcastToFriendListers(SkipCoreCode, me, player, packet, m_socialMap);
+}
+
+void ScriptMgr::OnSendSocialList(bool& SkipCoreCode, PlayerSocial* me,Player* player, PlayerSocialMap& m_playerSocialMap)
+{
+    FOREACH_SCRIPT(SocialScript)->OnSendSocialList(SkipCoreCode, me, player, m_playerSocialMap);
 }
 AllMapScript::AllMapScript(const char* name)
     : ScriptObject(name)
@@ -2435,4 +2507,15 @@ MailScript::MailScript(const char* name)
     : ScriptObject(name)
 {
     ScriptRegistry<MailScript>::AddScript(this);
+}
+
+ChannelScript::ChannelScript(const char* name)
+    : ScriptObject(name)
+{
+    ScriptRegistry<ChannelScript>::AddScript(this);
+}
+SocialScript::SocialScript(const char* name)
+    : ScriptObject(name)
+{
+    ScriptRegistry<SocialScript>::AddScript(this);
 }

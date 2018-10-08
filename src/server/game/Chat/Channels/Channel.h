@@ -135,6 +135,7 @@ enum eChannelRights
 
 class Channel
 {
+    public:
     struct PlayerInfo
     {
         uint64 player;
@@ -308,9 +309,15 @@ class Channel
             }
         }
 
+    public:
         typedef UNORDERED_MAP<uint64, PlayerInfo> PlayerContainer;
-        typedef UNORDERED_MAP<uint32, uint32> BannedContainer;
         typedef UNORDERED_SET<Player*> PlayersWatchingContainer;
+        PlayersWatchingContainer playersWatchingStore;
+        PlayerContainer playersStore;
+
+    private:
+        typedef UNORDERED_MAP<uint32, uint32> BannedContainer;
+        
 
         bool _announce;
         bool _ownership;
@@ -323,9 +330,10 @@ class Channel
         std::string _name;
         std::string _password;
         ChannelRights _channelRights;
-        PlayerContainer playersStore;
         BannedContainer bannedStore;
-        PlayersWatchingContainer playersWatchingStore;
+        
+
+
 };
 #endif
 

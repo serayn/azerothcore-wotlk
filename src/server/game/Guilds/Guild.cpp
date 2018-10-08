@@ -2148,6 +2148,9 @@ bool Guild::Validate()
 // Broadcasts
 void Guild::BroadcastToGuild(WorldSession* session, bool officerOnly, std::string const& msg, uint32 language) const
 {
+    bool SkipCoreCode = false;
+    sScriptMgr->OnBoradcastToGuild(SkipCoreCode, this, session, officerOnly, msg, language);
+    if(!SkipCoreCode)
     if (session && session->GetPlayer() && _HasRankRight(session->GetPlayer(), officerOnly ? GR_RIGHT_OFFCHATSPEAK : GR_RIGHT_GCHATSPEAK))
     {
         WorldPacket data;
@@ -2161,6 +2164,9 @@ void Guild::BroadcastToGuild(WorldSession* session, bool officerOnly, std::strin
 
 void Guild::BroadcastPacketToRank(WorldPacket* packet, uint8 rankId) const
 {
+    bool SkipCoreCode = false;
+    sScriptMgr->OnBroadcastPacketToRank(SkipCoreCode, this, packet, rankId);
+    if (!SkipCoreCode)
     for (Members::const_iterator itr = m_members.begin(); itr != m_members.end(); ++itr)
         if (itr->second->IsRank(rankId))
             if (Player* player = itr->second->FindPlayer())
@@ -2169,6 +2175,9 @@ void Guild::BroadcastPacketToRank(WorldPacket* packet, uint8 rankId) const
 
 void Guild::BroadcastPacket(WorldPacket* packet) const
 {
+    bool SkipCoreCode = false;
+    sScriptMgr->OnBroadcastPacket(SkipCoreCode, this, packet);
+    if (!SkipCoreCode)
     for (Members::const_iterator itr = m_members.begin(); itr != m_members.end(); ++itr)
         if (Player* player = itr->second->FindPlayer())
             player->GetSession()->SendPacket(packet);
@@ -2934,4 +2943,9 @@ void Guild::ResetTimes()
         itr->second->ResetValues();
 
     _BroadcastEvent(GE_BANK_TAB_AND_MONEY_UPDATED, 0);
+}
+
+bool Guild::HasRankRight(Player* player, uint32 right) const
+{
+    return _HasRankRight(player, right);
 }

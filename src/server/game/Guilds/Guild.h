@@ -648,11 +648,12 @@ private:
         void CanStoreItemInTab(Item* pItem, uint8 skipSlotId, bool merge, uint32& count);
     };
 
-    typedef UNORDERED_MAP<uint32, Member*> Members;
+    
     typedef std::vector<RankInfo> Ranks;
     typedef std::vector<BankTab*> BankTabs;
 
 public:
+    typedef UNORDERED_MAP<uint32, Member*> Members;
     static void SendCommandResult(WorldSession* session, GuildCommandType type, GuildCommandError errCode, std::string const& param = "");
     static void SendSaveEmblemResult(WorldSession* session, GuildEmblemError errCode);
 
@@ -754,6 +755,7 @@ public:
 
     void ResetTimes();
 
+    Members m_members;
 protected:
     uint32 m_id;
     std::string m_name;
@@ -767,7 +769,7 @@ protected:
     uint64 m_bankMoney;
 
     Ranks m_ranks;
-    Members m_members;
+    
     BankTabs m_bankTabs;
 
     // These are actually ordered lists. The first element is the oldest entry.
@@ -775,9 +777,6 @@ protected:
     LogHolder* m_bankEventLog[GUILD_BANK_MAX_TABS + 1];
 
 private:
-    inline uint8 _GetRanksSize() const { return uint8(m_ranks.size()); }
-    inline const RankInfo* GetRankInfo(uint8 rankId) const { return rankId < _GetRanksSize() ? &m_ranks[rankId] : NULL; }
-    inline RankInfo* GetRankInfo(uint8 rankId) { return rankId < _GetRanksSize() ? &m_ranks[rankId] : NULL; }
     inline bool _HasRankRight(Player* player, uint32 right) const
     {
         if (player)
@@ -785,6 +784,10 @@ private:
                 return (_GetRankRights(member->GetRankId()) & right) != GR_RIGHT_EMPTY;
         return false;
     }
+    inline uint8 _GetRanksSize() const { return uint8(m_ranks.size()); }
+    inline const RankInfo* GetRankInfo(uint8 rankId) const { return rankId < _GetRanksSize() ? &m_ranks[rankId] : NULL; }
+    inline RankInfo* GetRankInfo(uint8 rankId) { return rankId < _GetRanksSize() ? &m_ranks[rankId] : NULL; }
+    
 
     inline uint8 _GetLowestRankId() const { return uint8(m_ranks.size() - 1); }
 
@@ -798,7 +801,9 @@ private:
         stmt->setUInt32(0, lowguid);
         CharacterDatabase.Execute(stmt);
     }
-
+public:
+    bool HasRankRight(Player* player, uint32 right) const;
+private:
     // Creates log holders (either when loading or when creating guild)
     void _CreateLogHolders();
     // Tries to create new bank tab

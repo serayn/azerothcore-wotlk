@@ -487,11 +487,13 @@ void WorldSession::LogoutPlayer(bool save)
                     CharacterDatabase.Execute(stmt);
                 }
             }
-
+        // Serayn's remove 
+        /*
         ///- If the player is in a guild, update the guild roster and broadcast a logout message to other guild members
         if (Guild* guild = sGuildMgr->GetGuildById(_player->GetGuildId()))
             guild->HandleMemberLogout(this);
-
+        */
+        // Serayn's remove end
         ///- Remove pet
         _player->RemovePet(NULL, PET_SAVE_AS_CURRENT);
 
@@ -541,12 +543,14 @@ void WorldSession::LogoutPlayer(bool save)
             _player->GetGroup()->SendUpdate();
             _player->GetGroup()->ResetMaxEnchantingLevel();
         }
-
+        // Serayn's remove
+        /*
         //! Broadcast a logout message to the player's friends
         if (AccountMgr::IsGMAccount(GetSecurity())) // pussywizard: only for non-gms
             sSocialMgr->SendFriendStatus(_player, FRIEND_OFFLINE, _player->GetGUIDLow(), true);
         sSocialMgr->RemovePlayerSocial(_player->GetGUIDLow());
-
+        */
+        // Serayn's remove end
         //! Call script hook before deletion
         sScriptMgr->OnPlayerLogout(_player);
 
