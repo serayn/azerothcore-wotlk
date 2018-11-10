@@ -14,6 +14,7 @@
 #include "World.h"
 #include "Util.h"
 #include "AccountMgr.h"
+#include "ScriptMgr.h"
 
 PlayerSocial::PlayerSocial()
 {

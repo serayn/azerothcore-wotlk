@@ -1492,7 +1492,7 @@ class PlayerScript : public ScriptObject
         virtual void OnTextEmote(Player* /*player*/, uint32 /*textEmote*/, uint32 /*emoteNum*/, uint64 /*guid*/) { }
 
         // Called in Spell::Cast.
-        virtual void OnSpellCast(Player* /*player*/, Spell* /*spell*/, bool /*skipCheck*/) { }
+        virtual void OnSpellCast(Player* /*player*/, Spell* /*spell*/, bool /*skipCheck*/, bool /*SkipOtherCode*/) { }
 
         // Called during data loading
         virtual void OnLoadFromDB(Player* /*player*/) { };
@@ -2045,7 +2045,7 @@ class ScriptMgr
         void OnPlayerChat(Player* player, uint32 type, uint32 lang, std::string& msg, Channel* channel);
         void OnPlayerEmote(Player* player, uint32 emote);
         void OnPlayerTextEmote(Player* player, uint32 textEmote, uint32 emoteNum, uint64 guid);
-        void OnPlayerSpellCast(Player* player, Spell* spell, bool skipCheck);
+        void OnPlayerSpellCast(Player* player, Spell* spell, bool skipCheck, bool SkipOtherCode);
         void OnPlayerLogin(Player* player);
         void OnPlayerLoadFromDB(Player* player);
         void OnPlayerLogout(Player* player);

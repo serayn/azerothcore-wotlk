@@ -1755,12 +1755,12 @@ void ScriptMgr::OnPlayerTextEmote(Player* player, uint32 textEmote, uint32 emote
     FOREACH_SCRIPT(PlayerScript)->OnTextEmote(player, textEmote, emoteNum, guid);
 }
 
-void ScriptMgr::OnPlayerSpellCast(Player* player, Spell* spell, bool skipCheck)
+void ScriptMgr::OnPlayerSpellCast(Player* player, Spell* spell, bool skipCheck, bool SkipOtherCode)
 {
 #ifdef ELUNA
     sEluna->OnSpellCast(player, spell, skipCheck);
 #endif
-    FOREACH_SCRIPT(PlayerScript)->OnSpellCast(player, spell, skipCheck);
+    FOREACH_SCRIPT(PlayerScript)->OnSpellCast(player, spell, skipCheck, SkipOtherCode);
 }
 
 void ScriptMgr::OnBeforePlayerUpdate(Player* player, uint32 p_time)
