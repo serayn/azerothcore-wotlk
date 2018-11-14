@@ -356,5 +356,5 @@ public:
 
 void AddSC_instance_utgarde_keep()
 {
-    new instance_utgarde_keep();
+    //new instance_utgarde_keep();
 }
