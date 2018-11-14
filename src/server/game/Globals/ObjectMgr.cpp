@@ -3943,15 +3943,6 @@ void ObjectMgr::LoadQuests()
             }
         }
 
-        if (qinfo->Flags & QUEST_FLAGS_UNLIMITED_REPEAT)
-        {
-            if (!(qinfo->SpecialFlags & QUEST_SPECIAL_FLAGS_REPEATABLE))
-            {
-                sLog->outErrorDb("Unlimited repeat Quest %u not marked as repeatable in `SpecialFlags`, added.", qinfo->GetQuestId());
-                qinfo->SpecialFlags |= QUEST_SPECIAL_FLAGS_REPEATABLE;
-            }
-        }
-
         if (qinfo->Flags & QUEST_FLAGS_WEEKLY)
         {
             if (!(qinfo->SpecialFlags & QUEST_SPECIAL_FLAGS_REPEATABLE))

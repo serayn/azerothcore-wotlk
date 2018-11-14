@@ -964,9 +964,7 @@ void PoolMgr::SaveQuestsToDB(bool daily, bool weekly, bool other)
                 continue;
             if (!weekly && quest->IsWeekly())
                 continue;
-            if (quest->IsUnlimitedRepeat())
-                continue;
-            if (!other && !quest->IsDaily() && !quest->IsWeekly() && !quest->IsUnlimitedRepeat())
+            if (!other && !quest->IsDaily() && !quest->IsWeekly())
                 continue;
         }
         PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_QUEST_POOL_SAVE);
@@ -1010,7 +1008,7 @@ void PoolMgr::ChangeWeeklyQuests()
     {
         if (Quest const* quest = sObjectMgr->GetQuestTemplate(itr->GetFirstEqualChancedObjectId()))
         {
-            if (quest->IsDaily()||quest->IsUnlimitedRepeat())
+            if (quest->IsDaily())
                 continue;
 
             UpdatePool<Quest>(itr->GetPoolId(), 1);
