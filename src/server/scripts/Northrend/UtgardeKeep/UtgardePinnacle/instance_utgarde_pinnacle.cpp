@@ -257,5 +257,5 @@ public:
 
 void AddSC_instance_utgarde_pinnacle()
 {
-    new instance_pinnacle();
+    //new instance_pinnacle();
 }
