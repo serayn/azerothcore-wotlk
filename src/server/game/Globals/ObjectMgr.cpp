@@ -3233,11 +3233,11 @@ void ObjectMgr::LoadPlayerInfo()
                     continue;
                 }
 
-                if (sMapStore.LookupEntry(mapId)->Instanceable())
+                /*if (sMapStore.LookupEntry(mapId)->Instanceable())
                 {
                     sLog->outError("Home position in instanceable map for class %u race %u pair in `playercreateinfo` table, ignoring.", current_class, current_race);
                     continue;
-                }
+                }*/ // Serayn's point: for karazhan newbie area
 
                 PlayerInfo* info = new PlayerInfo();
                 info->mapId = mapId;

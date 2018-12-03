@@ -21877,11 +21877,15 @@ void Player::InitDataForForm(bool reapplyMods)
         }
         case FORM_BEAR:
         case FORM_DIREBEAR:
+        case FORM_BATTLESTANCE:      // Serayn's point 20181203: direct modify                       
+        case FORM_DEFENSIVESTANCE:                          
+        case FORM_BERSERKERSTANCE:                          
         {
             if (getPowerType() != POWER_RAGE)
                 setPowerType(POWER_RAGE);
             break;
         }
+
         default:                                            // 0, for example
         {
             ChrClassesEntry const* cEntry = sChrClassesStore.LookupEntry(getClass());
