@@ -449,8 +449,8 @@ void WorldSession::HandleCharCreateCallback(PreparedQueryResult result, Characte
             {
                 Field* fields = result->Fetch();
                 createInfo->CharCount = uint8(fields[0].GetUInt64()); // SQL's COUNT() returns uint64 but it will always be less than uint8.Max
-
-                if (createInfo->CharCount >= sWorld->getIntConfig(CONFIG_CHARACTERS_PER_REALM))
+                bool Forbid = false; sScriptMgr->OnCreateCharacterLimit(this, result, Forbid);
+                if ((createInfo->CharCount >= sWorld->getIntConfig(CONFIG_CHARACTERS_PER_REALM))||(Forbid))
                 {
                     WorldPacket data(SMSG_CHAR_CREATE, 1);
                     data << uint8(CHAR_CREATE_SERVER_LIMIT);

@@ -527,6 +527,10 @@ void ScriptMgr::OnWorldUpdate(uint32 diff)
     FOREACH_SCRIPT(WorldScript)->OnUpdate(diff);
 }
 
+void ScriptMgr::OnCreateCharacterLimit(WorldSession* me, PreparedQueryResult result, bool& Forbid)
+{
+    FOREACH_SCRIPT(WorldScript)->OnCreateCharacterLimit(me, result, Forbid);
+}
 void ScriptMgr::OnHonorCalculation(bool &SkipCoreCode, float& honor, uint8 level, float multiplier)
 {
     FOREACH_SCRIPT(FormulaScript)->OnHonorCalculation(SkipCoreCode, honor, level, multiplier);

@@ -324,6 +324,12 @@ class WorldScript : public ScriptObject
 
         // Called when the world is actually shut down.
         virtual void OnShutdown() { }
+
+        // On processing character creating limits
+        virtual void OnCreateCharacterLimit(WorldSession* /*me*/, PreparedQueryResult /*result*/, bool& /*Forbid*/)
+        {
+
+        }
 };
 
 class FormulaScript : public ScriptObject
@@ -1845,6 +1851,7 @@ class ScriptMgr
         void OnWorldUpdate(uint32 diff);
         void OnStartup();
         void OnShutdown();
+        void OnCreateCharacterLimit(WorldSession* me, PreparedQueryResult result, bool& Forbid);
 
     public: /* FormulaScript */
 
