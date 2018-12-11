@@ -791,6 +791,10 @@ void ScriptMgr::OnUpdateCombatSkills(bool& SkipCoreCode,Player* me, uint32 spell
 {
     FOREACH_SCRIPT(FormulaScript)->OnUpdateCombatSkills(SkipCoreCode, me, spelllevel, defence, attType, chance, result);
 }
+void ScriptMgr::OnIsPrimaryProfessionSkill(bool& SkipCoreCode, SkillLineEntry const * pSkill,uint32 skill, bool& result)
+{
+    FOREACH_SCRIPT(FormulaScript)->OnIsPrimaryProfessionSkill(SkipCoreCode, pSkill, skill, result);
+}
 #define SCR_MAP_BGN(M, V, I, E, C, T) \
     if (V->GetEntry() && V->GetEntry()->T()) \
     { \

@@ -22,13 +22,14 @@
 #include "BattlefieldMgr.h"
 #include "InstanceScript.h"
 #include "Player.h"
-
+#include "ScriptMgr.h"
 bool IsPrimaryProfessionSkill(uint32 skill)
 {
     SkillLineEntry const* pSkill = sSkillLineStore.LookupEntry(skill);
     if (!pSkill)
         return false;
-
+    bool SkipCoreCode = false; bool result = false;
+    sScriptMgr->OnIsPrimaryProfessionSkill(SkipCoreCode, pSkill, skill, result); if (SkipCoreCode) return result;
     if (pSkill->categoryId != SKILL_CATEGORY_PROFESSION)
         return false;
 

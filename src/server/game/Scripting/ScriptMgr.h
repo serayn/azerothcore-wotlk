@@ -937,6 +937,15 @@ class FormulaScript : public ScriptObject
             //  else
             //     sLog->outError("Module error: There is one OnUpdateCombatSkills script has been skipped cause of dupicated script of special type.");
         }
+
+        virtual void OnIsPrimaryProfessionSkill(bool& SkipCoreCode, SkillLineEntry const * /*pSkill*/, uint32 /*skill*/, bool& /*result*/)
+        {
+            if (!SkipCoreCode)
+            {
+
+                
+            }
+        }
 };
 
 template<class TMap> class MapScript : public UpdatableScript<TMap>
@@ -1913,7 +1922,7 @@ class ScriptMgr
         void OnDurabilityLoss(bool& SkipCoreCode, Player* me, Item* item, double percent, uint32& pDurabilityLoss);
         void OnUpdateCraftSkill(bool& SkipCoreCode, Player* me, uint32 spelllevel, uint32 SkillId, uint32 craft_skill_gain, bool& result);
         void OnUpdateCombatSkills(bool& SkipCoreCode, Player* me, uint32 spelllevel, bool defence, WeaponAttackType attType, uint32 chance, bool& result);
-
+        void OnIsPrimaryProfessionSkill(bool& SkipCoreCode, SkillLineEntry const * pSkill, uint32 skill, bool& result);
     public: /* MapScript */
 
         void OnCreateMap(Map* map);
