@@ -795,6 +795,18 @@ void ScriptMgr::OnIsPrimaryProfessionSkill(bool& SkipCoreCode, SkillLineEntry co
 {
     FOREACH_SCRIPT(FormulaScript)->OnIsPrimaryProfessionSkill(SkipCoreCode, pSkill, skill, result);
 }
+void ScriptMgr::OnGetMaxPetTalentPoints(bool& SkipCoreCode, uint8 level, uint8& points, Pet const* me)
+{
+    FOREACH_SCRIPT(FormulaScript)->OnGetMaxPetTalentPoints(SkipCoreCode, level, points, me);
+}
+void ScriptMgr::OnTrainingAndResetTalent(bool& SkipCoreCode,Player* player,const Creature* me, bool& result)
+{
+    FOREACH_SCRIPT(FormulaScript)->OnTrainingAndResetTalent(SkipCoreCode, player, me, result);
+}
+void ScriptMgr::OnLearnDualSpec(bool& SkipCoreCode, WorldObject* source, Player* me)
+{
+    FOREACH_SCRIPT(FormulaScript)->OnLearnDualSpec(SkipCoreCode,source, me);
+}
 #define SCR_MAP_BGN(M, V, I, E, C, T) \
     if (V->GetEntry() && V->GetEntry()->T()) \
     { \
@@ -1763,7 +1775,7 @@ void ScriptMgr::OnPlayerTextEmote(Player* player, uint32 textEmote, uint32 emote
     FOREACH_SCRIPT(PlayerScript)->OnTextEmote(player, textEmote, emoteNum, guid);
 }
 
-void ScriptMgr::OnPlayerSpellCast(Player* player, Spell* spell, bool skipCheck, bool SkipOtherCode)
+void ScriptMgr::OnPlayerSpellCast(Player* player, Spell* spell, bool skipCheck, bool &SkipOtherCode)
 {
 #ifdef ELUNA
     sEluna->OnSpellCast(player, spell, skipCheck);

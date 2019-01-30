@@ -2381,7 +2381,7 @@ MeleeHitOutcome Unit::RollMeleeOutcomeAgainst(const Unit* victim, WeaponAttackTy
             }
         }
     }
-    if (!RETURN_CODE == MELEE_HIT_EVADE) return RETURN_CODE;
+    if (RETURN_CODE != MELEE_HIT_EVADE) return RETURN_CODE;
 
     SkipCoreCode = false; RETURN_CODE = MELEE_HIT_EVADE;
     sScriptMgr->OnCrushingCalculation(SkipCoreCode, this, victim, victimDefenseSkill, victimMaxSkillValueForLevel, attackerMaxSkillValueForLevel,roll, tmp , sum, RETURN_CODE);

@@ -138,35 +138,38 @@ void AuctionHouseMgr::SendAuctionSuccessfulMail(AuctionEntry* auction, SQLTransa
     bool SkipCoreCode = false;
     sScriptMgr->OnSendAuctionSuccessfulMail(SkipCoreCode, this, auction, trans, owner, owner_guid, owner_accId);
     // owner exist
-    if(!SkipCoreCode)if (owner || owner_accId)
+    if (!SkipCoreCode)
     {
-        uint32 profit = auction->bid + auction->deposit - auction->GetAuctionCut();
-
-        if (owner)
+        if (owner || owner_accId)
         {
-            owner->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_GOLD_EARNED_BY_AUCTIONS, profit);
-            owner->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_HIGHEST_AUCTION_SOLD, auction->bid);
-            owner->GetSession()->SendAuctionOwnerNotification(auction);
-        }
+            uint32 profit = auction->bid + auction->deposit - auction->GetAuctionCut();
 
-        MailDraft(auction->BuildAuctionMailSubject(AUCTION_SUCCESSFUL), AuctionEntry::BuildAuctionMailBody(auction->bidder, auction->bid, auction->buyout, auction->deposit, auction->GetAuctionCut()))
-            .AddMoney(profit)
-            .SendMailTo(trans, MailReceiver(owner, auction->owner), auction, MAIL_CHECK_MASK_COPIED, sWorld->getIntConfig(CONFIG_MAIL_DELIVERY_DELAY));
-
-        if (auction->bid >= 500*GOLD)
-            if (const GlobalPlayerData* gpd = sWorld->GetGlobalPlayerData(auction->bidder))
+            if (owner)
             {
-                uint64 bidder_guid = MAKE_NEW_GUID(auction->bidder, 0, HIGHGUID_PLAYER);
-                Player* bidder = ObjectAccessor::FindPlayerInOrOutOfWorld(bidder_guid);
-                std::string owner_name = "";
-                uint8 owner_level = 0;
-                if (const GlobalPlayerData* gpd_owner = sWorld->GetGlobalPlayerData(auction->owner))
-                {
-                    owner_name = gpd_owner->name;
-                    owner_level = gpd_owner->level;
-                }
-                CharacterDatabase.PExecute("INSERT INTO log_money VALUES(%u, %u, \"%s\", \"%s\", %u, \"%s\", %u, \"<AH> profit: %ug, bidder: %s %u lvl (guid: %u), seller: %s %u lvl (guid: %u), item %u (%u)\", NOW())", gpd->accountId, auction->bidder, gpd->name.c_str(), bidder ? bidder->GetSession()->GetRemoteAddress().c_str() : "", owner_accId, owner_name.c_str(), auction->bid, (profit/GOLD), gpd->name.c_str(), gpd->level, auction->bidder, owner_name.c_str(), owner_level, auction->owner, auction->item_template, auction->itemCount);
+                owner->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_GOLD_EARNED_BY_AUCTIONS, profit);
+                owner->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_HIGHEST_AUCTION_SOLD, auction->bid);
+                owner->GetSession()->SendAuctionOwnerNotification(auction);
             }
+
+            MailDraft(auction->BuildAuctionMailSubject(AUCTION_SUCCESSFUL), AuctionEntry::BuildAuctionMailBody(auction->bidder, auction->bid, auction->buyout, auction->deposit, auction->GetAuctionCut()))
+                .AddMoney(profit)
+                .SendMailTo(trans, MailReceiver(owner, auction->owner), auction, MAIL_CHECK_MASK_COPIED, sWorld->getIntConfig(CONFIG_MAIL_DELIVERY_DELAY));
+
+            if (auction->bid >= 500 * GOLD)
+                if (const GlobalPlayerData* gpd = sWorld->GetGlobalPlayerData(auction->bidder))
+                {
+                    uint64 bidder_guid = MAKE_NEW_GUID(auction->bidder, 0, HIGHGUID_PLAYER);
+                    Player* bidder = ObjectAccessor::FindPlayerInOrOutOfWorld(bidder_guid);
+                    std::string owner_name = "";
+                    uint8 owner_level = 0;
+                    if (const GlobalPlayerData* gpd_owner = sWorld->GetGlobalPlayerData(auction->owner))
+                    {
+                        owner_name = gpd_owner->name;
+                        owner_level = gpd_owner->level;
+                    }
+                    CharacterDatabase.PExecute("INSERT INTO log_money VALUES(%u, %u, \"%s\", \"%s\", %u, \"%s\", %u, \"<AH> profit: %ug, bidder: %s %u lvl (guid: %u), seller: %s %u lvl (guid: %u), item %u (%u)\", NOW())", gpd->accountId, auction->bidder, gpd->name.c_str(), bidder ? bidder->GetSession()->GetRemoteAddress().c_str() : "", owner_accId, owner_name.c_str(), auction->bid, (profit / GOLD), gpd->name.c_str(), gpd->level, auction->bidder, owner_name.c_str(), owner_level, auction->owner, auction->item_template, auction->itemCount);
+                }
+        }
     }
 }
 
@@ -184,17 +187,20 @@ void AuctionHouseMgr::SendAuctionExpiredMail(AuctionEntry* auction, SQLTransacti
     bool SkipCoreCode = false;
     sScriptMgr->OnSendAuctionExpiredMail(SkipCoreCode, this, auction, trans, owner, owner_guid, owner_accId, pItem);
     // owner exist
-    if (!SkipCoreCode)if (owner || owner_accId)
+    if (!SkipCoreCode)
     {
-        if (owner)
-            owner->GetSession()->SendAuctionOwnerNotification(auction);
+        if (owner || owner_accId)
+        {
+            if (owner)
+                owner->GetSession()->SendAuctionOwnerNotification(auction);
 
-        MailDraft(auction->BuildAuctionMailSubject(AUCTION_EXPIRED), AuctionEntry::BuildAuctionMailBody(0, 0, auction->buyout, auction->deposit, 0))
-            .AddItem(pItem)
-            .SendMailTo(trans, MailReceiver(owner, auction->owner), auction, MAIL_CHECK_MASK_COPIED, 0);
+            MailDraft(auction->BuildAuctionMailSubject(AUCTION_EXPIRED), AuctionEntry::BuildAuctionMailBody(0, 0, auction->buyout, auction->deposit, 0))
+                .AddItem(pItem)
+                .SendMailTo(trans, MailReceiver(owner, auction->owner), auction, MAIL_CHECK_MASK_COPIED, 0);
+        }
+        else
+            sAuctionMgr->RemoveAItem(auction->item_guidlow, true);
     }
-    else
-        sAuctionMgr->RemoveAItem(auction->item_guidlow, true);
 }
 
 //this function sends mail to old bidder

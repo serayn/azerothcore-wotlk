@@ -946,6 +946,27 @@ class FormulaScript : public ScriptObject
                 
             }
         }
+        virtual void OnGetMaxPetTalentPoints(bool& SkipCoreCode, uint8 /*level*/, uint8& /*points*/, Pet const* /*me*/)
+        {
+            if (!SkipCoreCode)
+            {
+
+            }
+        }
+        virtual void OnTrainingAndResetTalent(bool& SkipCoreCode, Player* /*player*/, const  Creature* /*me*/, bool& /*result*/)
+        {
+            if (!SkipCoreCode)
+            {
+
+            }
+        }
+        virtual void OnLearnDualSpec(bool& SkipCoreCode, WorldObject* /*source*/, Player* /*me*/)
+        {
+            if (!SkipCoreCode)
+            {
+
+            }
+        }
 };
 
 template<class TMap> class MapScript : public UpdatableScript<TMap>
@@ -1507,7 +1528,7 @@ class PlayerScript : public ScriptObject
         virtual void OnTextEmote(Player* /*player*/, uint32 /*textEmote*/, uint32 /*emoteNum*/, uint64 /*guid*/) { }
 
         // Called in Spell::Cast.
-        virtual void OnSpellCast(Player* /*player*/, Spell* /*spell*/, bool /*skipCheck*/, bool /*SkipOtherCode*/) { }
+        virtual void OnSpellCast(Player* /*player*/, Spell* /*spell*/, bool /*skipCheck*/, bool& /*SkipOtherCode*/) { }
 
         // Called during data loading
         virtual void OnLoadFromDB(Player* /*player*/) { };
@@ -1923,6 +1944,10 @@ class ScriptMgr
         void OnUpdateCraftSkill(bool& SkipCoreCode, Player* me, uint32 spelllevel, uint32 SkillId, uint32 craft_skill_gain, bool& result);
         void OnUpdateCombatSkills(bool& SkipCoreCode, Player* me, uint32 spelllevel, bool defence, WeaponAttackType attType, uint32 chance, bool& result);
         void OnIsPrimaryProfessionSkill(bool& SkipCoreCode, SkillLineEntry const * pSkill, uint32 skill, bool& result);
+        void OnGetMaxPetTalentPoints(bool& SkipCoreCode, uint8 level, uint8& points, Pet const* me);
+        void OnTrainingAndResetTalent(bool& SkipCoreCode, Player* player, const  Creature* me, bool& result);
+        void OnLearnDualSpec(bool& SkipCoreCode, WorldObject* source, Player* me);
+
     public: /* MapScript */
 
         void OnCreateMap(Map* map);
@@ -2061,7 +2086,7 @@ class ScriptMgr
         void OnPlayerChat(Player* player, uint32 type, uint32 lang, std::string& msg, Channel* channel);
         void OnPlayerEmote(Player* player, uint32 emote);
         void OnPlayerTextEmote(Player* player, uint32 textEmote, uint32 emoteNum, uint64 guid);
-        void OnPlayerSpellCast(Player* player, Spell* spell, bool skipCheck, bool SkipOtherCode);
+        void OnPlayerSpellCast(Player* player, Spell* spell, bool skipCheck, bool &SkipOtherCode);
         void OnPlayerLogin(Player* player);
         void OnPlayerLoadFromDB(Player* player);
         void OnPlayerLogout(Player* player);

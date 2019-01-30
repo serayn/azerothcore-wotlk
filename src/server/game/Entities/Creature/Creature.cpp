@@ -930,7 +930,10 @@ bool Creature::isCanInteractWithBattleMaster(Player* player, bool msg) const
 }
 
 bool Creature::isCanTrainingAndResetTalentsOf(Player* player) const
-{ 
+{
+    bool SkipCoreCode = false; bool result = false;
+    sScriptMgr->OnTrainingAndResetTalent(SkipCoreCode, player, this, result);
+    if (SkipCoreCode) return result;
     return player->getLevel() >= 10
         && GetCreatureTemplate()->trainer_type == TRAINER_TYPE_CLASS
         && player->getClass() == GetCreatureTemplate()->trainer_class;

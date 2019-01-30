@@ -6433,7 +6433,7 @@ void Player::UpdateCombatSkills(Unit* victim, WeaponAttackType attType, bool def
 
     bool result = false;
     SkipCoreCode = false;
-    sScriptMgr->OnUpdateCombatSkills(SkipCoreCode, this, victim->getLevel(), defence, attType, chance, result);
+    sScriptMgr->OnUpdateCombatSkills(SkipCoreCode, this, victim->getLevel(), defence, attType, chance * 100.0f, result);
     if (!SkipCoreCode)
     {
         if (roll_chance_f(chance))
@@ -15097,7 +15097,7 @@ void Player::OnGossipSelect(WorldObject* source, uint32 gossipListId, uint32 men
         PlayerTalkClass->SendCloseGossip();
         return;
     }
-
+    bool SkipCoreCode = false;
     switch (gossipOptionId)
     {
         case GOSSIP_OPTION_GOSSIP:
@@ -15135,7 +15135,8 @@ void Player::OnGossipSelect(WorldObject* source, uint32 gossipListId, uint32 men
             GetSession()->SendTrainerList(guid);
             break;
         case GOSSIP_OPTION_LEARNDUALSPEC:
-            if (GetSpecsCount() == 1 && getLevel() >= sWorld->getIntConfig(CONFIG_MIN_DUALSPEC_LEVEL))
+            sScriptMgr->OnLearnDualSpec(SkipCoreCode, source, this);
+            if (!SkipCoreCode && GetSpecsCount() == 1 && getLevel() >= sWorld->getIntConfig(CONFIG_MIN_DUALSPEC_LEVEL))
             {
                 // Cast spells that teach dual spec
                 // Both are also ImplicitTarget self and must be cast by player

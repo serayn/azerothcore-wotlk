@@ -1074,9 +1074,10 @@ class spell_pal_judgement : public SpellScriptLoader
                 for (Unit::AuraEffectList::const_iterator i = auras.begin(); i != auras.end(); ++i)
                 {
                     if ((*i)->GetSpellInfo()->GetSpellSpecific() == SPELL_SPECIFIC_SEAL && (*i)->GetEffIndex() == EFFECT_2)
-                        if (sSpellMgr->GetSpellInfo((*i)->GetAmount()))
+                        if (sSpellMgr->GetSpellInfo((*i)->GetSpellInfo()->Effects[2].TriggerSpell))
                         {
-                            spellId2 = (*i)->GetAmount();
+                            //spellId2 = (*i)->GetAmount();
+                            spellId2 = (*i)->GetSpellInfo()->Effects[2].TriggerSpell;
                             break;
                         }
                 }

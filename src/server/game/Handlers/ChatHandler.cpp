@@ -150,10 +150,10 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recvData)
                     recvData >> to >> msg;
                     Player* receiver = ObjectAccessor::FindPlayerByName(to, false); 
 
+                    sScriptMgr->OnPlayerChat(sender, type, lang, msg, receiver);
                     if (msg.empty())
                         return;
-
-                    sScriptMgr->OnPlayerChat(sender, type, lang, msg, receiver);
+                    
 #ifdef ELUNA
                     if (!sEluna->OnChat(sender, type, lang, msg, receiver))
                         return;
