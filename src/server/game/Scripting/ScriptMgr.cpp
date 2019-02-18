@@ -807,6 +807,15 @@ void ScriptMgr::OnLearnDualSpec(bool& SkipCoreCode, WorldObject* source, Player*
 {
     FOREACH_SCRIPT(FormulaScript)->OnLearnDualSpec(SkipCoreCode,source, me);
 }
+void ScriptMgr::OnSpellEffectEnergize(bool& SkipCoreCode,Spell* me, SpellInfo const* const m_spellInfo, Unit* unitTarget, Unit* const m_caster,int32 damage, SpellEffectHandleMode effectHandleMode, Item* m_CastItem, SpellEffIndex effIndex)
+{
+    FOREACH_SCRIPT(FormulaScript)->OnSpellEffectEnergize(SkipCoreCode, me, m_spellInfo, unitTarget, m_caster,damage, effectHandleMode, m_CastItem, effIndex);
+}
+
+void ScriptMgr::OnSpellEffectEnergizePCT(bool& SkipCoreCode, Spell* me, SpellInfo const* const m_spellInfo, Unit* unitTarget, Unit* const m_caster, int32 damage, SpellEffectHandleMode effectHandleMode, Item* m_CastItem, SpellEffIndex effIndex)
+{
+    FOREACH_SCRIPT(FormulaScript)->OnSpellEffectEnergize(SkipCoreCode, me, m_spellInfo, unitTarget, m_caster, damage, effectHandleMode, m_CastItem, effIndex);
+}
 #define SCR_MAP_BGN(M, V, I, E, C, T) \
     if (V->GetEntry() && V->GetEntry()->T()) \
     { \

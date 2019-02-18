@@ -6444,7 +6444,7 @@ void AuraEffect::HandlePeriodicManaLeechAuraTick(Unit* target, Unit* caster) con
 {
     Powers powerType = Powers(GetMiscValue());
 
-    if (!caster || !caster->IsAlive() || !target->IsAlive() || target->getPowerType() != powerType)
+    if (!caster || !caster->IsAlive() || !target->IsAlive() || /*target->getPowerType() !=*/ target->GetMaxPower(powerType)==0) // Serayn's point about power
         return;
 
     if (target->HasUnitState(UNIT_STATE_ISOLATED) || target->IsImmunedToDamageOrSchool(GetSpellInfo()))
@@ -6555,7 +6555,7 @@ void AuraEffect::HandlePeriodicEnergizeAuraTick(Unit* target, Unit* caster) cons
 {
     Powers powerType = Powers(GetMiscValue());
 
-    if (target->GetTypeId() == TYPEID_PLAYER && target->getPowerType() != powerType && !m_spellInfo->HasAttribute(SPELL_ATTR7_CAN_RESTORE_SECONDARY_POWER))
+    if (target->GetTypeId() == TYPEID_PLAYER && /*target->getPowerType() != */  target->GetMaxPower(powerType)==0 && !m_spellInfo->HasAttribute(SPELL_ATTR7_CAN_RESTORE_SECONDARY_POWER))// Serayn's point about power
         return;
 
     if (!target->IsAlive() || !target->GetMaxPower(powerType))
@@ -6591,7 +6591,7 @@ void AuraEffect::HandlePeriodicPowerBurnAuraTick(Unit* target, Unit* caster) con
 {
     Powers powerType = Powers(GetMiscValue());
 
-    if (!caster || !target->IsAlive() || target->getPowerType() != powerType)
+    if (!caster || !target->IsAlive() || /*target->getPowerType() !=*/ target->GetMaxPower(powerType)==0)// Serayn's point about power
         return;
 
     if (target->HasUnitState(UNIT_STATE_ISOLATED) || target->IsImmunedToDamageOrSchool(GetSpellInfo()))

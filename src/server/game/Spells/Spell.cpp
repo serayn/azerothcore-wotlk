@@ -5788,7 +5788,8 @@ SpellCastResult Spell::CheckCast(bool strict)
                 // Can be area effect, Check only for players and not check if target - caster (spell can have multiply drain/burn effects)
                 if (m_caster->GetTypeId() == TYPEID_PLAYER)
                     if (Unit* target = m_targets.GetUnitTarget())
-                        if (target != m_caster && target->getPowerType() != Powers(m_spellInfo->Effects[i].MiscValue))
+                        //if (target != m_caster && target->getPowerType() != Powers(m_spellInfo->Effects[i].MiscValue)) // Serayn's point : 所有角色都能抽蓝
+                        if (target != m_caster && /*target->getPowerType() !=*/ target->GetMaxPower(Powers(m_spellInfo->Effects[i].MiscValue))>0)
                             return SPELL_FAILED_BAD_TARGETS;
                 break;
             }
@@ -6273,7 +6274,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                 if (!m_targets.GetUnitTarget())
                     return SPELL_FAILED_BAD_IMPLICIT_TARGETS;
 
-                if (m_targets.GetUnitTarget()->getPowerType() != POWER_MANA)
+                if (/*m_targets.GetUnitTarget()->getPowerType() != */m_targets.GetUnitTarget()->GetMaxPower(POWER_MANA)== 0)// Serayn's point about power
                     return SPELL_FAILED_BAD_TARGETS;
 
                 break;

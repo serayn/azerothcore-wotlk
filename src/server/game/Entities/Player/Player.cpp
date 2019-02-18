@@ -1160,7 +1160,7 @@ bool Player::Create(uint32 guidlow, CharacterCreateInfo* createInfo)
     // apply original stats mods before spell loading or item equipment that call before equip _RemoveStatsMods()
     UpdateMaxHealth();                                      // Update max Health (for add bonus from stamina)
     SetFullHealth();
-    if (getPowerType() == POWER_MANA)
+    //if (getPowerType() == POWER_MANA)     // Serayn's point: 
     {
         UpdateMaxPower(POWER_MANA);                         // Update max Mana (for add bonus from intellect)
         SetPower(POWER_MANA, GetMaxPower(POWER_MANA));
@@ -26810,10 +26810,10 @@ void Player::ActivateSpec(uint8 spec)
     GetSession()->_loadActionsSwitchSpecCallback = CharacterDatabase.AsyncQuery(stmt); // FutureResult
 
     // xinef: reset power
-    Powers pw = getPowerType();
+    /*Powers pw = getPowerType();   // Serayn's point : 所有角色都有蓝，而且能回蓝
     if (pw != POWER_MANA)
         SetPower(POWER_MANA, 0); // Mana must be 0 even if it isn't the active power type.
-    SetPower(pw, 0);
+    SetPower(pw, 0);*/
 
     // xinef: remove titan grip if player had it set and does not have appropriate talent
     if (!HasTalent(46917, GetActiveSpec()) && m_canTitanGrip)

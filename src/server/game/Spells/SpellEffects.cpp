@@ -1369,7 +1369,7 @@ void Spell::EffectPowerDrain(SpellEffIndex effIndex)
 
     Powers powerType = Powers(m_spellInfo->Effects[effIndex].MiscValue);
 
-    if (!unitTarget || !unitTarget->IsAlive() || unitTarget->getPowerType() != powerType || damage < 0)
+    if (!unitTarget || !unitTarget->IsAlive() ||/* unitTarget->getPowerType() != */ unitTarget->GetMaxPower(powerType) || damage < 0)// Serayn's point about power
         return;
 
     // add spell damage bonus
@@ -1450,7 +1450,7 @@ void Spell::EffectPowerBurn(SpellEffIndex effIndex)
 
     Powers powerType = Powers(m_spellInfo->Effects[effIndex].MiscValue);
 
-    if (!unitTarget || !unitTarget->IsAlive() || unitTarget->getPowerType() != powerType || damage < 0)
+    if (!unitTarget || !unitTarget->IsAlive() ||/* unitTarget->getPowerType() != */ unitTarget->GetMaxPower(powerType) || damage < 0) // Serayn's point for power
         return;
 
     // burn x% of target's mana, up to maximum of 2x% of caster's mana (Mana Burn)
@@ -1857,6 +1857,9 @@ void Spell::EffectPersistentAA(SpellEffIndex effIndex)
 
 void Spell::EffectEnergize(SpellEffIndex effIndex)
 {
+    bool SkipCoreCode = false;
+    sScriptMgr->OnSpellEffectEnergize(SkipCoreCode, this, m_spellInfo, unitTarget, m_caster, damage, effectHandleMode, m_CastItem, effIndex);
+    if (SkipCoreCode) return;
     if (effectHandleMode != SPELL_EFFECT_HANDLE_HIT_TARGET)
         return;
 
@@ -1870,7 +1873,7 @@ void Spell::EffectEnergize(SpellEffIndex effIndex)
 
     Powers power = Powers(m_spellInfo->Effects[effIndex].MiscValue);
 
-    if (unitTarget->GetTypeId() == TYPEID_PLAYER && unitTarget->getPowerType() != power && !m_spellInfo->HasAttribute(SPELL_ATTR7_CAN_RESTORE_SECONDARY_POWER))
+    if (unitTarget->GetTypeId() == TYPEID_PLAYER && unitTarget->getPowerType() !=power && !m_spellInfo->HasAttribute(SPELL_ATTR7_CAN_RESTORE_SECONDARY_POWER))
         return;
 
     if (unitTarget->GetMaxPower(power) == 0)
@@ -1968,6 +1971,10 @@ void Spell::EffectEnergize(SpellEffIndex effIndex)
 
 void Spell::EffectEnergizePct(SpellEffIndex effIndex)
 {
+    bool SkipCoreCode = false;
+    sScriptMgr->OnSpellEffectEnergizePCT(SkipCoreCode, this, m_spellInfo, unitTarget, m_caster, damage, effectHandleMode, m_CastItem, effIndex);
+    if (SkipCoreCode) return;
+
     if (effectHandleMode != SPELL_EFFECT_HANDLE_HIT_TARGET)
         return;
 
@@ -1981,7 +1988,7 @@ void Spell::EffectEnergizePct(SpellEffIndex effIndex)
 
     Powers power = Powers(m_spellInfo->Effects[effIndex].MiscValue);
 
-    if (unitTarget->GetTypeId() == TYPEID_PLAYER && unitTarget->getPowerType() != power && !m_spellInfo->HasAttribute(SPELL_ATTR7_CAN_RESTORE_SECONDARY_POWER))
+    if (unitTarget->GetTypeId() == TYPEID_PLAYER && unitTarget->getPowerType() !=power && !m_spellInfo->HasAttribute(SPELL_ATTR7_CAN_RESTORE_SECONDARY_POWER))
         return;
 
     uint32 maxPower = unitTarget->GetMaxPower(power);

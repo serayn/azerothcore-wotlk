@@ -137,7 +137,7 @@ enum QuestFlags
     QUEST_FLAGS_DISPLAY_ITEM_IN_TRACKER = 0x00020000,   // Displays usable item in quest tracker
     QUEST_FLAGS_OBJ_TEXT                = 0x00040000,   // use Objective text as Complete text
     QUEST_FLAGS_AUTO_ACCEPT             = 0x00080000,   // The client recognizes this flag as auto-accept. However, NONE of the current quests (3.3.5a) have this flag. Maybe blizz used to use it, or will use it in the future.
-    QUEST_FLAGS_UNLIMITED_REPEATABLE    = 0x00100000,   // Custom Quest flag, Unlimited repeatable and unlimited get xp rewarded..
+    QUEST_FLAGS_UNLIMITED_REPEATABLE    = 0x00100000,   // Custom Quest flag, Unlimited repeatable and unlimited xp rewarded..
     // ... 4.x added flags up to 0x80000000 - all unknown for now
 };
 

@@ -6303,7 +6303,7 @@ bool Unit::HandleDummyAuraProc(Unit* victim, uint32 damage, AuraEffect* triggere
             // Magic Absorption
             if (dummySpell->SpellIconID == 459)             // only this spell has SpellIconID == 459 and dummy aura
             {
-                if (getPowerType() != POWER_MANA)
+                if (/*getPowerType() != */ GetMaxPower(POWER_MANA)==0)// Serayn's point for power
                     return false;
 
                 // mana reward
@@ -7089,7 +7089,7 @@ bool Unit::HandleDummyAuraProc(Unit* victim, uint32 damage, AuraEffect* triggere
                 // Judgement of Wisdom
                 case 20186:
                 {
-                    if (!victim || !victim->IsAlive() || victim->getPowerType() != POWER_MANA || victim->HasSpellCooldown(20268))
+                    if (!victim || !victim->IsAlive() || /*victim->getPowerType() != POWER_MANA ||*/ victim->HasSpellCooldown(20268)) // Serayn's point: local modify
                         return false;
 
                     // 2% of base mana

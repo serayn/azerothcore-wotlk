@@ -679,7 +679,7 @@ class spell_item_skull_of_impeding_doom : public SpellScriptLoader
 
             void CalculateManaLeechAmount(AuraEffect const* /*aurEff*/, int32& amount, bool& /*canBeRecalculated*/)
             {
-                if (!GetCaster() || GetCaster()->getPowerType() != POWER_MANA)
+                if (!GetCaster() || /*GetCaster()->getPowerType() != */GetCaster()->GetMaxPower(POWER_MANA)==0)// Serayn's point for power
                     return;
 
                 amount = GetCaster()->GetMaxPower(POWER_MANA)*0.12f; // 5 ticks which reduce health by 60%

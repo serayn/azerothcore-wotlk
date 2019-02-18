@@ -522,7 +522,7 @@ class spell_pal_blessing_of_sanctuary : public SpellScriptLoader
 
             bool CheckProc(ProcEventInfo& /*eventInfo*/)
             {
-                return GetTarget()->getPowerType() == POWER_MANA;
+                return /*GetTarget()->getPowerType() == */GetTarget()->GetMaxPower(POWER_MANA)>0; // Serayn's point for power
             }
 
             void HandleProc(AuraEffect const* aurEff, ProcEventInfo& /*eventInfo*/)
@@ -1174,7 +1174,7 @@ class spell_pal_lay_on_hands : public SpellScriptLoader
 
                 // Xinef: Glyph of Divinity
                 if (Unit* target = GetExplTargetUnit())
-                    if (target->getPowerType() == POWER_MANA)
+                    if (/*target->getPowerType() == POWER_MANA*/ target->GetMaxPower(POWER_MANA)>0)// Serayn's point for power
                         _manaAmount = target->GetPower(POWER_MANA);
 
                 return SPELL_CAST_OK;

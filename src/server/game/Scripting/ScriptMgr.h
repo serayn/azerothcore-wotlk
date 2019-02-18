@@ -26,6 +26,7 @@
 #include "Group.h"
 #include "SocialMgr.h"
 #include "WorldSession.h"
+#include "Spell.h"
 class AuctionHouseObject;
 class AuraScript;
 class Battleground;
@@ -961,6 +962,20 @@ class FormulaScript : public ScriptObject
             }
         }
         virtual void OnLearnDualSpec(bool& SkipCoreCode, WorldObject* /*source*/, Player* /*me*/)
+        {
+            if (!SkipCoreCode)
+            {
+
+            }
+        }
+        virtual void OnSpellEffectEnergize(bool& SkipCoreCode, Spell* /*me*/, SpellInfo const* const /*m_spellInfo*/, Unit* /*unitTarget*/, Unit* const /*m_caster*/, int32 /*damage*/, SpellEffectHandleMode /*effectHandleMode*/, Item* /*m_CastItem*/, SpellEffIndex /*effIndex*/)
+        {
+            if (!SkipCoreCode)
+            {
+
+            }
+        }
+        virtual void OnSpellEffectEnergizePCT(bool& SkipCoreCode, Spell* /*me*/, SpellInfo const* const /*m_spellInfo*/, Unit* /*unitTarget*/, Unit* const /*m_caster*/, int32 /*damage*/, SpellEffectHandleMode /*effectHandleMode*/, Item* /*m_CastItem*/, SpellEffIndex /*effIndex*/)
         {
             if (!SkipCoreCode)
             {
@@ -1947,6 +1962,8 @@ class ScriptMgr
         void OnGetMaxPetTalentPoints(bool& SkipCoreCode, uint8 level, uint8& points, Pet const* me);
         void OnTrainingAndResetTalent(bool& SkipCoreCode, Player* player, const  Creature* me, bool& result);
         void OnLearnDualSpec(bool& SkipCoreCode, WorldObject* source, Player* me);
+        void OnSpellEffectEnergize(bool& SkipCoreCode, Spell* me, SpellInfo const* const m_spellInfo, Unit* unitTarget, Unit* const m_caster, int32 damage, SpellEffectHandleMode effectHandleMode, Item* m_CastItem,SpellEffIndex effIndex);
+        void OnSpellEffectEnergizePCT(bool& SkipCoreCode, Spell* me, SpellInfo const* const m_spellInfo, Unit* unitTarget, Unit* const m_caster, int32 damage, SpellEffectHandleMode effectHandleMode, Item* m_CastItem, SpellEffIndex effIndex);
 
     public: /* MapScript */
 

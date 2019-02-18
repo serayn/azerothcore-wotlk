@@ -1217,7 +1217,7 @@ class spell_sha_mana_spring_totem : public SpellScriptLoader
                 int32 damage = GetEffectValue();
                 if (Unit* target = GetHitUnit())
                     if (Unit* caster = GetCaster())
-                        if (target->getPowerType() == POWER_MANA)
+                        if (/*target->getPowerType() ==*/ target->GetMaxPower(POWER_MANA)>0)// Serayn's point for power
                             caster->CastCustomSpell(target, SPELL_SHAMAN_MANA_SPRING_TOTEM_ENERGIZE, &damage, 0, 0, true, 0, 0, GetOriginalCaster()->GetGUID());
             }
 
@@ -1256,7 +1256,7 @@ class spell_sha_mana_tide_totem : public SpellScriptLoader
                 if (Unit* caster = GetCaster())
                     if (Unit* unitTarget = GetHitUnit())
                     {
-                        if (unitTarget->getPowerType() == POWER_MANA)
+                        if (/*unitTarget->getPowerType() == POWER_MANA*/unitTarget->GetMaxPower(POWER_MANA)>0)// Serayn's point for power
                         {
                             int32 effValue = GetEffectValue();
                             // Glyph of Mana Tide
