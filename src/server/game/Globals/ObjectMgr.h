@@ -1270,7 +1270,16 @@ class ObjectMgr
 
             return &iter->second;
         }
-
+        bool IsVendorItem(uint32 item)
+        {
+            for (CacheVendorItemContainer::const_iterator iter = _cacheVendorItemStore.begin(); iter != _cacheVendorItemStore.end(); iter++)
+            {
+                for (VendorItemList::const_iterator i = iter->second.m_items.begin(); i != iter->second.m_items.end(); ++i)
+                    if ((*i)->item == item)
+                        return true;
+            }
+            return false;
+        }
         void AddVendorItem(uint32 entry, uint32 item, int32 maxcount, uint32 incrtime, uint32 extendedCost, bool persist = true); // for event
         bool RemoveVendorItem(uint32 entry, uint32 item, bool persist = true); // for event
         bool IsVendorItemValid(uint32 vendor_entry, uint32 item, int32 maxcount, uint32 ptime, uint32 ExtendedCost, Player* player = NULL, std::set<uint32>* skip_vendors = NULL, uint32 ORnpcflag = 0) const;
