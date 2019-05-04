@@ -1651,6 +1651,8 @@ class Unit : public WorldObject
             return value;
         }
         uint32 GetUnitMeleeSkill(Unit const* target = NULL) const;
+
+		std::list<Unit*> GetNearbyCreatureList(float dist) const;
         
         uint32 GetDefenseSkillValue(Unit const* target = NULL) const;
         uint32 GetWeaponSkillValue(WeaponAttackType attType, Unit const* target = NULL) const;

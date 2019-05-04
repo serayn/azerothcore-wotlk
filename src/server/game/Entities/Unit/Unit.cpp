@@ -19550,3 +19550,13 @@ uint32 Unit::GetUnitMeleeSkill(Unit const* target ) const
     if(!SkipCoreCode) result = (target ? getLevelForTarget(target) : getLevel()) * 5;
     return result;
 }
+
+std::list<Unit*> Unit::GetNearbyCreatureList(float dist) const
+{
+    std::list<Unit*> targets;
+    Trinity::AnyFriendlyUnitInObjectRangeCheck u_check(this, this, dist);
+    Trinity::UnitListSearcher<Trinity::AnyFriendlyUnitInObjectRangeCheck> searcher(this, targets, u_check);
+    VisitNearbyObject(dist, searcher);
+    return targets;
+
+}
