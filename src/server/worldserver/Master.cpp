@@ -117,7 +117,7 @@ int Master::Run()
 
     sLog->outString("%s (worldserver-daemon)", GitRevision::GetFullVersion());
     sLog->outString("<Ctrl-C> to stop.\n");
-
+    /*
     sLog->outString("   █████╗ ███████╗███████╗██████╗  ██████╗ ████████╗██╗  ██╗");           
     sLog->outString("  ██╔══██╗╚══███╔╝██╔════╝██╔══██╗██╔═══██╗╚══██╔══╝██║  ██║");           
     sLog->outString("  ███████║  ███╔╝ █████╗  ██████╔╝██║   ██║   ██║   ███████║");           
@@ -130,7 +130,7 @@ int Master::Run()
     sLog->outString("                                ██║     ██║   ██║██╔══██╗██╔══╝");  
     sLog->outString("                                ╚██████╗╚██████╔╝██║  ██║███████╗");
     sLog->outString("                                 ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝\n");
-
+    */
     sLog->outString("  	  AzerothCore 3.3.5a  -  www.azerothcore.org\n");
 
     /// worldserver PID file creation

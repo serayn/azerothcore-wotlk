@@ -19480,3 +19480,12 @@ void Unit::Whisper(uint32 textId, Player* target, bool isBossWhisper /*= false*/
     ChatHandler::BuildChatPacket(data, isBossWhisper ? CHAT_MSG_RAID_BOSS_WHISPER : CHAT_MSG_MONSTER_WHISPER, LANG_UNIVERSAL, this, target, bct->GetText(locale, getGender()), 0, "", locale);
     target->SendDirectMessage(&data);
 }
+std::list<Unit*> Unit::GetNearbyCreatureList(float dist) const
+{
+    std::list<Unit*> targets;
+    Trinity::AnyFriendlyUnitInObjectRangeCheck u_check(this, this, dist);
+    Trinity::UnitListSearcher<Trinity::AnyFriendlyUnitInObjectRangeCheck> searcher(this, targets, u_check);
+    VisitNearbyObject(dist, searcher);
+    return targets;
+
+}

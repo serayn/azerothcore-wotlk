@@ -1213,6 +1213,7 @@ class Player : public Unit, public GridObject<Player>
         uint32 GetItemCount(uint32 item, bool inBankAlso = false, Item* skipItem = NULL) const;
         uint32 GetItemCountWithLimitCategory(uint32 limitCategory, Item* skipItem = NULL) const;
         Item* GetItemByGuid(uint64 guid) const;
+        Item* GetItemByGuidLow(uint32 guid) const;
         Item* GetItemByEntry(uint32 entry) const;
         Item* GetItemByPos(uint16 pos) const;
         Item* GetItemByPos(uint8 bag, uint8 slot) const;

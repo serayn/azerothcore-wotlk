@@ -274,30 +274,96 @@ class FormulaScript : public ScriptObject
         FormulaScript(const char* name);
 
     public:
-
         // Called after calculating honor.
-        virtual void OnHonorCalculation(float& /*honor*/, uint8 /*level*/, float /*multiplier*/) { }
+        virtual void OnHonorCalculation(bool &ScriptUsed, float& /*honor*/, uint8 /*level*/, float /*multiplier*/)
+        {
+            if (!ScriptUsed)
+            {
+
+            }
+            else
+                sLog->outError("Module error: There is one OnHonorCalculation script has been skipped cause of dupicated script of special type.");
+        }
 
         // Called after gray level calculation.
-        virtual void OnGrayLevelCalculation(uint8& /*grayLevel*/, uint8 /*playerLevel*/) { }
+        virtual void OnGrayLevelCalculation(bool &ScriptUsed, uint8& /*grayLevel*/, uint8 /*playerLevel*/)
+        {
+            if (!ScriptUsed)
+            {
+
+            }
+            else
+                sLog->outError("Module error: There is one OnGrayLevelCalculation script has been skipped cause of dupicated script of special type.");
+        }
 
         // Called after calculating experience color.
-        virtual void OnColorCodeCalculation(XPColorChar& /*color*/, uint8 /*playerLevel*/, uint8 /*mobLevel*/) { }
+        virtual void OnColorCodeCalculation(bool &ScriptUsed, XPColorChar& /*color*/, uint8 /*playerLevel*/, uint8 /*mobLevel*/)
+        {
+            if (!ScriptUsed)
+            {
+
+            }
+            else
+                sLog->outError("Module error: There is one OnColorCodeCalculation script has been skipped cause of dupicated script of special type.");
+        }
 
         // Called after calculating zero difference.
-        virtual void OnZeroDifferenceCalculation(uint8& /*diff*/, uint8 /*playerLevel*/) { }
+        virtual void OnZeroDifferenceCalculation(bool &ScriptUsed, uint8& /*diff*/, uint8 /*playerLevel*/)
+        {
+            if (!ScriptUsed)
+            {
+
+            }
+            else
+                sLog->outError("Module error: There is one OnZeroDifferenceCalculation script has been skipped cause of dupicated script of special type.");
+        }
 
         // Called after calculating base experience gain.
-        virtual void OnBaseGainCalculation(uint32& /*gain*/, uint8 /*playerLevel*/, uint8 /*mobLevel*/, ContentLevels /*content*/) { }
+        virtual void OnBaseGainCalculation(bool &ScriptUsed, uint32& /*gain*/, uint8 /*playerLevel*/, uint8 /*mobLevel*/, ContentLevels /*content*/)
+        {
+            if (!ScriptUsed)
+            {
+
+            }
+            else
+                sLog->outError("Module error: There is one OnBaseGainCalculation script has been skipped cause of dupicated script of special type.");
+        }
 
         // Called after calculating experience gain.
-        virtual void OnGainCalculation(uint32& /*gain*/, Player* /*player*/, Unit* /*unit*/) { }
+        virtual void OnGainCalculation(bool &ScriptUsed, uint32& /*gain*/, Player* /*player*/, Unit* /*unit*/)
+        {
+            if (!ScriptUsed)
+            {
+
+            }
+            else
+                sLog->outError("Module error: There is one OnGainCalculation script has been skipped cause of dupicated script of special type.");
+        }
 
         // Called when calculating the experience rate for group experience.
-        virtual void OnGroupRateCalculation(float& /*rate*/, uint32 /*count*/, bool /*isRaid*/) { }
+        virtual void OnGroupRateCalculation(bool &ScriptUsed, float& /*rate*/, uint32 /*count*/, bool /*isRaid*/)
+        {
+            if (!ScriptUsed)
+            {
+
+            }
+            else
+                sLog->outError("Module error: There is one OnGroupRateCalculation script has been skipped cause of dupicated script of special type.");
+        }
 
         // Called after calculating arena rating changes
-        virtual void OnAfterArenaRatingCalculation(Battleground *const /*bg*/, int32& /*winnerMatchmakerChange*/, int32& /*loserMatchmakerChange*/, int32& /*winnerChange*/, int32& /*loserChange*/) { };
+        virtual void OnAfterArenaRatingCalculation(bool &ScriptUsed, Battleground *const /*bg*/, int32& /*winnerMatchmakerChange*/, int32& /*loserMatchmakerChange*/, int32& /*winnerChange*/, int32& /*loserChange*/)
+        {
+            if (!ScriptUsed)
+            {
+
+            }
+            else
+                sLog->outError("Module error: There is one OnAfterArenaRatingCalculation script has been skipped cause of dupicated script of special type.");
+        }
+
+
+
 };
 
 template<class TMap> class MapScript : public UpdatableScript<TMap>
@@ -1162,14 +1228,14 @@ class ScriptMgr
 
     public: /* FormulaScript */
 
-        void OnHonorCalculation(float& honor, uint8 level, float multiplier);
-        void OnGrayLevelCalculation(uint8& grayLevel, uint8 playerLevel);
-        void OnColorCodeCalculation(XPColorChar& color, uint8 playerLevel, uint8 mobLevel);
-        void OnZeroDifferenceCalculation(uint8& diff, uint8 playerLevel);
-        void OnBaseGainCalculation(uint32& gain, uint8 playerLevel, uint8 mobLevel, ContentLevels content);
-        void OnGainCalculation(uint32& gain, Player* player, Unit* unit);
-        void OnGroupRateCalculation(float& rate, uint32 count, bool isRaid);
-        void OnAfterArenaRatingCalculation(Battleground *const bg, int32 &winnerMatchmakerChange, int32 &loserMatchmakerChange, int32 &winnerChange, int32 &loserChange);
+        void OnHonorCalculation(bool &ScriptUsed, float& honor, uint8 level, float multiplier);
+        void OnGrayLevelCalculation(bool &ScriptUsed, uint8& grayLevel, uint8 playerLevel);
+        void OnColorCodeCalculation(bool &ScriptUsed, XPColorChar& color, uint8 playerLevel, uint8 mobLevel);
+        void OnZeroDifferenceCalculation(bool &ScriptUsed, uint8& diff, uint8 playerLevel);
+        void OnBaseGainCalculation(bool &ScriptUsed, uint32& gain, uint8 playerLevel, uint8 mobLevel, ContentLevels content);
+        void OnGainCalculation(bool &ScriptUsed, uint32& gain, Player* player, Unit* unit);
+        void OnGroupRateCalculation(bool &ScriptUsed, float& rate, uint32 count, bool isRaid);
+        void OnAfterArenaRatingCalculation(bool &ScriptUsed, Battleground *const bg, int32 &winnerMatchmakerChange, int32 &loserMatchmakerChange, int32 &winnerChange, int32 &loserChange);
 
     public: /* MapScript */
 

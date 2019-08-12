@@ -524,43 +524,44 @@ void ScriptMgr::OnWorldUpdate(uint32 diff)
     FOREACH_SCRIPT(WorldScript)->OnUpdate(diff);
 }
 
-void ScriptMgr::OnHonorCalculation(float& honor, uint8 level, float multiplier)
+void ScriptMgr::OnHonorCalculation(bool &ScriptUsed, float& honor, uint8 level, float multiplier)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnHonorCalculation(honor, level, multiplier);
+    FOREACH_SCRIPT(FormulaScript)->OnHonorCalculation(ScriptUsed, honor, level, multiplier);
 }
 
-void ScriptMgr::OnGrayLevelCalculation(uint8& grayLevel, uint8 playerLevel)
+void ScriptMgr::OnGrayLevelCalculation(bool &ScriptUsed, uint8& grayLevel, uint8 playerLevel)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnGrayLevelCalculation(grayLevel, playerLevel);
+    FOREACH_SCRIPT(FormulaScript)->OnGrayLevelCalculation(ScriptUsed, grayLevel, playerLevel);
 }
 
-void ScriptMgr::OnColorCodeCalculation(XPColorChar& color, uint8 playerLevel, uint8 mobLevel)
+void ScriptMgr::OnColorCodeCalculation(bool &ScriptUsed, XPColorChar& color, uint8 playerLevel, uint8 mobLevel)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnColorCodeCalculation(color, playerLevel, mobLevel);
+    FOREACH_SCRIPT(FormulaScript)->OnColorCodeCalculation(ScriptUsed, color, playerLevel, mobLevel);
 }
 
-void ScriptMgr::OnZeroDifferenceCalculation(uint8& diff, uint8 playerLevel)
+void ScriptMgr::OnZeroDifferenceCalculation(bool &ScriptUsed, uint8& diff, uint8 playerLevel)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnZeroDifferenceCalculation(diff, playerLevel);
+    FOREACH_SCRIPT(FormulaScript)->OnZeroDifferenceCalculation(ScriptUsed, diff, playerLevel);
 }
 
-void ScriptMgr::OnBaseGainCalculation(uint32& gain, uint8 playerLevel, uint8 mobLevel, ContentLevels content)
+void ScriptMgr::OnBaseGainCalculation(bool &ScriptUsed, uint32& gain, uint8 playerLevel, uint8 mobLevel, ContentLevels content)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnBaseGainCalculation(gain, playerLevel, mobLevel, content);
+    FOREACH_SCRIPT(FormulaScript)->OnBaseGainCalculation(ScriptUsed, gain, playerLevel, mobLevel, content);
 }
 
-void ScriptMgr::OnGainCalculation(uint32& gain, Player* player, Unit* unit)
+void ScriptMgr::OnGainCalculation(bool &ScriptUsed, uint32& gain, Player* player, Unit* unit)
 {
     ASSERT(player);
     ASSERT(unit);
 
-    FOREACH_SCRIPT(FormulaScript)->OnGainCalculation(gain, player, unit);
+    FOREACH_SCRIPT(FormulaScript)->OnGainCalculation(ScriptUsed, gain, player, unit);
 }
 
-void ScriptMgr::OnGroupRateCalculation(float& rate, uint32 count, bool isRaid)
+void ScriptMgr::OnGroupRateCalculation(bool &ScriptUsed, float& rate, uint32 count, bool isRaid)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnGroupRateCalculation(rate, count, isRaid);
+    FOREACH_SCRIPT(FormulaScript)->OnGroupRateCalculation(ScriptUsed, rate, count, isRaid);
 }
+
 
 #define SCR_MAP_BGN(M, V, I, E, C, T) \
     if (V->GetEntry() && V->GetEntry()->T()) \
@@ -1958,9 +1959,9 @@ void ScriptMgr::OnBeforeInitTalentForLevel(Player* player, uint8& level, uint32&
     FOREACH_SCRIPT(PlayerScript)->OnBeforeInitTalentForLevel(player, level, talentPointsForLevel);
 }
 
-void ScriptMgr::OnAfterArenaRatingCalculation(Battleground *const bg, int32 &winnerMatchmakerChange, int32 &loserMatchmakerChange, int32 &winnerChange, int32 &loserChange)
+void ScriptMgr::OnAfterArenaRatingCalculation(bool &ScriptUse, Battleground *const bg, int32 &winnerMatchmakerChange, int32 &loserMatchmakerChange, int32 &winnerChange, int32 &loserChange)
 {
-    FOREACH_SCRIPT(FormulaScript)->OnAfterArenaRatingCalculation(bg, winnerMatchmakerChange, loserMatchmakerChange, winnerChange, loserChange);
+    FOREACH_SCRIPT(FormulaScript)->OnAfterArenaRatingCalculation(ScriptUse, bg, winnerMatchmakerChange, loserMatchmakerChange, winnerChange, loserChange);
 }
 
 // BGScript

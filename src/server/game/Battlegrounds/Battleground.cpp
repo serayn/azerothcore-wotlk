@@ -806,8 +806,8 @@ void Battleground::EndBattleground(TeamId winnerTeamId)
                 winnerMatchmakerRating = GetArenaMatchmakerRating(winnerTeamId);
                 winnerMatchmakerChange = bValidArena ? winnerArenaTeam->WonAgainst(winnerMatchmakerRating, loserMatchmakerRating, winnerChange, GetBgMap()) : 0;
                 loserMatchmakerChange = loserArenaTeam->LostAgainst(loserMatchmakerRating, winnerMatchmakerRating, loserChange, GetBgMap());
-
-                sScriptMgr->OnAfterArenaRatingCalculation(this, winnerMatchmakerChange, loserMatchmakerChange, winnerChange, loserChange);
+                bool UseScript = false;
+                sScriptMgr->OnAfterArenaRatingCalculation(UseScript, this, winnerMatchmakerChange, loserMatchmakerChange, winnerChange, loserChange);
 
                 SetArenaMatchmakerRating(winnerTeamId, winnerMatchmakerRating + winnerMatchmakerChange);
                 SetArenaMatchmakerRating(GetOtherTeamId(winnerTeamId), loserMatchmakerRating + loserMatchmakerChange);
