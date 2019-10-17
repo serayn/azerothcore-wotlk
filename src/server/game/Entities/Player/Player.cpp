@@ -10738,19 +10738,20 @@ bool Player::IsValidPos(uint8 bag, uint8 slot, bool explicit_pos)
     return false;
 }
 
-bool Player::HasItemCount(uint32 item, uint32 count, bool inBankAlso) const
+bool Player::HasItemCount(uint32 item, uint32 count, bool inBankAlso, bool unequip_check) const
 { 
     uint32 tempcount = 0;
-    for (uint8 i = EQUIPMENT_SLOT_START; i < INVENTORY_SLOT_ITEM_END; i++)
-    {
-        Item* pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i);
-        if (pItem && pItem->GetEntry() == item && !pItem->IsInTrade())
+    if(!unequip_check)
+        for (uint8 i = EQUIPMENT_SLOT_START; i < INVENTORY_SLOT_ITEM_END; i++)
         {
-            tempcount += pItem->GetCount();
-            if (tempcount >= count)
-                return true;
+            Item* pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i);
+            if (pItem && pItem->GetEntry() == item && !pItem->IsInTrade())
+            {
+                tempcount += pItem->GetCount();
+                if (tempcount >= count)
+                    return true;
+            }
         }
-    }
     for (uint8 i = KEYRING_SLOT_START; i < CURRENCYTOKEN_SLOT_END; ++i)
     {
         Item* pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i);
@@ -13180,7 +13181,7 @@ void Player::DestroyItem(uint8 bag, uint8 slot, bool update)
     }
 }
 
-void Player::DestroyItemCount(uint32 itemEntry, uint32 count, bool update, bool unequip_check)
+void Player::DestroyItemCount(uint32 itemEntry, uint32 count, bool update, bool unequip_check, bool alsoInBank)
 { 
 #if defined(ENABLE_EXTRAS) && defined(ENABLE_EXTRA_LOGS)
     sLog->outDebug(LOG_FILTER_PLAYER_ITEMS, "STORAGE: DestroyItemCount item = %u, count = %u", itemEntry, count);
@@ -13311,60 +13312,62 @@ void Player::DestroyItemCount(uint32 itemEntry, uint32 count, bool update, bool 
     }
 
     // in bank
-    for (uint8 i = BANK_SLOT_ITEM_START; i < BANK_SLOT_ITEM_END; i++)
-    {
-        if (Item* item = GetItemByPos(INVENTORY_SLOT_BAG_0, i))
+    if (alsoInBank) {
+        for (uint8 i = BANK_SLOT_ITEM_START; i < BANK_SLOT_ITEM_END; i++)
         {
-            if (item->GetEntry() == itemEntry && !item->IsInTrade())
+            if (Item* item = GetItemByPos(INVENTORY_SLOT_BAG_0, i))
             {
-                if (item->GetCount() + remcount <= count)
+                if (item->GetEntry() == itemEntry && !item->IsInTrade())
                 {
-                    remcount += item->GetCount();
-                    DestroyItem(INVENTORY_SLOT_BAG_0, i, update);
-                    if (remcount >= count)
+                    if (item->GetCount() + remcount <= count)
+                    {
+                        remcount += item->GetCount();
+                        DestroyItem(INVENTORY_SLOT_BAG_0, i, update);
+                        if (remcount >= count)
+                            return;
+                    }
+                    else
+                    {
+                        ItemRemovedQuestCheck(item->GetEntry(), count - remcount);
+                        item->SetCount(item->GetCount() - count + remcount);
+                        if (IsInWorld() && update)
+                            item->SendUpdateToPlayer(this);
+                        item->SetState(ITEM_CHANGED, this);
                         return;
-                }
-                else
-                {
-                    ItemRemovedQuestCheck(item->GetEntry(), count - remcount);
-                    item->SetCount(item->GetCount() - count + remcount);
-                    if (IsInWorld() && update)
-                        item->SendUpdateToPlayer(this);
-                    item->SetState(ITEM_CHANGED, this);
-                    return;
+                    }
                 }
             }
         }
-    }
 
-    // in bank bags
-    for (uint8 i = BANK_SLOT_BAG_START; i < BANK_SLOT_BAG_END; i++)
-    {
-        if (Bag* bag = GetBagByPos(i))
+        // in bank bags
+        for (uint8 i = BANK_SLOT_BAG_START; i < BANK_SLOT_BAG_END; i++)
         {
-            for (uint32 j = 0; j < bag->GetBagSize(); j++)
+            if (Bag* bag = GetBagByPos(i))
             {
-                if (Item* item = bag->GetItemByPos(j))
+                for (uint32 j = 0; j < bag->GetBagSize(); j++)
                 {
-                    if (item->GetEntry() == itemEntry && !item->IsInTrade())
+                    if (Item* item = bag->GetItemByPos(j))
                     {
-                        // all items in bags can be unequipped
-                        if (item->GetCount() + remcount <= count)
+                        if (item->GetEntry() == itemEntry && !item->IsInTrade())
                         {
-                            remcount += item->GetCount();
-                            DestroyItem(i, j, update);
+                            // all items in bags can be unequipped
+                            if (item->GetCount() + remcount <= count)
+                            {
+                                remcount += item->GetCount();
+                                DestroyItem(i, j, update);
 
-                            if (remcount >= count)
+                                if (remcount >= count)
+                                    return;
+                            }
+                            else
+                            {
+                                ItemRemovedQuestCheck(item->GetEntry(), count - remcount);
+                                item->SetCount(item->GetCount() - count + remcount);
+                                if (IsInWorld() && update)
+                                    item->SendUpdateToPlayer(this);
+                                item->SetState(ITEM_CHANGED, this);
                                 return;
-                        }
-                        else
-                        {
-                            ItemRemovedQuestCheck(item->GetEntry(), count - remcount);
-                            item->SetCount(item->GetCount() - count + remcount);
-                            if (IsInWorld() && update)
-                                item->SendUpdateToPlayer(this);
-                            item->SetState(ITEM_CHANGED, this);
-                            return;
+                            }
                         }
                     }
                 }
